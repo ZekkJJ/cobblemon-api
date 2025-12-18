@@ -3,12 +3,16 @@ import { db } from '@/lib/mongodb';
 
 export const runtime = 'nodejs';
 
+// Rate limiting to prevent server lag - max 1 request per UUID per 10 seconds
+const syncTimestamps = new Map<string, number>();
+const RATE_LIMIT_MS = 10000; // 10 seconds
+
 // POST: Sync player data from Minecraft server
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
         console.log('[PLAYER SYNC] Received:', { uuid: body.uuid, username: body.username, keys: Object.keys(body) });
-        
+
         const { uuid, username, online, lastSeen, verified, party, pcStorage, cobbleDollarsBalance, inventory, enderChest } = body;
 
         if (!uuid || !username) {
@@ -18,43 +22,60 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Rate limiting check
+        const now = Date.now();
+        const lastSync = syncTimestamps.get(uuid) || 0;
+        if (now - lastSync < RATE_LIMIT_MS) {
+            console.log(`[PLAYER SYNC] Rate limited: ${username} (${uuid})`);
+            return NextResponse.json({ success: true, rateLimited: true });
+        }
+        syncTimestamps.set(uuid, now);
+
         // Find or update player by minecraftUuid (primary key)
         const existing = await db.users.findOne({ minecraftUuid: uuid });
-
-        const playerData: any = {
-            minecraftUuid: uuid,
-            minecraftUsername: username,
-            nickname: username, // Use Minecraft username as nickname if no Discord
-            minecraftOnline: online || false,
-            minecraftLastSeen: lastSeen || new Date().toISOString(),
-            pokemonParty: party || [],
-            pcStorage: pcStorage || [],
-            cobbleDollarsBalance: cobbleDollarsBalance || 0,
-            inventory: inventory || [],
-            enderChest: enderChest || [],
-            syncedAt: new Date().toISOString(),
-        };
 
         if (existing) {
             // Update by minecraftUuid to avoid issues with changing discordId
             await db.users.updateOne(
                 { minecraftUuid: uuid } as any,
-                playerData as any
+                {
+                    minecraftUsername: username,
+                    nickname: username,
+                    minecraftOnline: online || false,
+                    minecraftLastSeen: lastSeen || new Date().toISOString(),
+                    pokemonParty: party || [],
+                    pcStorage: pcStorage || [],
+                    cobbleDollarsBalance: cobbleDollarsBalance || 0,
+                    inventory: inventory || [],
+                    enderChest: enderChest || [],
+                    syncedAt: new Date().toISOString(),
+                }
             );
+            console.log(`[PLAYER SYNC] Updated ${username}: balance=${cobbleDollarsBalance}, party=${party?.length || 0}, pc=${pcStorage?.length || 0}`);
         } else {
             // Create new player entry without Discord linking yet
             await db.users.insertOne({
                 discordId: null, // No Discord yet
                 discordUsername: '',
+                minecraftUuid: uuid,
+                minecraftUsername: username,
                 nickname: username,
+                minecraftOnline: online || false,
+                minecraftLastSeen: lastSeen || new Date().toISOString(),
+                pokemonParty: party || [],
+                pcStorage: pcStorage || [],
+                cobbleDollarsBalance: cobbleDollarsBalance || 0,
+                inventory: inventory || [],
+                enderChest: enderChest || [],
+                syncedAt: new Date().toISOString(),
                 starterId: null,
                 starterIsShiny: false,
                 rolledAt: null,
                 isAdmin: false,
                 banned: false,
                 verified: false,
-                ...playerData,
             } as any);
+            console.log(`[PLAYER SYNC] Created new player ${username}: balance=${cobbleDollarsBalance}`);
         }
 
         const isBanned = (existing as any)?.banned || false;

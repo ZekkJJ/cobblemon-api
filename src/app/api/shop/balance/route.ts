@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
         return NextResponse.json({
             uuid,
-            balance: user.cobbledollars || 0,
+            balance: user.cobbleDollarsBalance || 0,
             username: user.minecraftUsername || 'Unknown'
         });
     } catch (error) {

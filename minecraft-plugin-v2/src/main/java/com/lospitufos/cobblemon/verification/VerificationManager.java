@@ -46,38 +46,19 @@ public class VerificationManager {
             onPlayerJoin(handler.getPlayer());
         });
         
-        // Register /verify command
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(
-                CommandManager.literal("verify")
-                    .then(CommandManager.argument("code", StringArgumentType.string())
-                        .executes(context -> {
-                            ServerPlayerEntity player = context.getSource().getPlayer();
-                            if (player == null) return 0;
-                            
-                            String code = StringArgumentType.getString(context, "code");
-                            verifyPlayer(player, code);
-                            return 1;
-                        })
-                    )
-            );
-            
-            // Register /codigo command to show verification code again
-            dispatcher.register(
-                CommandManager.literal("codigo")
-                    .executes(context -> {
-                        ServerPlayerEntity player = context.getSource().getPlayer();
-                        if (player == null) return 0;
-                        
-                        showVerificationCode(player);
-                        return 1;
-                    })
-            );
-            
-            logger.info("✓ /verify and /codigo commands registered");
-        });
-        
         logger.info("✓ Verification system initialized");
+    }
+
+    public void handleVerifyCommand(ServerPlayerEntity player, String code) {
+        if (player != null) {
+            verifyPlayer(player, code);
+        }
+    }
+
+    public void handleCodigoCommand(ServerPlayerEntity player) {
+        if (player != null) {
+            showVerificationCode(player);
+        }
     }
     
     private void onPlayerJoin(ServerPlayerEntity player) {

@@ -38,23 +38,13 @@ public class ShopManager {
     public void initialize(MinecraftServer server) {
         this.server = server;
         logger.info("Shop system initializing...");
-        
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(
-                CommandManager.literal("claimshop")
-                    .executes(context -> {
-                        ServerPlayerEntity player = context.getSource().getPlayer();
-                        if (player == null) return 0;
-                        
-                        claimPurchases(player);
-                        return 1;
-                    })
-            );
-            
-            logger.info("✓ /claimshop command registered");
-        });
-        
         logger.info("✓ Shop system initialized");
+    }
+
+    public void handleClaimCommand(ServerPlayerEntity player) {
+        if (player != null) {
+            claimPurchases(player);
+        }
     }
     
     private void claimPurchases(ServerPlayerEntity player) {

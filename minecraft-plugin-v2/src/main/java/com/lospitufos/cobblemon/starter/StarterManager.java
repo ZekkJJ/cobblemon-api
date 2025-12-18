@@ -45,24 +45,14 @@ public class StarterManager {
             checkAndGiveStarter(handler.getPlayer());
         });
         
-        // Admin command to force give starter
-        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-            dispatcher.register(CommandManager.literal("lospitufos")
-                .then(CommandManager.literal("forcestarter")
-                    .requires(source -> source.hasPermissionLevel(4))
-                    .then(CommandManager.argument("player", net.minecraft.command.argument.EntityArgumentType.player())
-                        .executes(context -> {
-                            ServerPlayerEntity target = net.minecraft.command.argument.EntityArgumentType.getPlayer(context, "player");
-                            checkAndGiveStarter(target);
-                            context.getSource().sendMessage(Text.literal("§aChecking starter for " + target.getName().getString()));
-                            return 1;
-                        })
-                    )
-                )
-            );
-        });
-        
         logger.info("✓ Starter management initialized");
+    }
+
+    public void handleForceStarterCommand(ServerPlayerEntity player) {
+        if (player != null) {
+            checkAndGiveStarter(player);
+            player.sendMessage(Text.literal("§aChecking starter for " + player.getName().getString()));
+        }
     }
     
     private void checkAndGiveStarter(ServerPlayerEntity player) {

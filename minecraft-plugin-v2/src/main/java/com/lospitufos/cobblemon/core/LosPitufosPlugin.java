@@ -10,8 +10,11 @@ import com.lospitufos.cobblemon.levelcaps.LevelCapManager;
 import com.lospitufos.cobblemon.shop.ShopManager;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.CommandManager;
+import com.mojang.brigadier.arguments.StringArgumentType;
 
 /**
  * Cobblemon Los Pitufos Plugin V2
@@ -73,11 +76,74 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
         // Initialize Discord webhook
         discordWebhook = new DiscordWebhookManager(config.getDiscordWebhookUrl(), logger);
 
+        // Register commands EARLY (before server starts)
+        registerCommands();
+
         // Register lifecycle events
         ServerLifecycleEvents.SERVER_STARTED.register(this::onServerStarted);
         ServerLifecycleEvents.SERVER_STOPPING.register(this::onServerStopping);
 
         logger.info("✓ Core initialization complete");
+    }
+
+    private void registerCommands() {
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            // Verification commands
+            if (config.isVerificationEnabled()) {
+                dispatcher.register(
+                    CommandManager.literal("verify")
+                        .then(CommandManager.argument("code", StringArgumentType.string())
+                            .executes(context -> {
+                                if (verificationManager != null) {
+                                    verificationManager.handleVerifyCommand(context.getSource().getPlayer(), 
+                                        StringArgumentType.getString(context, "code"));
+                                }
+                                return 1;
+                            })
+                        )
+                );
+                
+                dispatcher.register(
+                    CommandManager.literal("codigo")
+                        .executes(context -> {
+                            if (verificationManager != null) {
+                                verificationManager.handleCodigoCommand(context.getSource().getPlayer());
+                            }
+                            return 1;
+                        })
+                );
+                logger.info("✓ Verification commands registered");
+            }
+
+            // Shop command
+            dispatcher.register(
+                CommandManager.literal("claimshop")
+                    .executes(context -> {
+                        if (shopManager != null) {
+                            shopManager.handleClaimCommand(context.getSource().getPlayer());
+                        }
+                        return 1;
+                    })
+            );
+            logger.info("✓ Shop commands registered");
+
+            // Starter admin command
+            if (config.isStarterManagementEnabled()) {
+                dispatcher.register(
+                    CommandManager.literal("lospitufos")
+                        .then(CommandManager.literal("forcestarter")
+                            .requires(source -> source.hasPermissionLevel(2))
+                            .executes(context -> {
+                                if (starterManager != null) {
+                                    starterManager.handleForceStarterCommand(context.getSource().getPlayer());
+                                }
+                                return 1;
+                            })
+                        )
+                );
+                logger.info("✓ Admin commands registered");
+            }
+        });
     }
 
     private void onServerStarted(MinecraftServer minecraftServer) {

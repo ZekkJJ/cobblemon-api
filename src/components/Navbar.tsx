@@ -27,6 +27,7 @@ export default function Navbar() {
 
     const navLinks = [
         { href: '/', label: 'Gacha', icon: 'fa-dice' },
+        { href: '/tienda', label: 'Tienda', icon: 'fa-shopping-cart' },
         { href: '/servidor', label: 'Servidor', icon: 'fa-server' },
         { href: '/pokedex', label: 'Pokédex', icon: 'fa-book' },
         { href: '/jugadores', label: 'Jugadores', icon: 'fa-users' },

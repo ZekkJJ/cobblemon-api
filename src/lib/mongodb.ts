@@ -45,6 +45,16 @@ export async function getLevelCapsCollection() {
     return db.collection('level_caps');
 }
 
+export async function getShopStockCollection() {
+    const { db } = await connectToDatabase();
+    return db.collection('shop_stock');
+}
+
+export async function getShopPurchasesCollection() {
+    const { db } = await connectToDatabase();
+    return db.collection('shop_purchases');
+}
+
 // Simple wrapper for compatibility
 export const db = {
     users: {
@@ -174,6 +184,54 @@ export const db = {
             await col.updateOne(
                 query,
                 { $set: { ...doc, updatedAt: new Date() } },
+                { upsert: true }
+            );
+            return doc;
+        }
+    },
+    shop_stock: {
+        find: async (query: any = {}) => {
+            const col = await getShopStockCollection();
+            return await col.find(query).toArray();
+        },
+        findOne: async (query: any) => {
+            const col = await getShopStockCollection();
+            return await col.findOne(query);
+        },
+        updateOne: async (query: any, update: any) => {
+            const col = await getShopStockCollection();
+            await col.updateOne(query, { $set: update });
+            return true;
+        },
+        upsert: async (query: any, doc: any) => {
+            const col = await getShopStockCollection();
+            await col.updateOne(
+                query,
+                { $set: doc },
+                { upsert: true }
+            );
+            return doc;
+        }
+    },
+    shop_purchases: {
+        find: async (query: any = {}) => {
+            const col = await getShopPurchasesCollection();
+            return await col.find(query).toArray();
+        },
+        findOne: async (query: any) => {
+            const col = await getShopPurchasesCollection();
+            return await col.findOne(query);
+        },
+        updateOne: async (query: any, update: any) => {
+            const col = await getShopPurchasesCollection();
+            await col.updateOne(query, { $set: update });
+            return true;
+        },
+        upsert: async (query: any, doc: any) => {
+            const col = await getShopPurchasesCollection();
+            await col.updateOne(
+                query,
+                { $set: doc },
                 { upsert: true }
             );
             return doc;

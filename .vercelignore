@@ -1,0 +1,48 @@
+# Minecraft plugin directories (entire directories)
+minecraft-plugin/
+minecraft-plugin-v2/
+
+# Java/Gradle artifacts
+*.jar
+*.class
+*.hprof
+.gradle/
+build/
+gradle/
+
+# Audio files
+*.mp3
+*.wav
+*.ogg
+*.m4a
+
+# Video files
+*.mp4
+*.avi
+*.mov
+
+# Archives
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
+# Documentation
+*.md
+html.html
+
+# Logs
+*.log
+build-log.txt
+dev.log
+
+# Development
+.zencoder/
+.zenflow/
+.vscode/
+
+# Next.js (will be rebuilt on Vercel)
+.next/
+
+# Environment files (handled separately)
+.env.local

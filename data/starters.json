@@ -1,0 +1,82 @@
+[
+  {
+    "pokemonId": 1,
+    "isClaimed": true,
+    "claimedBy": "fake_001",
+    "claimedByNickname": "Ash",
+    "claimedAt": "2025-12-16T22:06:00.184Z",
+    "starterIsShiny": false,
+    "_id": "mj94ted5907riy7cn",
+    "createdAt": "2025-12-16T22:06:00.185Z"
+  },
+  {
+    "pokemonId": 4,
+    "isClaimed": true,
+    "claimedBy": "fake_002",
+    "claimedByNickname": "Misty",
+    "claimedAt": "2025-12-16T22:06:00.187Z",
+    "starterIsShiny": false,
+    "_id": "mj94ted8ouasze3iq",
+    "createdAt": "2025-12-16T22:06:00.188Z"
+  },
+  {
+    "pokemonId": 7,
+    "isClaimed": true,
+    "claimedBy": "fake_003",
+    "claimedByNickname": "Brock",
+    "claimedAt": "2025-12-16T22:06:00.191Z",
+    "starterIsShiny": false,
+    "_id": "mj94tedcj4q1q3dag",
+    "createdAt": "2025-12-16T22:06:00.192Z"
+  },
+  {
+    "pokemonId": 152,
+    "isClaimed": true,
+    "claimedBy": "fake_004",
+    "claimedByNickname": "Gary",
+    "claimedAt": "2025-12-16T22:06:00.194Z",
+    "starterIsShiny": true,
+    "_id": "mj94tedfsqovbiqla",
+    "createdAt": "2025-12-16T22:06:00.195Z"
+  },
+  {
+    "pokemonId": 155,
+    "isClaimed": true,
+    "claimedBy": "fake_005",
+    "claimedByNickname": "Jessie",
+    "claimedAt": "2025-12-16T22:06:00.198Z",
+    "starterIsShiny": false,
+    "_id": "mj94tedjcg7x5mvdv",
+    "createdAt": "2025-12-16T22:06:00.199Z"
+  },
+  {
+    "pokemonId": 158,
+    "isClaimed": true,
+    "claimedBy": "fake_006",
+    "claimedByNickname": "James",
+    "claimedAt": "2025-12-16T22:06:00.201Z",
+    "starterIsShiny": false,
+    "_id": "mj94tedl8ovjmvgwt",
+    "createdAt": "2025-12-16T22:06:00.201Z"
+  },
+  {
+    "pokemonId": 252,
+    "isClaimed": true,
+    "claimedBy": "fake_007",
+    "claimedByNickname": "Prof. Oak",
+    "claimedAt": "2025-12-16T22:06:00.203Z",
+    "starterIsShiny": false,
+    "_id": "mj94tedos5t3xllnt",
+    "createdAt": "2025-12-16T22:06:00.204Z"
+  },
+  {
+    "pokemonId": 255,
+    "isClaimed": true,
+    "claimedBy": "fake_008",
+    "claimedByNickname": "Joy",
+    "claimedAt": "2025-12-16T22:06:00.206Z",
+    "starterIsShiny": false,
+    "_id": "mj94tedr8wsc3twpq",
+    "createdAt": "2025-12-16T22:06:00.207Z"
+  }
+]

@@ -1,0 +1,2649 @@
+// Complete data for all 27 starter Pokémon (Gen 1-9)
+// Sprites use animated GIFs from PokeAPI
+
+import { Starter } from './types';
+
+function getSprites(id: number) {
+    const hasAnimated = id <= 649;
+    return {
+        sprite: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`,
+        spriteAnimated: hasAnimated
+            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/${id}.gif`
+            : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/${id}.gif`,
+        shiny: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/${id}.png`,
+        shinyAnimated: hasAnimated
+            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/animated/shiny/${id}.gif`
+            : `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/showdown/shiny/${id}.gif`,
+        artwork: `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`,
+        cry: `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`,
+    };
+}
+
+export const STARTERS_DATA: Omit<Starter, '_id' | 'isClaimed' | 'claimedBy' | 'claimedByNickname' | 'claimedAt'>[] = [
+    // ==================== GENERATION 1 ====================
+    {
+        pokemonId: 1,
+        name: "Bulbasaur",
+        nameEs: "Bulbasaur",
+        generation: 1,
+        types: ["Grass", "Poison"],
+        stats: { hp: 45, atk: 49, def: 49, spa: 65, spd: 65, spe: 45 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Chlorophyll", nameEs: "Clorofila", isHidden: true, description: "Boosts Speed in sunshine." }
+        ],
+        signatureMoves: [
+            { name: "Solar Beam", type: "Grass", category: "special", power: 120, accuracy: 100 },
+            { name: "Sludge Bomb", type: "Poison", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 2, toName: "Ivysaur", method: "Level 16" },
+            { to: 3, toName: "Venusaur", method: "Level 32" }
+        ],
+        description: "A strange seed was planted on its back at birth. The plant sprouts and grows with this Pokémon.",
+        height: 0.7,
+        weight: 6.9,
+    },
+    {
+        pokemonId: 4,
+        name: "Charmander",
+        nameEs: "Charmander",
+        generation: 1,
+        types: ["Fire"],
+        stats: { hp: 39, atk: 52, def: 43, spa: 60, spd: 50, spe: 65 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Solar Power", nameEs: "Poder Solar", isHidden: true, description: "Boosts Sp. Atk in sunshine, but loses HP." }
+        ],
+        signatureMoves: [
+            { name: "Flamethrower", type: "Fire", category: "special", power: 90, accuracy: 100 },
+            { name: "Dragon Claw", type: "Dragon", category: "physical", power: 80, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 5, toName: "Charmeleon", method: "Level 16" },
+            { to: 6, toName: "Charizard", method: "Level 36" }
+        ],
+        description: "It prefers hot things. When it rains, steam is said to spout from the tip of its tail.",
+        height: 0.6,
+        weight: 8.5,
+    },
+    {
+        pokemonId: 7,
+        name: "Squirtle",
+        nameEs: "Squirtle",
+        generation: 1,
+        types: ["Water"],
+        stats: { hp: 44, atk: 48, def: 65, spa: 50, spd: 64, spe: 43 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Rain Dish", nameEs: "Cura Lluvia", isHidden: true, description: "Gradually recovers HP in rain." }
+        ],
+        signatureMoves: [
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 },
+            { name: "Ice Beam", type: "Ice", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 8, toName: "Wartortle", method: "Level 16" },
+            { to: 9, toName: "Blastoise", method: "Level 36" }
+        ],
+        description: "After birth, its back swells and hardens into a shell. It sprays foam powerfully from its mouth.",
+        height: 0.5,
+        weight: 9.0,
+    },
+    // ==================== GENERATION 2 ====================
+    {
+        pokemonId: 152,
+        name: "Chikorita",
+        nameEs: "Chikorita",
+        generation: 2,
+        types: ["Grass"],
+        stats: { hp: 45, atk: 49, def: 65, spa: 49, spd: 65, spe: 45 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Leaf Guard", nameEs: "Defensa Hoja", isHidden: true, description: "Prevents status conditions in sunshine." }
+        ],
+        signatureMoves: [
+            { name: "Leaf Storm", type: "Grass", category: "special", power: 130, accuracy: 90 },
+            { name: "Aromatherapy", type: "Grass", category: "status", power: null, accuracy: null }
+        ],
+        evolutions: [
+            { to: 153, toName: "Bayleef", method: "Level 16" },
+            { to: 154, toName: "Meganium", method: "Level 32" }
+        ],
+        description: "A sweet aroma emanates from the leaf on its head. It is docile and loves to soak up sunrays.",
+        height: 0.9,
+        weight: 6.4,
+    },
+    {
+        pokemonId: 155,
+        name: "Cyndaquil",
+        nameEs: "Cyndaquil",
+        generation: 2,
+        types: ["Fire"],
+        stats: { hp: 39, atk: 52, def: 43, spa: 60, spd: 50, spe: 65 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Flash Fire", nameEs: "Absorbe Fuego", isHidden: true, description: "Powers up Fire moves if hit by one." }
+        ],
+        signatureMoves: [
+            { name: "Eruption", type: "Fire", category: "special", power: 150, accuracy: 100 },
+            { name: "Lava Plume", type: "Fire", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 156, toName: "Quilava", method: "Level 14" },
+            { to: 157, toName: "Typhlosion", method: "Level 36" }
+        ],
+        description: "It is timid, and always curls itself up in a ball. If attacked, it flares up its back for protection.",
+        height: 0.5,
+        weight: 7.9,
+    },
+    {
+        pokemonId: 158,
+        name: "Totodile",
+        nameEs: "Totodile",
+        generation: 2,
+        types: ["Water"],
+        stats: { hp: 50, atk: 65, def: 64, spa: 44, spd: 48, spe: 43 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Sheer Force", nameEs: "Potencia Bruta", isHidden: true, description: "Removes added effects to increase move damage." }
+        ],
+        signatureMoves: [
+            { name: "Aqua Tail", type: "Water", category: "physical", power: 90, accuracy: 90 },
+            { name: "Crunch", type: "Dark", category: "physical", power: 80, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 159, toName: "Croconaw", method: "Level 18" },
+            { to: 160, toName: "Feraligatr", method: "Level 30" }
+        ],
+        description: "Its powerful jaws can crush anything. Even its Trainer must be careful.",
+        height: 0.6,
+        weight: 9.5,
+    },
+    // ==================== GENERATION 3 ====================
+    {
+        pokemonId: 252,
+        name: "Treecko",
+        nameEs: "Treecko",
+        generation: 3,
+        types: ["Grass"],
+        stats: { hp: 40, atk: 45, def: 35, spa: 65, spd: 55, spe: 70 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Unburden", nameEs: "Liviano", isHidden: true, description: "Boosts Speed if held item is used." }
+        ],
+        signatureMoves: [
+            { name: "Leaf Blade", type: "Grass", category: "physical", power: 90, accuracy: 100 },
+            { name: "Giga Drain", type: "Grass", category: "special", power: 75, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 253, toName: "Grovyle", method: "Level 16" },
+            { to: 254, toName: "Sceptile", method: "Level 36" }
+        ],
+        description: "It makes its nest in a giant tree in the forest. It ferociously guards against anything nearing its territory.",
+        height: 0.5,
+        weight: 5.0,
+    },
+    {
+        pokemonId: 255,
+        name: "Torchic",
+        nameEs: "Torchic",
+        generation: 3,
+        types: ["Fire"],
+        stats: { hp: 45, atk: 60, def: 40, spa: 70, spd: 50, spe: 45 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Speed Boost", nameEs: "Impulso", isHidden: true, description: "Speed increases every turn." }
+        ],
+        signatureMoves: [
+            { name: "Blaze Kick", type: "Fire", category: "physical", power: 85, accuracy: 90 },
+            { name: "Brave Bird", type: "Flying", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 256, toName: "Combusken", method: "Level 16" },
+            { to: 257, toName: "Blaziken", method: "Level 36" }
+        ],
+        description: "It has a flame sac inside its belly that perpetually burns. It feels warm if hugged.",
+        height: 0.4,
+        weight: 2.5,
+    },
+    {
+        pokemonId: 258,
+        name: "Mudkip",
+        nameEs: "Mudkip",
+        generation: 3,
+        types: ["Water"],
+        stats: { hp: 50, atk: 70, def: 50, spa: 50, spd: 50, spe: 40 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Damp", nameEs: "Humedad", isHidden: true, description: "Prevents the use of self-destructing moves." }
+        ],
+        signatureMoves: [
+            { name: "Muddy Water", type: "Water", category: "special", power: 90, accuracy: 85 },
+            { name: "Earthquake", type: "Ground", category: "physical", power: 100, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 259, toName: "Marshtomp", method: "Level 16" },
+            { to: 260, toName: "Swampert", method: "Level 36" }
+        ],
+        description: "The fin on its head acts as a radar. It uses the fin to sense movement in water and air.",
+        height: 0.4,
+        weight: 7.6,
+    },
+    // ==================== GENERATION 4 ====================
+    {
+        pokemonId: 387,
+        name: "Turtwig",
+        nameEs: "Turtwig",
+        generation: 4,
+        types: ["Grass"],
+        stats: { hp: 55, atk: 68, def: 64, spa: 45, spd: 55, spe: 31 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Shell Armor", nameEs: "Coraza", isHidden: true, description: "Blocks critical hits." }
+        ],
+        signatureMoves: [
+            { name: "Wood Hammer", type: "Grass", category: "physical", power: 120, accuracy: 100 },
+            { name: "Earthquake", type: "Ground", category: "physical", power: 100, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 388, toName: "Grotle", method: "Level 18" },
+            { to: 389, toName: "Torterra", method: "Level 32" }
+        ],
+        description: "It undertakes photosynthesis with its body, making oxygen. The shell on its back is made of hardened soil.",
+        height: 0.4,
+        weight: 10.2,
+    },
+    {
+        pokemonId: 390,
+        name: "Chimchar",
+        nameEs: "Chimchar",
+        generation: 4,
+        types: ["Fire"],
+        stats: { hp: 44, atk: 58, def: 44, spa: 58, spd: 44, spe: 61 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Iron Fist", nameEs: "Puño Férreo", isHidden: true, description: "Boosts punching moves." }
+        ],
+        signatureMoves: [
+            { name: "Flare Blitz", type: "Fire", category: "physical", power: 120, accuracy: 100 },
+            { name: "Close Combat", type: "Fighting", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 391, toName: "Monferno", method: "Level 14" },
+            { to: 392, toName: "Infernape", method: "Level 36" }
+        ],
+        description: "The fire on its tail is produced by burning gas in its belly. Even rain can't extinguish it.",
+        height: 0.5,
+        weight: 6.2,
+    },
+    {
+        pokemonId: 393,
+        name: "Piplup",
+        nameEs: "Piplup",
+        generation: 4,
+        types: ["Water"],
+        stats: { hp: 53, atk: 51, def: 53, spa: 61, spd: 56, spe: 40 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Defiant", nameEs: "Competitivo", isHidden: true, description: "Boosts Attack when stats are lowered." }
+        ],
+        signatureMoves: [
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 },
+            { name: "Ice Beam", type: "Ice", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 394, toName: "Prinplup", method: "Level 16" },
+            { to: 395, toName: "Empoleon", method: "Level 36" }
+        ],
+        description: "It lives along shores in northern countries. An expert swimmer, it dives for over 10 minutes to hunt.",
+        height: 0.4,
+        weight: 5.2,
+    },
+    // ==================== GENERATION 5 ====================
+    {
+        pokemonId: 495,
+        name: "Snivy",
+        nameEs: "Snivy",
+        generation: 5,
+        types: ["Grass"],
+        stats: { hp: 45, atk: 45, def: 55, spa: 45, spd: 55, spe: 63 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Contrary", nameEs: "Respondón", isHidden: true, description: "Makes stat changes have opposite effect." }
+        ],
+        signatureMoves: [
+            { name: "Leaf Storm", type: "Grass", category: "special", power: 130, accuracy: 90 },
+            { name: "Glare", type: "Normal", category: "status", power: null, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 496, toName: "Servine", method: "Level 17" },
+            { to: 497, toName: "Serperior", method: "Level 36" }
+        ],
+        description: "It is very intelligent and calm. Being exposed to lots of sunlight makes its movements swifter.",
+        height: 0.6,
+        weight: 8.1,
+    },
+    {
+        pokemonId: 498,
+        name: "Tepig",
+        nameEs: "Tepig",
+        generation: 5,
+        types: ["Fire"],
+        stats: { hp: 65, atk: 63, def: 45, spa: 45, spd: 45, spe: 45 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Thick Fat", nameEs: "Grasa Gruesa", isHidden: true, description: "Halves damage from Fire and Ice moves." }
+        ],
+        signatureMoves: [
+            { name: "Flare Blitz", type: "Fire", category: "physical", power: 120, accuracy: 100 },
+            { name: "Head Smash", type: "Rock", category: "physical", power: 150, accuracy: 80 }
+        ],
+        evolutions: [
+            { to: 499, toName: "Pignite", method: "Level 17" },
+            { to: 500, toName: "Emboar", method: "Level 36" }
+        ],
+        description: "It blows fire through its nose. It roasts berries before eating them.",
+        height: 0.5,
+        weight: 9.9,
+    },
+    {
+        pokemonId: 501,
+        name: "Oshawott",
+        nameEs: "Oshawott",
+        generation: 5,
+        types: ["Water"],
+        stats: { hp: 55, atk: 55, def: 45, spa: 63, spd: 45, spe: 45 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Shell Armor", nameEs: "Coraza", isHidden: true, description: "Blocks critical hits." }
+        ],
+        signatureMoves: [
+            { name: "Razor Shell", type: "Water", category: "physical", power: 75, accuracy: 95 },
+            { name: "Megahorn", type: "Bug", category: "physical", power: 120, accuracy: 85 }
+        ],
+        evolutions: [
+            { to: 502, toName: "Dewott", method: "Level 17" },
+            { to: 503, toName: "Samurott", method: "Level 36" }
+        ],
+        description: "It fights using the scalchop on its stomach. It can counterattack without delay.",
+        height: 0.5,
+        weight: 5.9,
+    },
+    // ==================== GENERATION 6 ====================
+    {
+        pokemonId: 650,
+        name: "Chespin",
+        nameEs: "Chespin",
+        generation: 6,
+        types: ["Grass"],
+        stats: { hp: 56, atk: 61, def: 65, spa: 48, spd: 45, spe: 38 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Bulletproof", nameEs: "Antibalas", isHidden: true, description: "Protects from ball and bomb moves." }
+        ],
+        signatureMoves: [
+            { name: "Spiky Shield", type: "Grass", category: "status", power: null, accuracy: null },
+            { name: "Wood Hammer", type: "Grass", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 651, toName: "Quilladin", method: "Level 16" },
+            { to: 652, toName: "Chesnaught", method: "Level 36" }
+        ],
+        description: "The quills on its head are usually soft. When it flexes them, the points become sharp and piercing.",
+        height: 0.4,
+        weight: 9.0,
+    },
+    {
+        pokemonId: 653,
+        name: "Fennekin",
+        nameEs: "Fennekin",
+        generation: 6,
+        types: ["Fire"],
+        stats: { hp: 40, atk: 45, def: 40, spa: 62, spd: 60, spe: 60 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Magician", nameEs: "Prestidigitador", isHidden: true, description: "Steals held item when hitting with a move." }
+        ],
+        signatureMoves: [
+            { name: "Mystical Fire", type: "Fire", category: "special", power: 75, accuracy: 100 },
+            { name: "Psyshock", type: "Psychic", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 654, toName: "Braixen", method: "Level 16" },
+            { to: 655, toName: "Delphox", method: "Level 36" }
+        ],
+        description: "Eating a twig fills it with energy, and its roomy ears give vent to air hotter than 390 degrees Fahrenheit.",
+        height: 0.4,
+        weight: 9.4,
+    },
+    {
+        pokemonId: 656,
+        name: "Froakie",
+        nameEs: "Froakie",
+        generation: 6,
+        types: ["Water"],
+        stats: { hp: 41, atk: 56, def: 40, spa: 62, spd: 44, spe: 71 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Protean", nameEs: "Mutatipo", isHidden: true, description: "Changes type to match move being used." }
+        ],
+        signatureMoves: [
+            { name: "Water Shuriken", type: "Water", category: "special", power: 15, accuracy: 100 },
+            { name: "Mat Block", type: "Fighting", category: "status", power: null, accuracy: null }
+        ],
+        evolutions: [
+            { to: 657, toName: "Frogadier", method: "Level 16" },
+            { to: 658, toName: "Greninja", method: "Level 36" }
+        ],
+        description: "It secretes flexible bubbles from its chest and back. They reduce damage from attacks.",
+        height: 0.3,
+        weight: 7.0,
+    },
+    // ==================== GENERATION 7 ====================
+    {
+        pokemonId: 722,
+        name: "Rowlet",
+        nameEs: "Rowlet",
+        generation: 7,
+        types: ["Grass", "Flying"],
+        stats: { hp: 68, atk: 55, def: 55, spa: 50, spd: 50, spe: 42 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Long Reach", nameEs: "Tiro Largo", isHidden: true, description: "Uses moves without making contact." }
+        ],
+        signatureMoves: [
+            { name: "Spirit Shackle", type: "Ghost", category: "physical", power: 80, accuracy: 100 },
+            { name: "Leaf Blade", type: "Grass", category: "physical", power: 90, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 723, toName: "Dartrix", method: "Level 17" },
+            { to: 724, toName: "Decidueye", method: "Level 34" }
+        ],
+        description: "It stores energy during the day from photosynthesis. It becomes active at night.",
+        height: 0.3,
+        weight: 1.5,
+    },
+    {
+        pokemonId: 725,
+        name: "Litten",
+        nameEs: "Litten",
+        generation: 7,
+        types: ["Fire"],
+        stats: { hp: 45, atk: 65, def: 40, spa: 60, spd: 40, spe: 70 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Intimidate", nameEs: "Intimidación", isHidden: true, description: "Lowers opponent's Attack." }
+        ],
+        signatureMoves: [
+            { name: "Darkest Lariat", type: "Dark", category: "physical", power: 85, accuracy: 100 },
+            { name: "Flare Blitz", type: "Fire", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 726, toName: "Torracat", method: "Level 17" },
+            { to: 727, toName: "Incineroar", method: "Level 34" }
+        ],
+        description: "While grooming itself, it builds up fur inside its stomach. It sets the fur alight and spews fiery attacks.",
+        height: 0.4,
+        weight: 4.3,
+    },
+    {
+        pokemonId: 728,
+        name: "Popplio",
+        nameEs: "Popplio",
+        generation: 7,
+        types: ["Water"],
+        stats: { hp: 50, atk: 54, def: 54, spa: 66, spd: 56, spe: 40 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Liquid Voice", nameEs: "Voz Fluida", isHidden: true, description: "Sound moves become Water type." }
+        ],
+        signatureMoves: [
+            { name: "Sparkling Aria", type: "Water", category: "special", power: 90, accuracy: 100 },
+            { name: "Moonblast", type: "Fairy", category: "special", power: 95, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 729, toName: "Brionne", method: "Level 17" },
+            { to: 730, toName: "Primarina", method: "Level 34" }
+        ],
+        description: "This Pokémon snorts body fluids from its nose, blowing balloons to smash into its foes.",
+        height: 0.4,
+        weight: 7.5,
+    },
+    // ==================== GENERATION 8 ====================
+    {
+        pokemonId: 810,
+        name: "Grookey",
+        nameEs: "Grookey",
+        generation: 8,
+        types: ["Grass"],
+        stats: { hp: 50, atk: 65, def: 50, spa: 40, spd: 40, spe: 65 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Grassy Surge", nameEs: "Herbogénesis", isHidden: true, description: "Creates Grassy Terrain when entering battle." }
+        ],
+        signatureMoves: [
+            { name: "Drum Beating", type: "Grass", category: "physical", power: 80, accuracy: 100 },
+            { name: "Wood Hammer", type: "Grass", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 811, toName: "Thwackey", method: "Level 16" },
+            { to: 812, toName: "Rillaboom", method: "Level 35" }
+        ],
+        description: "When it uses its special stick to strike up a beat, the sound waves produced carry revitalizing energy to plants.",
+        height: 0.3,
+        weight: 5.0,
+    },
+    {
+        pokemonId: 813,
+        name: "Scorbunny",
+        nameEs: "Scorbunny",
+        generation: 8,
+        types: ["Fire"],
+        stats: { hp: 50, atk: 71, def: 40, spa: 40, spd: 40, spe: 69 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Libero", nameEs: "Líbero", isHidden: true, description: "Changes type to match move being used." }
+        ],
+        signatureMoves: [
+            { name: "Pyro Ball", type: "Fire", category: "physical", power: 120, accuracy: 90 },
+            { name: "Court Change", type: "Normal", category: "status", power: null, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 814, toName: "Raboot", method: "Level 16" },
+            { to: 815, toName: "Cinderace", method: "Level 35" }
+        ],
+        description: "It runs around to warm up its body, then uses its powerful legs to kick its way through opponents.",
+        height: 0.3,
+        weight: 4.5,
+    },
+    {
+        pokemonId: 816,
+        name: "Sobble",
+        nameEs: "Sobble",
+        generation: 8,
+        types: ["Water"],
+        stats: { hp: 50, atk: 40, def: 40, spa: 70, spd: 40, spe: 70 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Sniper", nameEs: "Francotirador", isHidden: true, description: "Powers up critical hits." }
+        ],
+        signatureMoves: [
+            { name: "Snipe Shot", type: "Water", category: "special", power: 80, accuracy: 100 },
+            { name: "U-turn", type: "Bug", category: "physical", power: 70, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 817, toName: "Drizzile", method: "Level 16" },
+            { to: 818, toName: "Inteleon", method: "Level 35" }
+        ],
+        description: "When scared, it cries. Its tears contain enzymes that make enemies cry uncontrollably.",
+        height: 0.3,
+        weight: 4.0,
+    },
+    // ==================== GENERATION 9 ====================
+    {
+        pokemonId: 906,
+        name: "Sprigatito",
+        nameEs: "Sprigatito",
+        generation: 9,
+        types: ["Grass"],
+        stats: { hp: 40, atk: 61, def: 54, spa: 45, spd: 45, spe: 65 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Protean", nameEs: "Mutatipo", isHidden: true, description: "Changes type to match move being used." }
+        ],
+        signatureMoves: [
+            { name: "Flower Trick", type: "Grass", category: "physical", power: 70, accuracy: null },
+            { name: "Play Rough", type: "Fairy", category: "physical", power: 90, accuracy: 90 }
+        ],
+        evolutions: [
+            { to: 907, toName: "Floragato", method: "Level 16" },
+            { to: 908, toName: "Meowscarada", method: "Level 36" }
+        ],
+        description: "Its fluffy fur has a composition similar to plants. It washes its face to keep its fur moist.",
+        height: 0.4,
+        weight: 4.1,
+    },
+    {
+        pokemonId: 909,
+        name: "Fuecoco",
+        nameEs: "Fuecoco",
+        generation: 9,
+        types: ["Fire"],
+        stats: { hp: 67, atk: 45, def: 59, spa: 63, spd: 40, spe: 36 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Unaware", nameEs: "Ignorante", isHidden: true, description: "Ignores opponent's stat changes." }
+        ],
+        signatureMoves: [
+            { name: "Torch Song", type: "Fire", category: "special", power: 80, accuracy: 100 },
+            { name: "Shadow Ball", type: "Ghost", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 910, toName: "Crocalor", method: "Level 16" },
+            { to: 911, toName: "Skeledirge", method: "Level 36" }
+        ],
+        description: "It lies on warm rocks and uses the heat absorbed by its body to create fire energy.",
+        height: 0.4,
+        weight: 9.8,
+    },
+    {
+        pokemonId: 912,
+        name: "Quaxly",
+        nameEs: "Quaxly",
+        generation: 9,
+        types: ["Water"],
+        stats: { hp: 55, atk: 65, def: 45, spa: 50, spd: 45, spe: 50 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Moxie", nameEs: "Autoestima", isHidden: true, description: "Boosts Attack after knocking out a Pokémon." }
+        ],
+        signatureMoves: [
+            { name: "Aqua Step", type: "Water", category: "physical", power: 80, accuracy: 100 },
+            { name: "Close Combat", type: "Fighting", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 913, toName: "Quaxwell", method: "Level 16" },
+            { to: 914, toName: "Quaquaval", method: "Level 36" }
+        ],
+        description: "It migrated to Paldea from distant lands long ago. The gel in its feathers repels water.",
+        height: 0.5,
+        weight: 6.1,
+    },
+    // ==================== COMMON & POPULAR GEN 1 ====================
+    {
+        pokemonId: 16,
+        name: "Pidgey",
+        nameEs: "Pidgey",
+        generation: 1,
+        types: ["Normal", "Flying"],
+        stats: { hp: 40, atk: 45, def: 40, spa: 35, spd: 35, spe: 56 },
+        abilities: [
+            { name: "Keen Eye", nameEs: "Vista Lince", isHidden: false, description: "Prevents accuracy loss." },
+            { name: "Tangled Feet", nameEs: "Tumbos", isHidden: false, description: "Raises evasion if confused." },
+            { name: "Big Pecks", nameEs: "Sacapecho", isHidden: true, description: "Protects from Defense-lowering effects." }
+        ],
+        signatureMoves: [
+            { name: "Gust", type: "Flying", category: "special", power: 40, accuracy: 100 },
+            { name: "Air Slash", type: "Flying", category: "special", power: 75, accuracy: 95 }
+        ],
+        evolutions: [
+            { to: 17, toName: "Pidgeotto", method: "Level 18" },
+            { to: 18, toName: "Pidgeot", method: "Level 36" }
+        ],
+        description: "Very docile. If attacked, it will often kick up sand to protect itself.",
+        height: 0.3,
+        weight: 1.8,
+    },
+    {
+        pokemonId: 19,
+        name: "Rattata",
+        nameEs: "Rattata",
+        generation: 1,
+        types: ["Normal"],
+        stats: { hp: 30, atk: 56, def: 35, spa: 25, spd: 35, spe: 72 },
+        abilities: [
+            { name: "Run Away", nameEs: "Fuga", isHidden: false, description: "Enables a sure getaway from wild Pokémon." },
+            { name: "Guts", nameEs: "Agallas", isHidden: false, description: "Boosts Attack if there is a status problem." },
+            { name: "Hustle", nameEs: "Entusiasmo", isHidden: true, description: "Boosts Attack but lowers accuracy." }
+        ],
+        signatureMoves: [
+            { name: "Hyper Fang", type: "Normal", category: "physical", power: 80, accuracy: 90 },
+            { name: "Sucker Punch", type: "Dark", category: "physical", power: 70, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 20, toName: "Raticate", method: "Level 20" }
+        ],
+        description: "Cautious in the extreme, its hardy vitality lets it live in any kind of environment.",
+        height: 0.3,
+        weight: 3.5,
+    },
+    {
+        pokemonId: 25,
+        name: "Pikachu",
+        nameEs: "Pikachu",
+        generation: 1,
+        types: ["Electric"],
+        stats: { hp: 35, atk: 55, def: 40, spa: 50, spd: 50, spe: 90 },
+        abilities: [
+            { name: "Static", nameEs: "Estática", isHidden: false, description: "May cause paralysis on contact." },
+            { name: "Lightning Rod", nameEs: "Pararrayos", isHidden: true, description: "Draws in all Electric-type moves." }
+        ],
+        signatureMoves: [
+            { name: "Thunderbolt", type: "Electric", category: "special", power: 90, accuracy: 100 },
+            { name: "Volt Tackle", type: "Electric", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 26, toName: "Raichu", method: "Thunder Stone" }
+        ],
+        description: "It raises its tail to check its surroundings. The tail is sometimes struck by lightning.",
+        height: 0.4,
+        weight: 6.0,
+    },
+    {
+        pokemonId: 133,
+        name: "Eevee",
+        nameEs: "Eevee",
+        generation: 1,
+        types: ["Normal"],
+        stats: { hp: 55, atk: 55, def: 50, spa: 45, spd: 65, spe: 55 },
+        abilities: [
+            { name: "Run Away", nameEs: "Fuga", isHidden: false, description: "Enables a sure getaway from wild Pokémon." },
+            { name: "Adaptability", nameEs: "Adaptable", isHidden: false, description: "Powers up same-type moves." },
+            { name: "Anticipation", nameEs: "Anticipación", isHidden: true, description: "Senses dangerous moves." }
+        ],
+        signatureMoves: [
+            { name: "Swift", type: "Normal", category: "special", power: 60, accuracy: null },
+            { name: "Last Resort", type: "Normal", category: "physical", power: 140, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 134, toName: "Vaporeon", method: "Water Stone" },
+            { to: 135, toName: "Jolteon", method: "Thunder Stone" },
+            { to: 136, toName: "Flareon", method: "Fire Stone" },
+            { to: 196, toName: "Espeon", method: "High Friendship + Day" },
+            { to: 197, toName: "Umbreon", method: "High Friendship + Night" },
+            { to: 470, toName: "Leafeon", method: "Moss Rock" },
+            { to: 471, toName: "Glaceon", method: "Ice Rock" },
+            { to: 700, toName: "Sylveon", method: "Fairy Move + High Friendship" }
+        ],
+        description: "It has the ability to alter the composition of its body to suit its surroundings.",
+        height: 0.3,
+        weight: 6.5,
+    },
+    {
+        pokemonId: 147,
+        name: "Dratini",
+        nameEs: "Dratini",
+        generation: 1,
+        types: ["Dragon"],
+        stats: { hp: 41, atk: 64, def: 45, spa: 50, spd: 50, spe: 50 },
+        abilities: [
+            { name: "Shed Skin", nameEs: "Mudar", isHidden: false, description: "May heal status conditions." },
+            { name: "Marvel Scale", nameEs: "Escama Especial", isHidden: true, description: "Boosts Defense if there is a status problem." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Rush", type: "Dragon", category: "physical", power: 100, accuracy: 75 },
+            { name: "Outrage", type: "Dragon", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 148, toName: "Dragonair", method: "Level 30" },
+            { to: 149, toName: "Dragonite", method: "Level 55" }
+        ],
+        description: "It is called the Mirage Pokémon because so few have seen it. Its shed skin has been found.",
+        height: 1.8,
+        weight: 3.3,
+    },
+    // ==================== LEGENDARIES GEN 1 ====================
+    {
+        pokemonId: 144,
+        name: "Articuno",
+        nameEs: "Articuno",
+        generation: 1,
+        types: ["Ice", "Flying"],
+        stats: { hp: 90, atk: 85, def: 100, spa: 95, spd: 125, spe: 85 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Snow Cloak", nameEs: "Manto Níveo", isHidden: true, description: "Raises evasion in a hailstorm." }
+        ],
+        signatureMoves: [
+            { name: "Ice Beam", type: "Ice", category: "special", power: 90, accuracy: 100 },
+            { name: "Blizzard", type: "Ice", category: "special", power: 110, accuracy: 70 }
+        ],
+        evolutions: [],
+        description: "A legendary bird Pokémon. It can create blizzards by freezing moisture in the air.",
+        height: 1.7,
+        weight: 55.4,
+    },
+    {
+        pokemonId: 145,
+        name: "Zapdos",
+        nameEs: "Zapdos",
+        generation: 1,
+        types: ["Electric", "Flying"],
+        stats: { hp: 90, atk: 90, def: 85, spa: 125, spd: 90, spe: 100 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Static", nameEs: "Estática", isHidden: true, description: "May cause paralysis on contact." }
+        ],
+        signatureMoves: [
+            { name: "Thunder", type: "Electric", category: "special", power: 110, accuracy: 70 },
+            { name: "Discharge", type: "Electric", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "A legendary bird Pokémon. They say lightning caused by the flapping of its wings causes summer storms.",
+        height: 1.6,
+        weight: 52.6,
+    },
+    {
+        pokemonId: 146,
+        name: "Moltres",
+        nameEs: "Moltres",
+        generation: 1,
+        types: ["Fire", "Flying"],
+        stats: { hp: 90, atk: 100, def: 90, spa: 125, spd: 85, spe: 90 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Flame Body", nameEs: "Cuerpo Llama", isHidden: true, description: "May burn the attacker." }
+        ],
+        signatureMoves: [
+            { name: "Heat Wave", type: "Fire", category: "special", power: 95, accuracy: 90 },
+            { name: "Flare Blitz", type: "Fire", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "A legendary bird Pokémon. It is said to migrate from the south along with the spring.",
+        height: 2.0,
+        weight: 60.0,
+    },
+    {
+        pokemonId: 150,
+        name: "Mewtwo",
+        nameEs: "Mewtwo",
+        generation: 1,
+        types: ["Psychic"],
+        stats: { hp: 106, atk: 110, def: 90, spa: 154, spd: 90, spe: 130 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Unnerve", nameEs: "Nerviosismo", isHidden: true, description: "Makes the foe nervous and unable to eat Berries." }
+        ],
+        signatureMoves: [
+            { name: "Psystrike", type: "Psychic", category: "special", power: 100, accuracy: 100 },
+            { name: "Psychic", type: "Psychic", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It was created by a scientist after years of horrific gene splicing and DNA engineering experiments.",
+        height: 2.0,
+        weight: 122.0,
+    },
+    {
+        pokemonId: 151,
+        name: "Mew",
+        nameEs: "Mew",
+        generation: 1,
+        types: ["Psychic"],
+        stats: { hp: 100, atk: 100, def: 100, spa: 100, spd: 100, spe: 100 },
+        abilities: [
+            { name: "Synchronize", nameEs: "Sincronía", isHidden: false, description: "Passes on status problems." }
+        ],
+        signatureMoves: [
+            { name: "Psychic", type: "Psychic", category: "special", power: 90, accuracy: 100 },
+            { name: "Aura Sphere", type: "Fighting", category: "special", power: 80, accuracy: null }
+        ],
+        evolutions: [],
+        description: "Because it can learn any move, some people began research to see if it is the ancestor of all Pokémon.",
+        height: 0.4,
+        weight: 4.0,
+    },
+    // ==================== POPULAR GEN 2 ====================
+    {
+        pokemonId: 243,
+        name: "Raikou",
+        nameEs: "Raikou",
+        generation: 2,
+        types: ["Electric"],
+        stats: { hp: 90, atk: 85, def: 75, spa: 115, spd: 100, spe: 115 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Inner Focus", nameEs: "Foco Interno", isHidden: true, description: "Prevents flinching." }
+        ],
+        signatureMoves: [
+            { name: "Thunder", type: "Electric", category: "special", power: 110, accuracy: 70 },
+            { name: "Volt Switch", type: "Electric", category: "special", power: 70, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "The rain clouds it carries let it fire thunderbolts at will. They say this Pokémon descended with lightning.",
+        height: 1.9,
+        weight: 178.0,
+    },
+    {
+        pokemonId: 244,
+        name: "Entei",
+        nameEs: "Entei",
+        generation: 2,
+        types: ["Fire"],
+        stats: { hp: 115, atk: 115, def: 85, spa: 90, spd: 75, spe: 100 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Inner Focus", nameEs: "Foco Interno", isHidden: true, description: "Prevents flinching." }
+        ],
+        signatureMoves: [
+            { name: "Sacred Fire", type: "Fire", category: "physical", power: 100, accuracy: 95 },
+            { name: "Flare Blitz", type: "Fire", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Volcanoes erupt when it barks. Unable to restrain its extreme power, it races headlong around the land.",
+        height: 2.1,
+        weight: 198.0,
+    },
+    {
+        pokemonId: 245,
+        name: "Suicune",
+        nameEs: "Suicune",
+        generation: 2,
+        types: ["Water"],
+        stats: { hp: 100, atk: 75, def: 115, spa: 90, spd: 115, spe: 85 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Inner Focus", nameEs: "Foco Interno", isHidden: true, description: "Prevents flinching." }
+        ],
+        signatureMoves: [
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 },
+            { name: "Ice Beam", type: "Ice", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Said to be the reincarnation of north winds, it can instantly purify filthy, murky water.",
+        height: 2.0,
+        weight: 187.0,
+    },
+    {
+        pokemonId: 249,
+        name: "Lugia",
+        nameEs: "Lugia",
+        generation: 2,
+        types: ["Psychic", "Flying"],
+        stats: { hp: 106, atk: 90, def: 130, spa: 90, spd: 154, spe: 110 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Multiscale", nameEs: "Mutiescudo", isHidden: true, description: "Halves damage when HP is full." }
+        ],
+        signatureMoves: [
+            { name: "Aeroblast", type: "Flying", category: "special", power: 100, accuracy: 95 },
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 }
+        ],
+        evolutions: [],
+        description: "It is said that it quietly spends its time deep at the bottom of the sea because its powers are too strong.",
+        height: 5.2,
+        weight: 216.0,
+    },
+    {
+        pokemonId: 250,
+        name: "Ho-Oh",
+        nameEs: "Ho-Oh",
+        generation: 2,
+        types: ["Fire", "Flying"],
+        stats: { hp: 106, atk: 130, def: 90, spa: 110, spd: 154, spe: 90 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Regenerator", nameEs: "Regeneración", isHidden: true, description: "Restores HP on switching out." }
+        ],
+        signatureMoves: [
+            { name: "Sacred Fire", type: "Fire", category: "physical", power: 100, accuracy: 95 },
+            { name: "Brave Bird", type: "Flying", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Its feathers are in seven colors. It is said that anyone seeing it is promised eternal happiness.",
+        height: 3.8,
+        weight: 199.0,
+    },
+    {
+        pokemonId: 248,
+        name: "Tyranitar",
+        nameEs: "Tyranitar",
+        generation: 2,
+        types: ["Rock", "Dark"],
+        stats: { hp: 100, atk: 134, def: 110, spa: 95, spd: 100, spe: 61 },
+        abilities: [
+            { name: "Sand Stream", nameEs: "Chorro Arena", isHidden: false, description: "Summons a sandstorm." },
+            { name: "Unnerve", nameEs: "Nerviosismo", isHidden: true, description: "Makes the foe nervous and unable to eat Berries." }
+        ],
+        signatureMoves: [
+            { name: "Stone Edge", type: "Rock", category: "physical", power: 100, accuracy: 80 },
+            { name: "Crunch", type: "Dark", category: "physical", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Its body can't be harmed by any sort of attack, so it is very eager to make challenges against enemies.",
+        height: 2.0,
+        weight: 202.0,
+    },
+    // ==================== POPULAR GEN 3 ====================
+    {
+        pokemonId: 280,
+        name: "Ralts",
+        nameEs: "Ralts",
+        generation: 3,
+        types: ["Psychic", "Fairy"],
+        stats: { hp: 28, atk: 25, def: 25, spa: 45, spd: 35, spe: 40 },
+        abilities: [
+            { name: "Synchronize", nameEs: "Sincronía", isHidden: false, description: "Passes on status problems." },
+            { name: "Trace", nameEs: "Calco", isHidden: false, description: "Copies a foe's Ability." },
+            { name: "Telepathy", nameEs: "Telepatía", isHidden: true, description: "Anticipates and dodges ally attacks." }
+        ],
+        signatureMoves: [
+            { name: "Psychic", type: "Psychic", category: "special", power: 90, accuracy: 100 },
+            { name: "Moonblast", type: "Fairy", category: "special", power: 95, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 281, toName: "Kirlia", method: "Level 20" },
+            { to: 282, toName: "Gardevoir", method: "Level 30" }
+        ],
+        description: "It is highly attuned to the emotions of people and Pokémon. It hides if it senses hostility.",
+        height: 0.4,
+        weight: 6.6,
+    },
+    {
+        pokemonId: 371,
+        name: "Bagon",
+        nameEs: "Bagon",
+        generation: 3,
+        types: ["Dragon"],
+        stats: { hp: 45, atk: 75, def: 60, spa: 40, spd: 30, spe: 50 },
+        abilities: [
+            { name: "Rock Head", nameEs: "Cabeza Roca", isHidden: false, description: "Prevents recoil damage." },
+            { name: "Sheer Force", nameEs: "Potencia Bruta", isHidden: true, description: "Removes added effects to increase move damage." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Claw", type: "Dragon", category: "physical", power: 80, accuracy: 100 },
+            { name: "Outrage", type: "Dragon", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 372, toName: "Shelgon", method: "Level 30" },
+            { to: 373, toName: "Salamence", method: "Level 50" }
+        ],
+        description: "Its steel-hard head can shatter boulders. It longingly hopes for wings to grow so it can fly.",
+        height: 0.6,
+        weight: 42.1,
+    },
+    {
+        pokemonId: 374,
+        name: "Beldum",
+        nameEs: "Beldum",
+        generation: 3,
+        types: ["Steel", "Psychic"],
+        stats: { hp: 40, atk: 55, def: 80, spa: 35, spd: 60, spe: 30 },
+        abilities: [
+            { name: "Clear Body", nameEs: "Cuerpo Puro", isHidden: false, description: "Prevents stat reduction." },
+            { name: "Light Metal", nameEs: "Metal Liviano", isHidden: true, description: "Halves weight." }
+        ],
+        signatureMoves: [
+            { name: "Zen Headbutt", type: "Psychic", category: "physical", power: 80, accuracy: 90 },
+            { name: "Meteor Mash", type: "Steel", category: "physical", power: 90, accuracy: 90 }
+        ],
+        evolutions: [
+            { to: 375, toName: "Metang", method: "Level 20" },
+            { to: 376, toName: "Metagross", method: "Level 45" }
+        ],
+        description: "Instead of blood, a powerful magnetic force courses through its body. It communicates with others by sending controlled pulses of magnetism.",
+        height: 0.6,
+        weight: 95.2,
+    },
+    {
+        pokemonId: 382,
+        name: "Kyogre",
+        nameEs: "Kyogre",
+        generation: 3,
+        types: ["Water"],
+        stats: { hp: 100, atk: 100, def: 90, spa: 150, spd: 140, spe: 90 },
+        abilities: [
+            { name: "Drizzle", nameEs: "Llovizna", isHidden: false, description: "Summons rain in battle." }
+        ],
+        signatureMoves: [
+            { name: "Origin Pulse", type: "Water", category: "special", power: 110, accuracy: 85 },
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 }
+        ],
+        evolutions: [],
+        description: "Through Primal Reversion it can take on its true form and obtain even greater power. It is said to have expanded the seas by bringing heavy rains.",
+        height: 4.5,
+        weight: 352.0,
+    },
+    {
+        pokemonId: 383,
+        name: "Groudon",
+        nameEs: "Groudon",
+        generation: 3,
+        types: ["Ground"],
+        stats: { hp: 100, atk: 150, def: 140, spa: 100, spd: 90, spe: 90 },
+        abilities: [
+            { name: "Drought", nameEs: "Sequía", isHidden: false, description: "Summons harsh sunlight in battle." }
+        ],
+        signatureMoves: [
+            { name: "Precipice Blades", type: "Ground", category: "physical", power: 120, accuracy: 85 },
+            { name: "Earthquake", type: "Ground", category: "physical", power: 100, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Through Primal Reversion it can take on its true form and obtain even greater power. It is said to have expanded the lands by evaporating water.",
+        height: 3.5,
+        weight: 950.0,
+    },
+    {
+        pokemonId: 384,
+        name: "Rayquaza",
+        nameEs: "Rayquaza",
+        generation: 3,
+        types: ["Dragon", "Flying"],
+        stats: { hp: 105, atk: 150, def: 90, spa: 150, spd: 90, spe: 95 },
+        abilities: [
+            { name: "Air Lock", nameEs: "Bucle Aire", isHidden: false, description: "Eliminates weather effects." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Ascent", type: "Flying", category: "physical", power: 120, accuracy: 100 },
+            { name: "Outrage", type: "Dragon", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It flies in the ozone layer, way up high in the sky. Until recently, no one had ever seen it.",
+        height: 7.0,
+        weight: 206.5,
+    },
+    // ==================== POPULAR GEN 4 ====================
+    {
+        pokemonId: 447,
+        name: "Riolu",
+        nameEs: "Riolu",
+        generation: 4,
+        types: ["Fighting"],
+        stats: { hp: 40, atk: 70, def: 40, spa: 35, spd: 40, spe: 60 },
+        abilities: [
+            { name: "Steadfast", nameEs: "Impasible", isHidden: false, description: "Raises Speed when flinched." },
+            { name: "Inner Focus", nameEs: "Foco Interno", isHidden: false, description: "Prevents flinching." },
+            { name: "Prankster", nameEs: "Bromista", isHidden: true, description: "Gives priority to status moves." }
+        ],
+        signatureMoves: [
+            { name: "Aura Sphere", type: "Fighting", category: "special", power: 80, accuracy: null },
+            { name: "Close Combat", type: "Fighting", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 448, toName: "Lucario", method: "High Friendship + Day" }
+        ],
+        description: "It can discern the physical and emotional states of people, Pokémon, and other natural things from their auras.",
+        height: 0.7,
+        weight: 20.2,
+    },
+    {
+        pokemonId: 443,
+        name: "Gible",
+        nameEs: "Gible",
+        generation: 4,
+        types: ["Dragon", "Ground"],
+        stats: { hp: 58, atk: 70, def: 45, spa: 40, spd: 45, spe: 42 },
+        abilities: [
+            { name: "Sand Veil", nameEs: "Velo Arena", isHidden: false, description: "Raises evasion in a sandstorm." },
+            { name: "Rough Skin", nameEs: "Piel Tosca", isHidden: true, description: "Hurts to touch." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Claw", type: "Dragon", category: "physical", power: 80, accuracy: 100 },
+            { name: "Earthquake", type: "Ground", category: "physical", power: 100, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 444, toName: "Gabite", method: "Level 24" },
+            { to: 445, toName: "Garchomp", method: "Level 48" }
+        ],
+        description: "It nests in horizontal holes warmed by geothermal heat. Foes who get too close can expect to be pounced on and bitten.",
+        height: 0.7,
+        weight: 20.5,
+    },
+    {
+        pokemonId: 483,
+        name: "Dialga",
+        nameEs: "Dialga",
+        generation: 4,
+        types: ["Steel", "Dragon"],
+        stats: { hp: 100, atk: 120, def: 120, spa: 150, spd: 100, spe: 90 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Telepathy", nameEs: "Telepatía", isHidden: true, description: "Anticipates and dodges ally attacks." }
+        ],
+        signatureMoves: [
+            { name: "Roar of Time", type: "Dragon", category: "special", power: 150, accuracy: 90 },
+            { name: "Flash Cannon", type: "Steel", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It has the power to control time. It appears in Sinnoh-region myths as an ancient deity.",
+        height: 5.4,
+        weight: 683.0,
+    },
+    {
+        pokemonId: 484,
+        name: "Palkia",
+        nameEs: "Palkia",
+        generation: 4,
+        types: ["Water", "Dragon"],
+        stats: { hp: 90, atk: 120, def: 100, spa: 150, spd: 120, spe: 100 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Telepathy", nameEs: "Telepatía", isHidden: true, description: "Anticipates and dodges ally attacks." }
+        ],
+        signatureMoves: [
+            { name: "Spacial Rend", type: "Dragon", category: "special", power: 100, accuracy: 95 },
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 }
+        ],
+        evolutions: [],
+        description: "It has the ability to distort space. It is described as a deity in Sinnoh-region mythology.",
+        height: 4.2,
+        weight: 336.0,
+    },
+    {
+        pokemonId: 487,
+        name: "Giratina",
+        nameEs: "Giratina",
+        generation: 4,
+        types: ["Ghost", "Dragon"],
+        stats: { hp: 150, atk: 100, def: 120, spa: 100, spd: 120, spe: 90 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." },
+            { name: "Telepathy", nameEs: "Telepatía", isHidden: true, description: "Anticipates and dodges ally attacks." }
+        ],
+        signatureMoves: [
+            { name: "Shadow Force", type: "Ghost", category: "physical", power: 120, accuracy: 100 },
+            { name: "Dragon Claw", type: "Dragon", category: "physical", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It was banished for its violence. It silently gazed upon the old world from the Distortion World.",
+        height: 4.5,
+        weight: 750.0,
+    },
+    // ==================== POPULAR GEN 5 ====================
+    {
+        pokemonId: 633,
+        name: "Deino",
+        nameEs: "Deino",
+        generation: 5,
+        types: ["Dark", "Dragon"],
+        stats: { hp: 52, atk: 65, def: 50, spa: 45, spd: 50, spe: 38 },
+        abilities: [
+            { name: "Hustle", nameEs: "Entusiasmo", isHidden: false, description: "Boosts Attack but lowers accuracy." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Pulse", type: "Dragon", category: "special", power: 85, accuracy: 100 },
+            { name: "Dark Pulse", type: "Dark", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 634, toName: "Zweilous", method: "Level 50" },
+            { to: 635, toName: "Hydreigon", method: "Level 64" }
+        ],
+        description: "It tends to bite everything, and it is not a picky eater. Approaching it carelessly is dangerous.",
+        height: 0.8,
+        weight: 17.3,
+    },
+    {
+        pokemonId: 643,
+        name: "Reshiram",
+        nameEs: "Reshiram",
+        generation: 5,
+        types: ["Dragon", "Fire"],
+        stats: { hp: 100, atk: 120, def: 100, spa: 150, spd: 120, spe: 90 },
+        abilities: [
+            { name: "Turboblaze", nameEs: "Turbollama", isHidden: false, description: "Moves can be used regardless of Abilities." }
+        ],
+        signatureMoves: [
+            { name: "Blue Flare", type: "Fire", category: "special", power: 130, accuracy: 85 },
+            { name: "Fusion Flare", type: "Fire", category: "special", power: 100, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Flames spout from its tail as it flies through the sky like a jet airplane. It is said to scorch the world.",
+        height: 3.2,
+        weight: 330.0,
+    },
+    {
+        pokemonId: 644,
+        name: "Zekrom",
+        nameEs: "Zekrom",
+        generation: 5,
+        types: ["Dragon", "Electric"],
+        stats: { hp: 100, atk: 150, def: 120, spa: 120, spd: 100, spe: 90 },
+        abilities: [
+            { name: "Teravolt", nameEs: "Terravoltaje", isHidden: false, description: "Moves can be used regardless of Abilities." }
+        ],
+        signatureMoves: [
+            { name: "Bolt Strike", type: "Electric", category: "physical", power: 130, accuracy: 85 },
+            { name: "Fusion Bolt", type: "Electric", category: "physical", power: 100, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It creates electricity in its tail and conceals itself in lightning clouds. It is said to scorch the world.",
+        height: 2.9,
+        weight: 345.0,
+    },
+    {
+        pokemonId: 646,
+        name: "Kyurem",
+        nameEs: "Kyurem",
+        generation: 5,
+        types: ["Dragon", "Ice"],
+        stats: { hp: 125, atk: 130, def: 90, spa: 130, spd: 90, spe: 95 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." }
+        ],
+        signatureMoves: [
+            { name: "Glaciate", type: "Ice", category: "special", power: 65, accuracy: 95 },
+            { name: "Dragon Pulse", type: "Dragon", category: "special", power: 85, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It generates a powerful, freezing energy inside itself, but its body became frozen when the energy leaked out.",
+        height: 3.0,
+        weight: 325.0,
+    },
+    // ==================== POPULAR GEN 6 ====================
+    {
+        pokemonId: 704,
+        name: "Goomy",
+        nameEs: "Goomy",
+        generation: 6,
+        types: ["Dragon"],
+        stats: { hp: 45, atk: 50, def: 35, spa: 55, spd: 75, spe: 40 },
+        abilities: [
+            { name: "Sap Sipper", nameEs: "Herbívoro", isHidden: false, description: "Boosts Attack when hit by a Grass-type move." },
+            { name: "Hydration", nameEs: "Hidratación", isHidden: false, description: "Heals status problems in rain." },
+            { name: "Gooey", nameEs: "Baba", isHidden: true, description: "Lowers Speed on contact." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Pulse", type: "Dragon", category: "special", power: 85, accuracy: 100 },
+            { name: "Muddy Water", type: "Water", category: "special", power: 90, accuracy: 85 }
+        ],
+        evolutions: [
+            { to: 705, toName: "Sliggoo", method: "Level 40" },
+            { to: 706, toName: "Goodra", method: "Level 50 (Rain)" }
+        ],
+        description: "The weakest Dragon-type Pokémon, it lives in damp, shady places, so its body doesn't dry out.",
+        height: 0.3,
+        weight: 2.8,
+    },
+    {
+        pokemonId: 716,
+        name: "Xerneas",
+        nameEs: "Xerneas",
+        generation: 6,
+        types: ["Fairy"],
+        stats: { hp: 126, atk: 131, def: 95, spa: 131, spd: 98, spe: 99 },
+        abilities: [
+            { name: "Fairy Aura", nameEs: "Aura Feérica", isHidden: false, description: "Powers up each Pokémon's Fairy-type moves." }
+        ],
+        signatureMoves: [
+            { name: "Geomancy", type: "Fairy", category: "status", power: null, accuracy: null },
+            { name: "Moonblast", type: "Fairy", category: "special", power: 95, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "When the horns on its head shine in seven colors, it is said to be sharing everlasting life.",
+        height: 3.0,
+        weight: 215.0,
+    },
+    {
+        pokemonId: 717,
+        name: "Yveltal",
+        nameEs: "Yveltal",
+        generation: 6,
+        types: ["Dark", "Flying"],
+        stats: { hp: 126, atk: 131, def: 95, spa: 131, spd: 98, spe: 99 },
+        abilities: [
+            { name: "Dark Aura", nameEs: "Aura Oscura", isHidden: false, description: "Powers up each Pokémon's Dark-type moves." }
+        ],
+        signatureMoves: [
+            { name: "Oblivion Wing", type: "Flying", category: "special", power: 80, accuracy: 100 },
+            { name: "Dark Pulse", type: "Dark", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "When this legendary Pokémon's wings and tail feathers spread wide and glow red, it absorbs the life force of living creatures.",
+        height: 5.8,
+        weight: 203.0,
+    },
+    {
+        pokemonId: 700,
+        name: "Sylveon",
+        nameEs: "Sylveon",
+        generation: 6,
+        types: ["Fairy"],
+        stats: { hp: 95, atk: 65, def: 65, spa: 110, spd: 130, spe: 60 },
+        abilities: [
+            { name: "Cute Charm", nameEs: "Gran Encanto", isHidden: false, description: "May cause infatuation." },
+            { name: "Pixilate", nameEs: "Piel Feérica", isHidden: true, description: "Normal-type moves become Fairy-type." }
+        ],
+        signatureMoves: [
+            { name: "Moonblast", type: "Fairy", category: "special", power: 95, accuracy: 100 },
+            { name: "Hyper Voice", type: "Normal", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It sends a soothing aura from its ribbonlike feelers to calm fights.",
+        height: 1.0,
+        weight: 23.5,
+    },
+    // ==================== POPULAR GEN 7 ====================
+    {
+        pokemonId: 782,
+        name: "Jangmo-o",
+        nameEs: "Jangmo-o",
+        generation: 7,
+        types: ["Dragon"],
+        stats: { hp: 45, atk: 55, def: 65, spa: 45, spd: 45, spe: 45 },
+        abilities: [
+            { name: "Bulletproof", nameEs: "Antibalas", isHidden: false, description: "Protects from ball and bomb moves." },
+            { name: "Soundproof", nameEs: "Insonorizar", isHidden: false, description: "Avoids sound-based moves." },
+            { name: "Overcoat", nameEs: "Funda", isHidden: true, description: "Protects from weather damage." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Claw", type: "Dragon", category: "physical", power: 80, accuracy: 100 },
+            { name: "Outrage", type: "Dragon", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 783, toName: "Hakamo-o", method: "Level 35" },
+            { to: 784, toName: "Kommo-o", method: "Level 45" }
+        ],
+        description: "It expresses its feelings by smacking its scales. Metallic sounds echo through the tall mountains where Jangmo-o lives.",
+        height: 0.6,
+        weight: 29.7,
+    },
+    {
+        pokemonId: 791,
+        name: "Solgaleo",
+        nameEs: "Solgaleo",
+        generation: 7,
+        types: ["Psychic", "Steel"],
+        stats: { hp: 137, atk: 137, def: 107, spa: 113, spd: 89, spe: 97 },
+        abilities: [
+            { name: "Full Metal Body", nameEs: "Guardia Metálica", isHidden: false, description: "Prevents stat reduction." }
+        ],
+        signatureMoves: [
+            { name: "Sunsteel Strike", type: "Steel", category: "physical", power: 100, accuracy: 100 },
+            { name: "Zen Headbutt", type: "Psychic", category: "physical", power: 80, accuracy: 90 }
+        ],
+        evolutions: [],
+        description: "It is said to live in another world. The intense light it radiates from the surface of its body can make the darkest of nights light up like midday.",
+        height: 3.4,
+        weight: 230.0,
+    },
+    {
+        pokemonId: 792,
+        name: "Lunala",
+        nameEs: "Lunala",
+        generation: 7,
+        types: ["Psychic", "Ghost"],
+        stats: { hp: 137, atk: 113, def: 89, spa: 137, spd: 107, spe: 97 },
+        abilities: [
+            { name: "Shadow Shield", nameEs: "Guardia Espectro", isHidden: false, description: "Halves damage when HP is full." }
+        ],
+        signatureMoves: [
+            { name: "Moongeist Beam", type: "Ghost", category: "special", power: 100, accuracy: 100 },
+            { name: "Shadow Ball", type: "Ghost", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It is said to be a female evolution of Cosmog. When its third eye activates, away it flies to another world.",
+        height: 4.0,
+        weight: 120.0,
+    },
+    {
+        pokemonId: 800,
+        name: "Necrozma",
+        nameEs: "Necrozma",
+        generation: 7,
+        types: ["Psychic"],
+        stats: { hp: 97, atk: 107, def: 101, spa: 127, spd: 89, spe: 79 },
+        abilities: [
+            { name: "Prism Armor", nameEs: "Prisma Armadura", isHidden: false, description: "Reduces damage from super-effective moves." }
+        ],
+        signatureMoves: [
+            { name: "Prismatic Laser", type: "Psychic", category: "special", power: 160, accuracy: 100 },
+            { name: "Photon Geyser", type: "Psychic", category: "special", power: 100, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Light is the source of its energy. If it isn't devouring light, impurities build up in it and on it, and Necrozma darkens and stops moving.",
+        height: 2.4,
+        weight: 230.0,
+    },
+    // ==================== POPULAR GEN 8 ====================
+    {
+        pokemonId: 885,
+        name: "Dreepy",
+        nameEs: "Dreepy",
+        generation: 8,
+        types: ["Dragon", "Ghost"],
+        stats: { hp: 28, atk: 60, def: 30, spa: 40, spd: 30, spe: 82 },
+        abilities: [
+            { name: "Clear Body", nameEs: "Cuerpo Puro", isHidden: false, description: "Prevents stat reduction." },
+            { name: "Infiltrator", nameEs: "Infiltración", isHidden: false, description: "Passes through barriers." },
+            { name: "Cursed Body", nameEs: "Cuerpo Maldito", isHidden: true, description: "May disable a move used on it." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Darts", type: "Dragon", category: "physical", power: 50, accuracy: 100 },
+            { name: "Shadow Ball", type: "Ghost", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 886, toName: "Drakloak", method: "Level 50" },
+            { to: 887, toName: "Dragapult", method: "Level 60" }
+        ],
+        description: "It has a habit of biting at Clauncher even though it doesn't feed on them. This is said to be vestigial behavior from when Dreepy was alive.",
+        height: 0.5,
+        weight: 2.0,
+    },
+    {
+        pokemonId: 888,
+        name: "Zacian",
+        nameEs: "Zacian",
+        generation: 8,
+        types: ["Fairy"],
+        stats: { hp: 92, atk: 130, def: 115, spa: 80, spd: 115, spe: 138 },
+        abilities: [
+            { name: "Intrepid Sword", nameEs: "Espada Indómita", isHidden: false, description: "Boosts Attack on entering battle." }
+        ],
+        signatureMoves: [
+            { name: "Behemoth Blade", type: "Steel", category: "physical", power: 100, accuracy: 100 },
+            { name: "Play Rough", type: "Fairy", category: "physical", power: 90, accuracy: 90 }
+        ],
+        evolutions: [],
+        description: "Known as a legendary hero, this Pokémon absorbs metal particles, transforming them into a weapon it uses to battle.",
+        height: 2.8,
+        weight: 110.0,
+    },
+    {
+        pokemonId: 889,
+        name: "Zamazenta",
+        nameEs: "Zamazenta",
+        generation: 8,
+        types: ["Fighting"],
+        stats: { hp: 92, atk: 130, def: 115, spa: 80, spd: 115, spe: 138 },
+        abilities: [
+            { name: "Dauntless Shield", nameEs: "Escudo Recio", isHidden: false, description: "Boosts Defense on entering battle." }
+        ],
+        signatureMoves: [
+            { name: "Behemoth Bash", type: "Steel", category: "physical", power: 100, accuracy: 100 },
+            { name: "Close Combat", type: "Fighting", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "In times past, it worked together with a king of the people to save the Galar region. It absorbs metal that it then uses in battle.",
+        height: 2.9,
+        weight: 210.0,
+    },
+    {
+        pokemonId: 890,
+        name: "Eternatus",
+        nameEs: "Eternatus",
+        generation: 8,
+        types: ["Poison", "Dragon"],
+        stats: { hp: 140, atk: 85, def: 95, spa: 145, spd: 95, spe: 130 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." }
+        ],
+        signatureMoves: [
+            { name: "Dynamax Cannon", type: "Dragon", category: "special", power: 100, accuracy: 100 },
+            { name: "Sludge Bomb", type: "Poison", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "The core on its chest absorbs energy emanating from the lands of the Galar region. This energy is what allows Eternatus to stay active.",
+        height: 20.0,
+        weight: 950.0,
+    },
+    // ==================== POPULAR GEN 9 ====================
+    {
+        pokemonId: 1007,
+        name: "Koraidon",
+        nameEs: "Koraidon",
+        generation: 9,
+        types: ["Fighting", "Dragon"],
+        stats: { hp: 100, atk: 135, def: 115, spa: 85, spd: 100, spe: 135 },
+        abilities: [
+            { name: "Orichalcum Pulse", nameEs: "Latido Oricalco", isHidden: false, description: "Summons harsh sunlight when entering battle." }
+        ],
+        signatureMoves: [
+            { name: "Collision Course", type: "Fighting", category: "physical", power: 100, accuracy: 100 },
+            { name: "Outrage", type: "Dragon", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "This Pokémon resembles Cyclizar, but it is far burlier and more ferocious. Nothing is known about its ecology or other features.",
+        height: 2.5,
+        weight: 303.0,
+    },
+    {
+        pokemonId: 1008,
+        name: "Miraidon",
+        nameEs: "Miraidon",
+        generation: 9,
+        types: ["Electric", "Dragon"],
+        stats: { hp: 100, atk: 85, def: 100, spa: 135, spd: 115, spe: 135 },
+        abilities: [
+            { name: "Hadron Engine", nameEs: "Motor Hadrónico", isHidden: false, description: "Summons Electric Terrain when entering battle." }
+        ],
+        signatureMoves: [
+            { name: "Electro Drift", type: "Electric", category: "special", power: 100, accuracy: 100 },
+            { name: "Dragon Pulse", type: "Dragon", category: "special", power: 85, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Much remains unknown about this creature. It resembles Cyclizar, but it is far more ruthless and powerful.",
+        height: 3.5,
+        weight: 240.0,
+    },
+    // ==================== MORE POPULAR POKEMON ====================
+    {
+        pokemonId: 10,
+        name: "Caterpie",
+        nameEs: "Caterpie",
+        generation: 1,
+        types: ["Bug"],
+        stats: { hp: 45, atk: 30, def: 35, spa: 20, spd: 20, spe: 45 },
+        abilities: [
+            { name: "Shield Dust", nameEs: "Polvo Escudo", isHidden: false, description: "Blocks added effects of attacks." },
+            { name: "Run Away", nameEs: "Fuga", isHidden: true, description: "Enables a sure getaway from wild Pokémon." }
+        ],
+        signatureMoves: [
+            { name: "Bug Bite", type: "Bug", category: "physical", power: 60, accuracy: 100 },
+            { name: "Tackle", type: "Normal", category: "physical", power: 40, accuracy: 100 }
+        ],
+        evolutions: [
+            { to: 11, toName: "Metapod", method: "Level 7" },
+            { to: 12, toName: "Butterfree", method: "Level 10" }
+        ],
+        description: "Its feet have suction cups designed to stick to any surface. It tenaciously climbs trees to forage.",
+        height: 0.3,
+        weight: 2.9,
+    },
+    {
+        pokemonId: 94,
+        name: "Gengar",
+        nameEs: "Gengar",
+        generation: 1,
+        types: ["Ghost", "Poison"],
+        stats: { hp: 60, atk: 65, def: 60, spa: 130, spd: 75, spe: 110 },
+        abilities: [
+            { name: "Cursed Body", nameEs: "Cuerpo Maldito", isHidden: false, description: "May disable a move used on it." }
+        ],
+        signatureMoves: [
+            { name: "Shadow Ball", type: "Ghost", category: "special", power: 80, accuracy: 100 },
+            { name: "Sludge Wave", type: "Poison", category: "special", power: 95, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It is said to emerge from darkness to steal the lives of those who become lost in mountains.",
+        height: 1.5,
+        weight: 40.5,
+    },
+    {
+        pokemonId: 130,
+        name: "Gyarados",
+        nameEs: "Gyarados",
+        generation: 1,
+        types: ["Water", "Flying"],
+        stats: { hp: 95, atk: 125, def: 79, spa: 60, spd: 100, spe: 81 },
+        abilities: [
+            { name: "Intimidate", nameEs: "Intimidación", isHidden: false, description: "Lowers the foe's Attack stat." },
+            { name: "Moxie", nameEs: "Autoestima", isHidden: true, description: "Boosts Attack after knocking out a Pokémon." }
+        ],
+        signatureMoves: [
+            { name: "Waterfall", type: "Water", category: "physical", power: 80, accuracy: 100 },
+            { name: "Ice Fang", type: "Ice", category: "physical", power: 65, accuracy: 95 }
+        ],
+        evolutions: [],
+        description: "Once it begins to rampage, a Gyarados will burn everything down, even in a harsh storm.",
+        height: 6.5,
+        weight: 235.0,
+    },
+    {
+        pokemonId: 143,
+        name: "Snorlax",
+        nameEs: "Snorlax",
+        generation: 1,
+        types: ["Normal"],
+        stats: { hp: 160, atk: 110, def: 65, spa: 65, spd: 110, spe: 30 },
+        abilities: [
+            { name: "Immunity", nameEs: "Inmunidad", isHidden: false, description: "Prevents poisoning." },
+            { name: "Thick Fat", nameEs: "Sebo", isHidden: false, description: "Ups resistance to Fire- and Ice-type moves." },
+            { name: "Gluttony", nameEs: "Gula", isHidden: true, description: "Encourages early use of Berries." }
+        ],
+        signatureMoves: [
+            { name: "Body Slam", type: "Normal", category: "physical", power: 85, accuracy: 100 },
+            { name: "Crunch", type: "Dark", category: "physical", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It is not satisfied unless it eats over 880 pounds of food every day. When it is done eating, it goes promptly to sleep.",
+        height: 2.1,
+        weight: 460.0,
+    },
+    {
+        pokemonId: 65,
+        name: "Alakazam",
+        nameEs: "Alakazam",
+        generation: 1,
+        types: ["Psychic"],
+        stats: { hp: 55, atk: 50, def: 45, spa: 135, spd: 95, spe: 120 },
+        abilities: [
+            { name: "Synchronize", nameEs: "Sincronía", isHidden: false, description: "Passes on status problems." },
+            { name: "Inner Focus", nameEs: "Foco Interno", isHidden: false, description: "Prevents flinching." },
+            { name: "Magic Guard", nameEs: "Muro Mágico", isHidden: true, description: "Only damaged by attacks." }
+        ],
+        signatureMoves: [
+            { name: "Psychic", type: "Psychic", category: "special", power: 90, accuracy: 100 },
+            { name: "Shadow Ball", type: "Ghost", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Its brain can outperform a supercomputer. Its intelligence quotient is said to be 5,000.",
+        height: 1.5,
+        weight: 48.0,
+    },
+    {
+        pokemonId: 68,
+        name: "Machamp",
+        nameEs: "Machamp",
+        generation: 1,
+        types: ["Fighting"],
+        stats: { hp: 90, atk: 130, def: 80, spa: 65, spd: 85, spe: 55 },
+        abilities: [
+            { name: "Guts", nameEs: "Agallas", isHidden: false, description: "Boosts Attack if there is a status problem." },
+            { name: "No Guard", nameEs: "Impasible", isHidden: false, description: "Ensures attacks hit regardless of evasion or accuracy." },
+            { name: "Steadfast", nameEs: "Impasible", isHidden: true, description: "Raises Speed when flinched." }
+        ],
+        signatureMoves: [
+            { name: "Dynamic Punch", type: "Fighting", category: "physical", power: 100, accuracy: 50 },
+            { name: "Close Combat", type: "Fighting", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It quickly swings its four arms to rock its opponents with ceaseless punches and chops from all angles.",
+        height: 1.6,
+        weight: 130.0,
+    },
+    {
+        pokemonId: 196,
+        name: "Espeon",
+        nameEs: "Espeon",
+        generation: 2,
+        types: ["Psychic"],
+        stats: { hp: 65, atk: 65, def: 60, spa: 130, spd: 95, spe: 110 },
+        abilities: [
+            { name: "Synchronize", nameEs: "Sincronía", isHidden: false, description: "Passes on status problems." },
+            { name: "Magic Bounce", nameEs: "Espejo Mágico", isHidden: true, description: "Reflects status moves." }
+        ],
+        signatureMoves: [
+            { name: "Psychic", type: "Psychic", category: "special", power: 90, accuracy: 100 },
+            { name: "Dazzling Gleam", type: "Fairy", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "By reading air currents, it can predict things such as the weather or its foe's next move.",
+        height: 0.9,
+        weight: 26.5,
+    },
+    {
+        pokemonId: 197,
+        name: "Umbreon",
+        nameEs: "Umbreon",
+        generation: 2,
+        types: ["Dark"],
+        stats: { hp: 95, atk: 65, def: 110, spa: 60, spd: 130, spe: 65 },
+        abilities: [
+            { name: "Synchronize", nameEs: "Sincronía", isHidden: false, description: "Passes on status problems." },
+            { name: "Inner Focus", nameEs: "Foco Interno", isHidden: true, description: "Prevents flinching." }
+        ],
+        signatureMoves: [
+            { name: "Foul Play", type: "Dark", category: "physical", power: 95, accuracy: 100 },
+            { name: "Dark Pulse", type: "Dark", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "When darkness falls, the rings on its body begin to glow, striking fear in the hearts of anyone nearby.",
+        height: 1.0,
+        weight: 27.0,
+    },
+    {
+        pokemonId: 134,
+        name: "Vaporeon",
+        nameEs: "Vaporeon",
+        generation: 1,
+        types: ["Water"],
+        stats: { hp: 130, atk: 65, def: 60, spa: 110, spd: 95, spe: 65 },
+        abilities: [
+            { name: "Water Absorb", nameEs: "Absorbe Agua", isHidden: false, description: "Restores HP if hit by a Water-type move." },
+            { name: "Hydration", nameEs: "Hidratación", isHidden: true, description: "Heals status problems in rain." }
+        ],
+        signatureMoves: [
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 },
+            { name: "Ice Beam", type: "Ice", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Its cell composition is similar to water molecules. As a result, it can melt away into water.",
+        height: 1.0,
+        weight: 29.0,
+    },
+    {
+        pokemonId: 135,
+        name: "Jolteon",
+        nameEs: "Jolteon",
+        generation: 1,
+        types: ["Electric"],
+        stats: { hp: 65, atk: 65, def: 60, spa: 110, spd: 95, spe: 130 },
+        abilities: [
+            { name: "Volt Absorb", nameEs: "Absorbe Electricidad", isHidden: false, description: "Restores HP if hit by an Electric-type move." },
+            { name: "Quick Feet", nameEs: "Pies Rápidos", isHidden: true, description: "Boosts Speed if there is a status problem." }
+        ],
+        signatureMoves: [
+            { name: "Thunder", type: "Electric", category: "special", power: 110, accuracy: 70 },
+            { name: "Volt Switch", type: "Electric", category: "special", power: 70, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It accumulates negative ions in the atmosphere to blast out 10,000-volt lightning bolts.",
+        height: 0.8,
+        weight: 24.5,
+    },
+    {
+        pokemonId: 136,
+        name: "Flareon",
+        nameEs: "Flareon",
+        generation: 1,
+        types: ["Fire"],
+        stats: { hp: 65, atk: 130, def: 60, spa: 95, spd: 110, spe: 65 },
+        abilities: [
+            { name: "Flash Fire", nameEs: "Absorbe Fuego", isHidden: false, description: "Powers up Fire moves if hit by one." },
+            { name: "Guts", nameEs: "Agallas", isHidden: true, description: "Boosts Attack if there is a status problem." }
+        ],
+        signatureMoves: [
+            { name: "Flare Blitz", type: "Fire", category: "physical", power: 120, accuracy: 100 },
+            { name: "Fire Fang", type: "Fire", category: "physical", power: 65, accuracy: 95 }
+        ],
+        evolutions: [],
+        description: "It has a flame chamber inside its body. It inhales, then blows out fire that is over 3,000 degrees Fahrenheit.",
+        height: 0.9,
+        weight: 25.0,
+    },
+    {
+        pokemonId: 470,
+        name: "Leafeon",
+        nameEs: "Leafeon",
+        generation: 4,
+        types: ["Grass"],
+        stats: { hp: 65, atk: 110, def: 130, spa: 60, spd: 65, spe: 95 },
+        abilities: [
+            { name: "Leaf Guard", nameEs: "Defensa Hoja", isHidden: false, description: "Prevents status conditions in sunshine." },
+            { name: "Chlorophyll", nameEs: "Clorofila", isHidden: true, description: "Boosts Speed in sunshine." }
+        ],
+        signatureMoves: [
+            { name: "Leaf Blade", type: "Grass", category: "physical", power: 90, accuracy: 100 },
+            { name: "X-Scissor", type: "Bug", category: "physical", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Just like a plant, it uses photosynthesis. As a result, it is always enveloped in clear air.",
+        height: 1.0,
+        weight: 25.5,
+    },
+    {
+        pokemonId: 471,
+        name: "Glaceon",
+        nameEs: "Glaceon",
+        generation: 4,
+        types: ["Ice"],
+        stats: { hp: 65, atk: 60, def: 110, spa: 130, spd: 95, spe: 65 },
+        abilities: [
+            { name: "Snow Cloak", nameEs: "Manto Níveo", isHidden: false, description: "Raises evasion in a hailstorm." },
+            { name: "Ice Body", nameEs: "Gélido", isHidden: true, description: "Gradually recovers HP in a hailstorm." }
+        ],
+        signatureMoves: [
+            { name: "Ice Beam", type: "Ice", category: "special", power: 90, accuracy: 100 },
+            { name: "Blizzard", type: "Ice", category: "special", power: 110, accuracy: 70 }
+        ],
+        evolutions: [],
+        description: "It lowers its body heat to freeze its fur. The hairs then become like needles it can fire.",
+        height: 0.8,
+        weight: 25.9,
+    },
+    {
+        pokemonId: 448,
+        name: "Lucario",
+        nameEs: "Lucario",
+        generation: 4,
+        types: ["Fighting", "Steel"],
+        stats: { hp: 70, atk: 110, def: 70, spa: 115, spd: 70, spe: 90 },
+        abilities: [
+            { name: "Steadfast", nameEs: "Impasible", isHidden: false, description: "Raises Speed when flinched." },
+            { name: "Inner Focus", nameEs: "Foco Interno", isHidden: false, description: "Prevents flinching." },
+            { name: "Justified", nameEs: "Justiciero", isHidden: true, description: "Boosts Attack when hit by a Dark-type move." }
+        ],
+        signatureMoves: [
+            { name: "Aura Sphere", type: "Fighting", category: "special", power: 80, accuracy: null },
+            { name: "Flash Cannon", type: "Steel", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It controls waves known as auras, which are powerful enough to pulverize huge rocks.",
+        height: 1.2,
+        weight: 54.0,
+    },
+    {
+        pokemonId: 445,
+        name: "Garchomp",
+        nameEs: "Garchomp",
+        generation: 4,
+        types: ["Dragon", "Ground"],
+        stats: { hp: 108, atk: 130, def: 95, spa: 80, spd: 85, spe: 102 },
+        abilities: [
+            { name: "Sand Veil", nameEs: "Velo Arena", isHidden: false, description: "Raises evasion in a sandstorm." },
+            { name: "Rough Skin", nameEs: "Piel Tosca", isHidden: true, description: "Hurts to touch." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Claw", type: "Dragon", category: "physical", power: 80, accuracy: 100 },
+            { name: "Earthquake", type: "Ground", category: "physical", power: 100, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It is said that when one runs at high speed, its wings create blades of wind that can fell nearby trees.",
+        height: 1.9,
+        weight: 95.0,
+    },
+    {
+        pokemonId: 376,
+        name: "Metagross",
+        nameEs: "Metagross",
+        generation: 3,
+        types: ["Steel", "Psychic"],
+        stats: { hp: 80, atk: 135, def: 130, spa: 95, spd: 90, spe: 70 },
+        abilities: [
+            { name: "Clear Body", nameEs: "Cuerpo Puro", isHidden: false, description: "Prevents stat reduction." },
+            { name: "Light Metal", nameEs: "Metal Liviano", isHidden: true, description: "Halves weight." }
+        ],
+        signatureMoves: [
+            { name: "Meteor Mash", type: "Steel", category: "physical", power: 90, accuracy: 90 },
+            { name: "Zen Headbutt", type: "Psychic", category: "physical", power: 80, accuracy: 90 }
+        ],
+        evolutions: [],
+        description: "It folds its four legs when flying. Its four brains are said to be superior to a supercomputer.",
+        height: 1.6,
+        weight: 550.0,
+    },
+    {
+        pokemonId: 373,
+        name: "Salamence",
+        nameEs: "Salamence",
+        generation: 3,
+        types: ["Dragon", "Flying"],
+        stats: { hp: 95, atk: 135, def: 80, spa: 110, spd: 80, spe: 100 },
+        abilities: [
+            { name: "Intimidate", nameEs: "Intimidación", isHidden: false, description: "Lowers the foe's Attack stat." },
+            { name: "Moxie", nameEs: "Autoestima", isHidden: true, description: "Boosts Attack after knocking out a Pokémon." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Claw", type: "Dragon", category: "physical", power: 80, accuracy: 100 },
+            { name: "Fly", type: "Flying", category: "physical", power: 90, accuracy: 95 }
+        ],
+        evolutions: [],
+        description: "It becomes uncontrollable if it is enraged. It destroys everything with shredding claws and fire.",
+        height: 1.5,
+        weight: 102.6,
+    },
+    {
+        pokemonId: 282,
+        name: "Gardevoir",
+        nameEs: "Gardevoir",
+        generation: 3,
+        types: ["Psychic", "Fairy"],
+        stats: { hp: 68, atk: 65, def: 65, spa: 125, spd: 115, spe: 80 },
+        abilities: [
+            { name: "Synchronize", nameEs: "Sincronía", isHidden: false, description: "Passes on status problems." },
+            { name: "Trace", nameEs: "Calco", isHidden: false, description: "Copies a foe's Ability." },
+            { name: "Telepathy", nameEs: "Telepatía", isHidden: true, description: "Anticipates and dodges ally attacks." }
+        ],
+        signatureMoves: [
+            { name: "Psychic", type: "Psychic", category: "special", power: 90, accuracy: 100 },
+            { name: "Moonblast", type: "Fairy", category: "special", power: 95, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "To protect its Trainer, it will expend all its psychic power to create a small black hole.",
+        height: 1.6,
+        weight: 48.4,
+    },
+    {
+        pokemonId: 149,
+        name: "Dragonite",
+        nameEs: "Dragonite",
+        generation: 1,
+        types: ["Dragon", "Flying"],
+        stats: { hp: 91, atk: 134, def: 95, spa: 100, spd: 100, spe: 80 },
+        abilities: [
+            { name: "Inner Focus", nameEs: "Foco Interno", isHidden: false, description: "Prevents flinching." },
+            { name: "Multiscale", nameEs: "Mutiescudo", isHidden: true, description: "Halves damage when HP is full." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Claw", type: "Dragon", category: "physical", power: 80, accuracy: 100 },
+            { name: "Hurricane", type: "Flying", category: "special", power: 110, accuracy: 70 }
+        ],
+        evolutions: [],
+        description: "It is said to make its home somewhere in the sea. It guides crews of shipwrecks to shore.",
+        height: 2.2,
+        weight: 210.0,
+    },
+    {
+        pokemonId: 635,
+        name: "Hydreigon",
+        nameEs: "Hydreigon",
+        generation: 5,
+        types: ["Dark", "Dragon"],
+        stats: { hp: 92, atk: 105, def: 90, spa: 125, spd: 90, spe: 98 },
+        abilities: [
+            { name: "Levitate", nameEs: "Levitación", isHidden: false, description: "Gives immunity to Ground-type moves." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Pulse", type: "Dragon", category: "special", power: 85, accuracy: 100 },
+            { name: "Dark Pulse", type: "Dark", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "The heads on their arms do not have brains. They use all three heads to consume and destroy everything.",
+        height: 1.8,
+        weight: 160.0,
+    },
+    {
+        pokemonId: 706,
+        name: "Goodra",
+        nameEs: "Goodra",
+        generation: 6,
+        types: ["Dragon"],
+        stats: { hp: 90, atk: 100, def: 70, spa: 110, spd: 150, spe: 80 },
+        abilities: [
+            { name: "Sap Sipper", nameEs: "Herbívoro", isHidden: false, description: "Boosts Attack when hit by a Grass-type move." },
+            { name: "Hydration", nameEs: "Hidratación", isHidden: false, description: "Heals status problems in rain." },
+            { name: "Gooey", nameEs: "Baba", isHidden: true, description: "Lowers Speed on contact." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Pulse", type: "Dragon", category: "special", power: 85, accuracy: 100 },
+            { name: "Muddy Water", type: "Water", category: "special", power: 90, accuracy: 85 }
+        ],
+        evolutions: [],
+        description: "It attacks with retractable horns. It throws a punch that's the equivalent of the force of a hundred pro boxers.",
+        height: 2.0,
+        weight: 150.5,
+    },
+    {
+        pokemonId: 784,
+        name: "Kommo-o",
+        nameEs: "Kommo-o",
+        generation: 7,
+        types: ["Dragon", "Fighting"],
+        stats: { hp: 75, atk: 110, def: 125, spa: 100, spd: 105, spe: 85 },
+        abilities: [
+            { name: "Bulletproof", nameEs: "Antibalas", isHidden: false, description: "Protects from ball and bomb moves." },
+            { name: "Soundproof", nameEs: "Insonorizar", isHidden: false, description: "Avoids sound-based moves." },
+            { name: "Overcoat", nameEs: "Funda", isHidden: true, description: "Protects from weather damage." }
+        ],
+        signatureMoves: [
+            { name: "Clanging Scales", type: "Dragon", category: "special", power: 110, accuracy: 100 },
+            { name: "Close Combat", type: "Fighting", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "When it spots enemies, it threatens them by jingling the scales on its tail. Weak opponents will crack and flee in panic.",
+        height: 1.6,
+        weight: 78.2,
+    },
+    {
+        pokemonId: 887,
+        name: "Dragapult",
+        nameEs: "Dragapult",
+        generation: 8,
+        types: ["Dragon", "Ghost"],
+        stats: { hp: 88, atk: 120, def: 75, spa: 100, spd: 75, spe: 142 },
+        abilities: [
+            { name: "Clear Body", nameEs: "Cuerpo Puro", isHidden: false, description: "Prevents stat reduction." },
+            { name: "Infiltrator", nameEs: "Infiltración", isHidden: false, description: "Passes through barriers." },
+            { name: "Cursed Body", nameEs: "Cuerpo Maldito", isHidden: true, description: "May disable a move used on it." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Darts", type: "Dragon", category: "physical", power: 50, accuracy: 100 },
+            { name: "Shadow Ball", type: "Ghost", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "When it isn't battling, it keeps Dreepy in the holes on its horns. Once a fight starts, it launches the Dreepy like supersonic missiles.",
+        height: 3.0,
+        weight: 50.0,
+    },
+    {
+        pokemonId: 609,
+        name: "Chandelure",
+        nameEs: "Chandelure",
+        generation: 5,
+        types: ["Ghost", "Fire"],
+        stats: { hp: 60, atk: 55, def: 90, spa: 145, spd: 90, spe: 80 },
+        abilities: [
+            { name: "Flash Fire", nameEs: "Absorbe Fuego", isHidden: false, description: "Powers up Fire moves if hit by one." },
+            { name: "Flame Body", nameEs: "Cuerpo Llama", isHidden: false, description: "May burn the attacker." },
+            { name: "Infiltrator", nameEs: "Infiltración", isHidden: true, description: "Passes through barriers." }
+        ],
+        signatureMoves: [
+            { name: "Shadow Ball", type: "Ghost", category: "special", power: 80, accuracy: 100 },
+            { name: "Flamethrower", type: "Fire", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "The spirits burned up in its ominous flame lose their way and wander this world forever.",
+        height: 1.0,
+        weight: 34.3,
+    },
+    {
+        pokemonId: 658,
+        name: "Greninja",
+        nameEs: "Greninja",
+        generation: 6,
+        types: ["Water", "Dark"],
+        stats: { hp: 72, atk: 95, def: 67, spa: 103, spd: 71, spe: 122 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Protean", nameEs: "Mutatipo", isHidden: true, description: "Changes type to match the move it's using." }
+        ],
+        signatureMoves: [
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 },
+            { name: "Dark Pulse", type: "Dark", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It creates throwing stars out of compressed water. When it spins them and throws them at high speed, these stars can split metal in two.",
+        height: 1.5,
+        weight: 40.0,
+    },
+    {
+        pokemonId: 257,
+        name: "Blaziken",
+        nameEs: "Blaziken",
+        generation: 3,
+        types: ["Fire", "Fighting"],
+        stats: { hp: 80, atk: 120, def: 70, spa: 110, spd: 70, spe: 80 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Speed Boost", nameEs: "Impulso", isHidden: true, description: "Its Speed stat is boosted every turn." }
+        ],
+        signatureMoves: [
+            { name: "Blaze Kick", type: "Fire", category: "physical", power: 85, accuracy: 90 },
+            { name: "Close Combat", type: "Fighting", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It learns martial arts that use punches and kicks. Every several years, its old feathers burn off, and new, supple feathers grow back in their place.",
+        height: 1.9,
+        weight: 52.0,
+    },
+    {
+        pokemonId: 350,
+        name: "Milotic",
+        nameEs: "Milotic",
+        generation: 3,
+        types: ["Water"],
+        stats: { hp: 95, atk: 60, def: 79, spa: 100, spd: 125, spe: 81 },
+        abilities: [
+            { name: "Marvel Scale", nameEs: "Escama Especial", isHidden: false, description: "Boosts Defense if there is a status problem." },
+            { name: "Competitive", nameEs: "Competitivo", isHidden: false, description: "Boosts Sp. Atk sharply when stats are lowered." },
+            { name: "Cute Charm", nameEs: "Gran Encanto", isHidden: true, description: "May cause infatuation." }
+        ],
+        signatureMoves: [
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 },
+            { name: "Ice Beam", type: "Ice", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Its beautiful tail fin is said to have the power to calm feelings of hatred and hostility to end conflict.",
+        height: 6.2,
+        weight: 162.0,
+    },
+    {
+        pokemonId: 718,
+        name: "Zygarde",
+        nameEs: "Zygarde",
+        generation: 6,
+        types: ["Dragon", "Ground"],
+        stats: { hp: 108, atk: 100, def: 121, spa: 81, spd: 95, spe: 95 },
+        abilities: [
+            { name: "Aura Break", nameEs: "Rompe Aura", isHidden: false, description: "Reverses Aura Abilities." },
+            { name: "Power Construct", nameEs: "Agrupamiento", isHidden: true, description: "Changes form when HP is low." }
+        ],
+        signatureMoves: [
+            { name: "Thousand Arrows", type: "Ground", category: "physical", power: 90, accuracy: 100 },
+            { name: "Dragon Pulse", type: "Dragon", category: "special", power: 85, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "This is Zygarde's form when about half of its pieces have been assembled. It plays the role of monitoring the ecosystem.",
+        height: 5.0,
+        weight: 305.0,
+    },
+    {
+        pokemonId: 380,
+        name: "Latias",
+        nameEs: "Latias",
+        generation: 3,
+        types: ["Dragon", "Psychic"],
+        stats: { hp: 80, atk: 80, def: 90, spa: 110, spd: 130, spe: 110 },
+        abilities: [
+            { name: "Levitate", nameEs: "Levitación", isHidden: false, description: "Gives immunity to Ground-type moves." }
+        ],
+        signatureMoves: [
+            { name: "Mist Ball", type: "Psychic", category: "special", power: 95, accuracy: 100 },
+            { name: "Dragon Pulse", type: "Dragon", category: "special", power: 85, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "They make a small herd of only several members. They rarely make contact with people or other Pokémon.",
+        height: 1.4,
+        weight: 40.0,
+    },
+    {
+        pokemonId: 381,
+        name: "Latios",
+        nameEs: "Latios",
+        generation: 3,
+        types: ["Dragon", "Psychic"],
+        stats: { hp: 80, atk: 90, def: 80, spa: 130, spd: 110, spe: 110 },
+        abilities: [
+            { name: "Levitate", nameEs: "Levitación", isHidden: false, description: "Gives immunity to Ground-type moves." }
+        ],
+        signatureMoves: [
+            { name: "Luster Purge", type: "Psychic", category: "special", power: 95, accuracy: 100 },
+            { name: "Dragon Pulse", type: "Dragon", category: "special", power: 85, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "A highly intelligent Pokémon. By folding back its wings in flight, it can overtake jet planes.",
+        height: 2.0,
+        weight: 60.0,
+    },
+    {
+        pokemonId: 892,
+        name: "Urshifu",
+        nameEs: "Urshifu",
+        generation: 8,
+        types: ["Fighting", "Dark"],
+        stats: { hp: 100, atk: 130, def: 100, spa: 63, spd: 60, spe: 97 },
+        abilities: [
+            { name: "Unseen Fist", nameEs: "Puño Invisible", isHidden: false, description: "Contact moves ignore protection." }
+        ],
+        signatureMoves: [
+            { name: "Wicked Blow", type: "Dark", category: "physical", power: 75, accuracy: 100 },
+            { name: "Close Combat", type: "Fighting", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "This form of Urshifu is a strong believer in the one-hit KO. Its strategy is to leap in close to foes and land a devastating blow.",
+        height: 1.9,
+        weight: 105.0,
+    },
+    {
+        pokemonId: 491,
+        name: "Darkrai",
+        nameEs: "Darkrai",
+        generation: 4,
+        types: ["Dark"],
+        stats: { hp: 70, atk: 90, def: 90, spa: 135, spd: 90, spe: 125 },
+        abilities: [
+            { name: "Bad Dreams", nameEs: "Mal Sueño", isHidden: false, description: "Reduces sleeping foe's HP." }
+        ],
+        signatureMoves: [
+            { name: "Dark Void", type: "Dark", category: "status", power: null, accuracy: 50 },
+            { name: "Dark Pulse", type: "Dark", category: "special", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It can lull people to sleep and make them dream. It is active during nights of the new moon.",
+        height: 1.5,
+        weight: 50.5,
+    },
+    {
+        pokemonId: 386,
+        name: "Deoxys",
+        nameEs: "Deoxys",
+        generation: 3,
+        types: ["Psychic"],
+        stats: { hp: 50, atk: 150, def: 50, spa: 150, spd: 50, spe: 150 },
+        abilities: [
+            { name: "Pressure", nameEs: "Presión", isHidden: false, description: "Raises foes' PP usage." }
+        ],
+        signatureMoves: [
+            { name: "Psycho Boost", type: "Psychic", category: "special", power: 140, accuracy: 90 },
+            { name: "Psychic", type: "Psychic", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "An alien virus that fell to earth on a meteor underwent a DNA mutation to become this Pokémon.",
+        height: 1.7,
+        weight: 60.8,
+    },
+    {
+        pokemonId: 493,
+        name: "Arceus",
+        nameEs: "Arceus",
+        generation: 4,
+        types: ["Normal"],
+        stats: { hp: 120, atk: 120, def: 120, spa: 120, spd: 120, spe: 120 },
+        abilities: [
+            { name: "Multitype", nameEs: "Multitipo", isHidden: false, description: "Changes type to match the held Plate." }
+        ],
+        signatureMoves: [
+            { name: "Judgment", type: "Normal", category: "special", power: 100, accuracy: 100 },
+            { name: "Hyper Beam", type: "Normal", category: "special", power: 150, accuracy: 90 }
+        ],
+        evolutions: [],
+        description: "It is said to have emerged from an egg in a place where there was nothing, then shaped the world.",
+        height: 3.2,
+        weight: 320.0,
+    },
+    {
+        pokemonId: 445,
+        name: "Garchomp",
+        nameEs: "Garchomp",
+        generation: 4,
+        types: ["Dragon", "Ground"],
+        stats: { hp: 108, atk: 130, def: 95, spa: 80, spd: 85, spe: 102 },
+        abilities: [
+            { name: "Sand Veil", nameEs: "Velo Arena", isHidden: false, description: "Raises evasion in a sandstorm." },
+            { name: "Rough Skin", nameEs: "Piel Tosca", isHidden: true, description: "Hurts to touch." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Claw", type: "Dragon", category: "physical", power: 80, accuracy: 100 },
+            { name: "Earthquake", type: "Ground", category: "physical", power: 100, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It is said that when one runs at high speed, its wings create blades of wind that can fell nearby trees.",
+        height: 1.9,
+        weight: 95.0,
+    },
+    {
+        pokemonId: 38,
+        name: "Ninetales",
+        nameEs: "Ninetales",
+        generation: 1,
+        types: ["Fire"],
+        stats: { hp: 73, atk: 76, def: 75, spa: 81, spd: 100, spe: 100 },
+        abilities: [
+            { name: "Flash Fire", nameEs: "Absorbe Fuego", isHidden: false, description: "Powers up Fire moves if hit by one." },
+            { name: "Drought", nameEs: "Sequía", isHidden: true, description: "Summons harsh sunlight in battle." }
+        ],
+        signatureMoves: [
+            { name: "Flamethrower", type: "Fire", category: "special", power: 90, accuracy: 100 },
+            { name: "Will-O-Wisp", type: "Fire", category: "status", power: null, accuracy: 85 }
+        ],
+        evolutions: [],
+        description: "Very smart and very vengeful. Grabbing one of its many tails could result in a 1,000-year curse.",
+        height: 1.1,
+        weight: 19.9,
+    },
+    {
+        pokemonId: 398,
+        name: "Staraptor",
+        nameEs: "Staraptor",
+        generation: 4,
+        types: ["Normal", "Flying"],
+        stats: { hp: 85, atk: 120, def: 70, spa: 50, spd: 60, spe: 100 },
+        abilities: [
+            { name: "Intimidate", nameEs: "Intimidación", isHidden: false, description: "Lowers the foe's Attack stat." },
+            { name: "Reckless", nameEs: "Audaz", isHidden: true, description: "Powers up moves with recoil damage." }
+        ],
+        signatureMoves: [
+            { name: "Brave Bird", type: "Flying", category: "physical", power: 120, accuracy: 100 },
+            { name: "Close Combat", type: "Fighting", category: "physical", power: 120, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "When Staravia evolve into Staraptor, they leave the flock to live alone. They have sturdy wings.",
+        height: 1.2,
+        weight: 24.9,
+    },
+    {
+        pokemonId: 272,
+        name: "Ludicolo",
+        nameEs: "Ludicolo",
+        generation: 3,
+        types: ["Water", "Grass"],
+        stats: { hp: 80, atk: 70, def: 70, spa: 90, spd: 100, spe: 70 },
+        abilities: [
+            { name: "Swift Swim", nameEs: "Nado Rápido", isHidden: false, description: "Boosts Speed in rain." },
+            { name: "Rain Dish", nameEs: "Cura Lluvia", isHidden: false, description: "Gradually recovers HP in rain." },
+            { name: "Own Tempo", nameEs: "Ritmo Propio", isHidden: true, description: "Prevents confusion." }
+        ],
+        signatureMoves: [
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 },
+            { name: "Energy Ball", type: "Grass", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "The rhythm of bright, festive music activates Ludicolo's cells, making it more powerful.",
+        height: 1.5,
+        weight: 55.0,
+    },
+    {
+        pokemonId: 497,
+        name: "Serperior",
+        nameEs: "Serperior",
+        generation: 5,
+        types: ["Grass"],
+        stats: { hp: 75, atk: 75, def: 95, spa: 75, spd: 95, spe: 113 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Contrary", nameEs: "Respondón", isHidden: true, description: "Makes stat changes have an opposite effect." }
+        ],
+        signatureMoves: [
+            { name: "Leaf Storm", type: "Grass", category: "special", power: 130, accuracy: 90 },
+            { name: "Giga Drain", type: "Grass", category: "special", power: 75, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It can stop its opponents' movements with just a glare. It takes in solar energy and boosts it internally.",
+        height: 3.3,
+        weight: 63.0,
+    },
+    {
+        pokemonId: 500,
+        name: "Emboar",
+        nameEs: "Emboar",
+        generation: 5,
+        types: ["Fire", "Fighting"],
+        stats: { hp: 110, atk: 123, def: 65, spa: 100, spd: 65, spe: 65 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Reckless", nameEs: "Audaz", isHidden: true, description: "Powers up moves with recoil damage." }
+        ],
+        signatureMoves: [
+            { name: "Flare Blitz", type: "Fire", category: "physical", power: 120, accuracy: 100 },
+            { name: "Hammer Arm", type: "Fighting", category: "physical", power: 100, accuracy: 90 }
+        ],
+        evolutions: [],
+        description: "A flaring beard of fire is proof that it is fired up. It is adept at using many different moves.",
+        height: 1.6,
+        weight: 150.0,
+    },
+    {
+        pokemonId: 503,
+        name: "Samurott",
+        nameEs: "Samurott",
+        generation: 5,
+        types: ["Water"],
+        stats: { hp: 95, atk: 100, def: 85, spa: 108, spd: 70, spe: 70 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Shell Armor", nameEs: "Caparazón", isHidden: true, description: "Blocks critical hits." }
+        ],
+        signatureMoves: [
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 },
+            { name: "Megahorn", type: "Bug", category: "physical", power: 120, accuracy: 85 }
+        ],
+        evolutions: [],
+        description: "One swing of the sword incorporated in its armor can fell an opponent. A simple glare from one of them quiets everybody.",
+        height: 1.5,
+        weight: 94.6,
+    },
+    {
+        pokemonId: 212,
+        name: "Scizor",
+        nameEs: "Scizor",
+        generation: 2,
+        types: ["Bug", "Steel"],
+        stats: { hp: 70, atk: 130, def: 100, spa: 55, spd: 80, spe: 65 },
+        abilities: [
+            { name: "Swarm", nameEs: "Enjambre", isHidden: false, description: "Powers up Bug-type moves when HP is low." },
+            { name: "Technician", nameEs: "Experto", isHidden: false, description: "Powers up weaker moves." },
+            { name: "Light Metal", nameEs: "Metal Liviano", isHidden: true, description: "Halves weight." }
+        ],
+        signatureMoves: [
+            { name: "Bullet Punch", type: "Steel", category: "physical", power: 40, accuracy: 100 },
+            { name: "X-Scissor", type: "Bug", category: "physical", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It has a steel-hard body. It intimidates foes by upraising its eye-patterned pincers.",
+        height: 1.8,
+        weight: 118.0,
+    },
+    {
+        pokemonId: 306,
+        name: "Aggron",
+        nameEs: "Aggron",
+        generation: 3,
+        types: ["Steel", "Rock"],
+        stats: { hp: 70, atk: 110, def: 180, spa: 60, spd: 60, spe: 50 },
+        abilities: [
+            { name: "Sturdy", nameEs: "Robustez", isHidden: false, description: "Cannot be knocked out with one hit." },
+            { name: "Rock Head", nameEs: "Cabeza Roca", isHidden: false, description: "Prevents recoil damage." },
+            { name: "Heavy Metal", nameEs: "Metal Pesado", isHidden: true, description: "Doubles weight." }
+        ],
+        signatureMoves: [
+            { name: "Iron Tail", type: "Steel", category: "physical", power: 100, accuracy: 75 },
+            { name: "Head Smash", type: "Rock", category: "physical", power: 150, accuracy: 80 }
+        ],
+        evolutions: [],
+        description: "Its iron horns grow longer a little at a time. They are used to determine the Aggron's age.",
+        height: 2.1,
+        weight: 360.0,
+    },
+    {
+        pokemonId: 229,
+        name: "Houndoom",
+        nameEs: "Houndoom",
+        generation: 2,
+        types: ["Dark", "Fire"],
+        stats: { hp: 75, atk: 90, def: 50, spa: 110, spd: 80, spe: 95 },
+        abilities: [
+            { name: "Early Bird", nameEs: "Madrugar", isHidden: false, description: "Wakes up quickly from sleep." },
+            { name: "Flash Fire", nameEs: "Absorbe Fuego", isHidden: false, description: "Powers up Fire moves if hit by one." },
+            { name: "Unnerve", nameEs: "Nerviosismo", isHidden: true, description: "Makes the foe nervous and unable to eat Berries." }
+        ],
+        signatureMoves: [
+            { name: "Dark Pulse", type: "Dark", category: "special", power: 80, accuracy: 100 },
+            { name: "Flamethrower", type: "Fire", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "If you are burned by the flames it shoots from its mouth, the pain will never go away.",
+        height: 1.4,
+        weight: 35.0,
+    },
+    {
+        pokemonId: 248,
+        name: "Tyranitar",
+        nameEs: "Tyranitar",
+        generation: 2,
+        types: ["Rock", "Dark"],
+        stats: { hp: 100, atk: 134, def: 110, spa: 95, spd: 100, spe: 61 },
+        abilities: [
+            { name: "Sand Stream", nameEs: "Chorro Arena", isHidden: false, description: "Summons a sandstorm." },
+            { name: "Unnerve", nameEs: "Nerviosismo", isHidden: true, description: "Makes the foe nervous and unable to eat Berries." }
+        ],
+        signatureMoves: [
+            { name: "Stone Edge", type: "Rock", category: "physical", power: 100, accuracy: 80 },
+            { name: "Crunch", type: "Dark", category: "physical", power: 80, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Its body can't be harmed by any sort of attack, so it is very eager to make challenges against enemies.",
+        height: 2.0,
+        weight: 202.0,
+    },
+    {
+        pokemonId: 3,
+        name: "Venusaur",
+        nameEs: "Venusaur",
+        generation: 1,
+        types: ["Grass", "Poison"],
+        stats: { hp: 80, atk: 82, def: 83, spa: 100, spd: 100, spe: 80 },
+        abilities: [
+            { name: "Overgrow", nameEs: "Espesura", isHidden: false, description: "Powers up Grass-type moves when HP is low." },
+            { name: "Chlorophyll", nameEs: "Clorofila", isHidden: true, description: "Boosts Speed in sunshine." }
+        ],
+        signatureMoves: [
+            { name: "Solar Beam", type: "Grass", category: "special", power: 120, accuracy: 100 },
+            { name: "Sludge Bomb", type: "Poison", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "After a rainy day, the flower on its back smells stronger. The scent attracts other Pokémon.",
+        height: 2.0,
+        weight: 100.0,
+    },
+    {
+        pokemonId: 6,
+        name: "Charizard",
+        nameEs: "Charizard",
+        generation: 1,
+        types: ["Fire", "Flying"],
+        stats: { hp: 78, atk: 84, def: 78, spa: 109, spd: 85, spe: 100 },
+        abilities: [
+            { name: "Blaze", nameEs: "Mar Llamas", isHidden: false, description: "Powers up Fire-type moves when HP is low." },
+            { name: "Solar Power", nameEs: "Poder Solar", isHidden: true, description: "Boosts Sp. Atk in sunshine, but loses HP." }
+        ],
+        signatureMoves: [
+            { name: "Flamethrower", type: "Fire", category: "special", power: 90, accuracy: 100 },
+            { name: "Air Slash", type: "Flying", category: "special", power: 75, accuracy: 95 }
+        ],
+        evolutions: [],
+        description: "Its wings can carry this Pokémon close to an altitude of 4,600 feet. It blows out fire at very high temperatures.",
+        height: 1.7,
+        weight: 90.5,
+    },
+    {
+        pokemonId: 9,
+        name: "Blastoise",
+        nameEs: "Blastoise",
+        generation: 1,
+        types: ["Water"],
+        stats: { hp: 79, atk: 83, def: 100, spa: 85, spd: 105, spe: 78 },
+        abilities: [
+            { name: "Torrent", nameEs: "Torrente", isHidden: false, description: "Powers up Water-type moves when HP is low." },
+            { name: "Rain Dish", nameEs: "Cura Lluvia", isHidden: true, description: "Gradually recovers HP in rain." }
+        ],
+        signatureMoves: [
+            { name: "Hydro Pump", type: "Water", category: "special", power: 110, accuracy: 80 },
+            { name: "Ice Beam", type: "Ice", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "The jets of water it spouts from the rocket cannons on its shell can punch through thick steel.",
+        height: 1.6,
+        weight: 85.5,
+    },
+    {
+        pokemonId: 445,
+        name: "Garchomp",
+        nameEs: "Garchomp",
+        generation: 4,
+        types: ["Dragon", "Ground"],
+        stats: { hp: 108, atk: 130, def: 95, spa: 80, spd: 85, spe: 102 },
+        abilities: [
+            { name: "Sand Veil", nameEs: "Velo Arena", isHidden: false, description: "Raises evasion in a sandstorm." },
+            { name: "Rough Skin", nameEs: "Piel Tosca", isHidden: true, description: "Hurts to touch." }
+        ],
+        signatureMoves: [
+            { name: "Dragon Claw", type: "Dragon", category: "physical", power: 80, accuracy: 100 },
+            { name: "Earthquake", type: "Ground", category: "physical", power: 100, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "It is said that when one runs at high speed, its wings create blades of wind that can fell nearby trees.",
+        height: 1.9,
+        weight: 95.0,
+    },
+    {
+        pokemonId: 242,
+        name: "Blissey",
+        nameEs: "Blissey",
+        generation: 2,
+        types: ["Normal"],
+        stats: { hp: 255, atk: 10, def: 10, spa: 75, spd: 135, spe: 55 },
+        abilities: [
+            { name: "Natural Cure", nameEs: "Cura Natural", isHidden: false, description: "Heals status on switching out." },
+            { name: "Serene Grace", nameEs: "Dicha", isHidden: false, description: "Boosts the likelihood of added effects." },
+            { name: "Healer", nameEs: "Alma Cura", isHidden: true, description: "May heal ally's status conditions." }
+        ],
+        signatureMoves: [
+            { name: "Soft-Boiled", type: "Normal", category: "status", power: null, accuracy: null },
+            { name: "Hyper Voice", type: "Normal", category: "special", power: 90, accuracy: 100 }
+        ],
+        evolutions: [],
+        description: "Anyone who takes even one bite of Blissey's egg becomes unfailingly caring and pleasant to everyone.",
+        height: 1.5,
+        weight: 46.8,
+    },
+];
+
+// Helper to get sprite URLs
+export function getStarterSprites(pokemonId: number, isShiny: boolean = false) {
+    return getSprites(pokemonId);
+}
+
+// Get type color for styling
+export function getTypeColor(type: string): string {
+    const colors: Record<string, string> = {
+        Grass: '#78C850',
+        Fire: '#F08030',
+        Water: '#6890F0',
+        Poison: '#A040A0',
+        Flying: '#A890F0',
+        Bug: '#A8B820',
+        Normal: '#A8A878',
+        Electric: '#F8D030',
+        Ground: '#E0C068',
+        Fighting: '#C03028',
+        Psychic: '#F85888',
+        Rock: '#B8A038',
+        Ice: '#98D8D8',
+        Ghost: '#705898',
+        Dragon: '#7038F8',
+        Dark: '#705848',
+        Steel: '#B8B8D0',
+        Fairy: '#EE99AC',
+    };
+    return colors[type] || '#A8A878';
+}
+
+// Get all starters for a specific generation
+export function getStartersByGeneration(gen: number) {
+    return STARTERS_DATA.filter(s => s.generation === gen);
+}
+
+// Get starters by type
+export function getStartersByType(type: string) {
+    return STARTERS_DATA.filter(s => s.types.includes(type));
+}

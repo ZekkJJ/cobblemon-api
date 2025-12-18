@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
         }
 
         const totalCost = ballStock.price * quantity;
-        const currentBalance = user.cobbledollars || 0;
+        const currentBalance = user.cobbleDollarsBalance || 0;
 
         if (currentBalance < totalCost) {
             return NextResponse.json(
@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
         const newBalance = currentBalance - totalCost;
         await db.users.updateOne(
             { minecraftUuid: uuid },
-            { cobbledollars: newBalance }
+            { cobbleDollarsBalance: newBalance }
         );
 
         const purchases = await db.shop_purchases.findOne({ uuid });

@@ -1,0 +1,29 @@
+{
+    "schemaVersion": 1,
+    "id": "cobblemon-lospitufos-v2",
+    "version": "${version}",
+    "name": "Cobblemon Los Pitufos V2",
+    "description": "Clean rewrite - Verification, Starter, Sync & Level Caps system for Cobblemon servers",
+    "authors": [
+        "LosPitufos Team"
+    ],
+    "contact": {
+        "website": "https://cobblemon-los-pitufos.vercel.app"
+    },
+    "license": "MIT",
+    "icon": "assets/icon.png",
+    "environment": "server",
+    "entrypoints": {
+        "server": [
+            "com.lospitufos.cobblemon.core.LosPitufosPlugin"
+        ]
+    },
+    "mixins": [],
+    "depends": {
+        "fabricloader": ">=0.16.0",
+        "minecraft": "1.21.1",
+        "java": ">=21",
+        "fabric-api": "*",
+        "cobblemon": ">=1.7.0"
+    }
+}

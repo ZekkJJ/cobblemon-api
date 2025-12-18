@@ -36,15 +36,16 @@ yarn-error.log*
 # Minecraft server files
 server/
 minecraft-plugin/
-minecraft-plugin-v2/
 
-# Java/Gradle
+# Java/Gradle - exclude build artifacts but track source
 *.jar
 *.class
 *.hprof
-.gradle/
-build/
-gradle/
+minecraft-plugin-v2/.gradle/
+minecraft-plugin-v2/build/
+minecraft-plugin-v2/gradle/
+minecraft-plugin-v2/.zencoder/
+minecraft-plugin-v2/.zenflow/
 
 # Media files
 *.mp3

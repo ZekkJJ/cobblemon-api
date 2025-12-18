@@ -1,0 +1,58 @@
+plugins {
+    id 'fabric-loom' version '1.8-SNAPSHOT'
+    id 'java'
+}
+
+version = '2.0.0'
+group = 'com.lospitufos.cobblemon'
+
+base {
+    archivesName = 'CobblemonLosPitufos-V2'
+}
+
+repositories {
+    mavenCentral()
+    maven { url = 'https://maven.fabricmc.net/' }
+    maven { url = 'https://maven.impactdev.net/repository/development/' }
+}
+
+dependencies {
+    // Minecraft & Fabric for 1.21.1
+    minecraft 'com.mojang:minecraft:1.21.1'
+    mappings 'net.fabricmc:yarn:1.21.1+build.3:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.16.5'
+    
+    // Fabric API
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.103.0+1.21.1'
+    
+    // Kotlin stdlib for Cobblemon interop
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:2.0.0'
+    
+    // Cobblemon 1.7.1
+    modCompileOnly('com.cobblemon:fabric:1.7.1+1.21.1') {
+        transitive = false
+    }
+    modRuntimeOnly('com.cobblemon:fabric:1.7.1+1.21.1') {
+        transitive = false
+    }
+    
+    // Gson for JSON
+    implementation 'com.google.code.gson:gson:2.10.1'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.release = 21
+}
+
+processResources {
+    inputs.property "version", project.version
+    
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}

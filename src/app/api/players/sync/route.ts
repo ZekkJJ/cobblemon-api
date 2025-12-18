@@ -19,8 +19,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Find or update player by minecraftUuid (primary key)
-        const users = await db.users.find({});
-        const existing = users.find((u: any) => u.minecraftUuid === uuid);
+        const existing = await db.users.findOne({ minecraftUuid: uuid });
 
         const playerData: any = {
             minecraftUuid: uuid,

@@ -88,6 +88,7 @@ public class WebSyncManager {
             logger.info("Sync on evolution enabled");
         }
         
+        
         // Register disconnect event for online status tracking
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server1) -> {
             ServerPlayerEntity player = handler.getPlayer();
@@ -95,6 +96,7 @@ public class WebSyncManager {
             
             JsonObject payload = new JsonObject();
             payload.addProperty("uuid", uuid.toString());
+            payload.addProperty("username", player.getName().getString());
             payload.addProperty("online", false);
             payload.addProperty("lastSeen", java.time.Instant.now().toString());
             

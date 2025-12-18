@@ -17,7 +17,7 @@ import java.util.concurrent.*;
 public class HttpClient {
 
     private static final Gson GSON = new GsonBuilder().create();
-    private static final int TIMEOUT_MS = 30000;
+    private static final int TIMEOUT_MS = 15000; // 15 seconds (reduced from 30s for faster failure detection)
 
     private final String baseUrl;
     private final ModLogger logger;

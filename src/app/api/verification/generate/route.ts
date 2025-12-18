@@ -19,9 +19,8 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Find or create user
-        const users = await db.users.find({});
-        const existing = users.find((u: any) => u.minecraftUuid === minecraftUuid);
+        // Find user by UUID (optimized - use findOne instead of loading all users)
+        const existing = await db.users.findOne({ minecraftUuid });
 
         if (existing) {
             // Update existing user with new verification code

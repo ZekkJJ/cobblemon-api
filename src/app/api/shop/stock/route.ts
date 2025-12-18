@@ -32,25 +32,25 @@ export async function GET(request: NextRequest) {
 
         if (!stockData || Date.now() - stockData.lastRefresh > STOCK_REFRESH_INTERVAL) {
             const newStocks = await generateStocks();
+            const timestamp = Date.now();
             
             await db.shop_stock.upsert(
                 { id: 'current' },
                 {
                     id: 'current',
                     stocks: newStocks,
-                    lastRefresh: Date.now()
+                    lastRefresh: timestamp
                 }
             );
 
-            stockData = {
-                id: 'current',
-                stocks: newStocks,
-                lastRefresh: Date.now()
-            };
+            stockData = await db.shop_stock.findOne({ id: 'current' });
+            if (!stockData) {
+                throw new Error('Failed to create stock data');
+            }
         }
 
         const ballsWithStock = POKEBALLS.map(ball => {
-            const stock = stockData.stocks[ball.id];
+            const stock = stockData!.stocks[ball.id];
             return {
                 ...ball,
                 currentStock: stock.stock,

@@ -66,17 +66,10 @@ export async function POST(request: NextRequest) {
             { cobbledollars: newBalance }
         );
 
-        let purchases = await db.shop_purchases.findOne({ uuid });
-        if (!purchases) {
-            purchases = {
-                uuid,
-                username: user.minecraftUsername || 'Unknown',
-                pending: []
-            };
-        }
-
-        purchases.pending = purchases.pending || [];
-        purchases.pending.push({
+        const purchases = await db.shop_purchases.findOne({ uuid });
+        const pending = purchases?.pending || [];
+        
+        pending.push({
             ballId,
             quantity,
             purchasedAt: new Date().toISOString(),
@@ -85,7 +78,11 @@ export async function POST(request: NextRequest) {
 
         await db.shop_purchases.upsert(
             { uuid },
-            purchases
+            {
+                uuid,
+                username: user.minecraftUsername || 'Unknown',
+                pending
+            }
         );
 
         return NextResponse.json({

@@ -1,0 +1,33 @@
+# Dependencias
+node_modules
+npm-debug.log
+
+# Next.js
+.next
+out
+build
+
+# Archivos de desarrollo
+.env.local
+.env.development
+
+# Git
+.git
+.gitignore
+
+# Otros
+*.md
+.vscode
+.idea
+*.log
+pokeball_models
+minecraft-plugin
+minecraft-plugin-v2
+
+# Tests
+coverage
+.nyc_output
+
+# OS
+.DS_Store
+Thumbs.db

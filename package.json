@@ -2,11 +2,14 @@
   "name": "cobblemon-los-pitufos",
   "version": "1.0.0",
   "private": true,
+  "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "node index.js",
+    "start:next": "next start",
+    "lint": "next lint",
+    "deploy": "node deploy.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

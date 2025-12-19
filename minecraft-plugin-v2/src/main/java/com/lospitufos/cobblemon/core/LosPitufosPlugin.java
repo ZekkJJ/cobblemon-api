@@ -127,6 +127,20 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
             );
             logger.info("✓ Shop commands registered");
 
+            // Sync command
+            if (config.isWebSyncEnabled()) {
+                dispatcher.register(
+                    CommandManager.literal("syncnow")
+                        .executes(context -> {
+                            if (syncManager != null) {
+                                syncManager.handleSyncCommand(context.getSource().getPlayer());
+                            }
+                            return 1;
+                        })
+                );
+                logger.info("✓ Sync commands registered");
+            }
+
             // Starter admin command
             if (config.isStarterManagementEnabled()) {
                 dispatcher.register(

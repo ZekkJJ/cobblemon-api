@@ -26,7 +26,8 @@ public class HttpClient {
     public HttpClient(String baseUrl, ModLogger logger) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl.substring(0, baseUrl.length() - 1) : baseUrl;
         this.logger = logger;
-        this.executor = Executors.newFixedThreadPool(4);
+        // Increased thread pool to 8 for better concurrency
+        this.executor = Executors.newFixedThreadPool(8);
     }
 
     /**

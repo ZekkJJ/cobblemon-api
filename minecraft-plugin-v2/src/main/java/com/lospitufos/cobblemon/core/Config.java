@@ -29,9 +29,9 @@ public class Config {
     private boolean levelCapsEnabled = true;
 
     // Sync settings
-    private int syncIntervalSeconds = 300; // 5 minutes
-    private boolean syncOnCapture = true;
-    private boolean syncOnEvolution = true;
+    private int syncIntervalSeconds = 600; // 10 minutes (reduced to prevent lag)
+    private boolean syncOnCapture = false; // Disabled to prevent lag spikes
+    private boolean syncOnEvolution = false; // Disabled to prevent lag spikes
 
     // Verification settings
     private boolean freezeUnverified = true;

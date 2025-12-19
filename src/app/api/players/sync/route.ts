@@ -3,9 +3,9 @@ import { db } from '@/lib/mongodb';
 
 export const runtime = 'nodejs';
 
-// Rate limiting to prevent server lag - max 1 request per UUID per 10 seconds
+// Rate limiting to prevent server lag - max 1 request per UUID per 5 seconds
 const syncTimestamps = new Map<string, number>();
-const RATE_LIMIT_MS = 10000; // 10 seconds
+const RATE_LIMIT_MS = 5000; // 5 seconds (reduced for faster updates)
 
 // POST: Sync player data from Minecraft server
 export async function POST(request: NextRequest) {

@@ -35,8 +35,9 @@ public class CobbleDollarsManager {
                 String content = Files.readString(playerFile);
                 JsonObject data = JsonParser.parseString(content).getAsJsonObject();
                 
-                if (data.has("balance")) {
-                    return data.get("balance").getAsInt();
+                // CobbleDollars mod saves the balance as "cobbledollars" (lowercase), not "balance"
+                if (data.has("cobbledollars")) {
+                    return data.get("cobbledollars").getAsInt();
                 }
             }
         } catch (IOException e) {
@@ -62,7 +63,7 @@ public class CobbleDollarsManager {
             Path playerFile = dataDir.resolve(playerUuid.toString() + ".json");
             
             JsonObject data = new JsonObject();
-            data.addProperty("balance", balance);
+            data.addProperty("cobbledollars", balance);
             
             Files.writeString(playerFile, data.toString());
             return true;

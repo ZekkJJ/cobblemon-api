@@ -110,14 +110,25 @@ public class WebSyncManager {
         logger.info("✓ Web sync initialized");
     }
     
+    private int syncPlayerIndex = 0; // Track which player to sync next
+    
     private void performPeriodicSync() {
         if (server == null) return;
         
-        logger.debug("Performing periodic sync...");
+        var playerList = server.getPlayerManager().getPlayerList();
+        if (playerList.isEmpty()) return;
         
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            syncPlayerData(player);
+        // Only sync ONE player per interval to prevent lag spikes
+        // This distributes the load across multiple sync intervals
+        if (syncPlayerIndex >= playerList.size()) {
+            syncPlayerIndex = 0;
         }
+        
+        ServerPlayerEntity player = playerList.get(syncPlayerIndex);
+        logger.debug("Syncing player " + (syncPlayerIndex + 1) + "/" + playerList.size() + ": " + player.getName().getString());
+        syncPlayerData(player);
+        
+        syncPlayerIndex++;
     }
     
     public void syncPlayerData(ServerPlayerEntity player) {
@@ -323,6 +334,27 @@ public class WebSyncManager {
         data.addProperty("status", pokemon.getStatus() != null ? pokemon.getStatus().getStatus().getName().getPath() : null);
         
         return data;
+    }
+    
+    public void handleSyncCommand(ServerPlayerEntity player) {
+        if (player == null) return;
+        
+        player.sendMessage(
+            net.minecraft.text.Text.literal("§a⏳ Sincronizando tus datos con la web..."),
+            false
+        );
+        
+        syncPlayerData(player);
+        
+        // Send confirmation after a short delay (async operation needs time)
+        scheduler.schedule(() -> {
+            if (player.isConnected()) {
+                player.sendMessage(
+                    net.minecraft.text.Text.literal("§a✓ Datos sincronizados correctamente!"),
+                    false
+                );
+            }
+        }, 2, TimeUnit.SECONDS);
     }
     
     public void shutdown() {

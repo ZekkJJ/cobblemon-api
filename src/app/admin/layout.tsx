@@ -31,6 +31,7 @@ export default async function AdminLayout({
                 <nav className="flex-1 space-y-2">
                     <NavLink href="/admin">Dashboard</NavLink>
                     <NavLink href="/admin/players">Jugadores</NavLink>
+                    <NavLink href="/admin/level-caps">Level Caps</NavLink>
                     <NavLink href="/admin/tournaments">Torneos</NavLink>
                 </nav>
 

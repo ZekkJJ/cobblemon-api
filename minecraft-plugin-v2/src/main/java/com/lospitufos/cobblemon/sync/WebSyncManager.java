@@ -348,8 +348,10 @@ public class WebSyncManager {
         
         // Send confirmation after a short delay (async operation needs time)
         scheduler.schedule(() -> {
-            if (player.isConnected()) {
-                player.sendMessage(
+            // Check if player is still online
+            ServerPlayerEntity stillOnline = server.getPlayerManager().getPlayer(player.getUuid());
+            if (stillOnline != null) {
+                stillOnline.sendMessage(
                     net.minecraft.text.Text.literal("§a✓ Datos sincronizados correctamente!"),
                     false
                 );

@@ -61,6 +61,8 @@ export const authOptions: AuthOptions = {
                         (session.user as any).starterIsShiny = userData.starterIsShiny;
                         (session.user as any).isAdmin = userData.isAdmin;
                         (session.user as any).hasRolled = userData.starterId !== null;
+                        (session.user as any).minecraftUuid = userData.minecraftUuid;
+                        (session.user as any).minecraftUsername = userData.minecraftUsername;
                     }
                 } catch (error) {
                     console.error('Error fetching user data:', error);

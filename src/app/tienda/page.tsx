@@ -190,8 +190,8 @@ export default function TiendaPage() {
                                 className="bg-gray-800/70 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:scale-105"
                             >
                                 <div className="flex items-center justify-between mb-4">
-                                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center text-4xl">
-                                        ⚪
+                                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center text-5xl">
+                                        {ball.sprite}
                                     </div>
                                     <div className="text-right">
                                         <div className={`text-sm font-bold ${getStockColor(ball.currentStock, ball.maxStock)}`}>

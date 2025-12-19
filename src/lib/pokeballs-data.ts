@@ -19,7 +19,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 1.0,
         basePrice: 200,
         description: 'La Pokébola básica para capturar Pokémon salvajes.',
-        sprite: '🔴',
+        sprite: '/pokeballs/Poke Ball_model.png',
         minStock: 5,
         maxStock: 10
     },
@@ -30,7 +30,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 1.5,
         basePrice: 600,
         description: 'Una Pokébola mejorada con mayor tasa de captura.',
-        sprite: '🔵',
+        sprite: '/pokeballs/Great Ball_model.png',
         minStock: 3,
         maxStock: 8
     },
@@ -41,11 +41,11 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 2.0,
         basePrice: 1200,
         description: 'Una Pokébola de alto rendimiento para capturas difíciles.',
-        sprite: '⚫',
+        sprite: '/pokeballs/Ultra Ball_model.png',
         minStock: 2,
         maxStock: 5
     },
-    
+
     // Especiales (rotativas)
     {
         id: 'premier_ball',
@@ -54,7 +54,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 1.0,
         basePrice: 400,
         description: 'Una Pokébola conmemorativa de apariencia elegante.',
-        sprite: '⚪',
+        sprite: '/pokeballs/Premier Ball_model.png',
         minStock: 3,
         maxStock: 7
     },
@@ -65,7 +65,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 1.0,
         basePrice: 3000,
         description: 'Los Pokémon capturados se vuelven más amigables rápidamente.',
-        sprite: '🟡',
+        sprite: '/pokeballs/Luxury Ball_model.png',
         minStock: 1,
         maxStock: 4
     },
@@ -76,7 +76,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 5.0,
         basePrice: 2800,
         description: 'Funciona mejor en el primer turno de batalla.',
-        sprite: '💙',
+        sprite: '/pokeballs/Quick Ball_model.png',
         minStock: 1,
         maxStock: 3
     },
@@ -87,7 +87,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 3.5,
         basePrice: 2400,
         description: 'Funciona mejor de noche o en cuevas.',
-        sprite: '🟢',
+        sprite: '/pokeballs/Dusk Ball_model.png',
         minStock: 2,
         maxStock: 4
     },
@@ -98,7 +98,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 4.0,
         basePrice: 2100,
         description: 'Más efectiva conforme pasan los turnos.',
-        sprite: '⏰',
+        sprite: '/pokeballs/Timer Ball_model.png',
         minStock: 2,
         maxStock: 4
     },
@@ -109,7 +109,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 3.5,
         basePrice: 1800,
         description: 'Funciona bien con Pokémon de tipo Agua y Bicho.',
-        sprite: '🟦',
+        sprite: '/pokeballs/Net Ball_model.png',
         minStock: 2,
         maxStock: 5
     },
@@ -120,7 +120,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 3.5,
         basePrice: 1700,
         description: 'Funciona mejor con especies ya capturadas.',
-        sprite: '🟨',
+        sprite: '/pokeballs/Repeat Ball_model.png',
         minStock: 2,
         maxStock: 5
     },
@@ -131,7 +131,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 3.5,
         basePrice: 1900,
         description: 'Funciona bien con Pokémon bajo el agua.',
-        sprite: '🌊',
+        sprite: '/pokeballs/Dive Ball_model.png',
         minStock: 2,
         maxStock: 4
     },
@@ -142,7 +142,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 1.0,
         basePrice: 1500,
         description: 'Restaura la salud y el estado del Pokémon capturado.',
-        sprite: '💗',
+        sprite: '/pokeballs/Heal Ball_model.png',
         minStock: 3,
         maxStock: 6
     },
@@ -153,7 +153,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 8.0,
         basePrice: 1600,
         description: 'Funciona mejor con Pokémon de bajo nivel.',
-        sprite: '🟤',
+        sprite: '/pokeballs/Nest Ball_model.png',
         minStock: 2,
         maxStock: 5
     },
@@ -164,7 +164,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 1.5,
         basePrice: 3500,
         description: 'Una Pokébola especial usada en la Zona Safari.',
-        sprite: '🟩',
+        sprite: '/pokeballs/Safari Ball_model.png',
         minStock: 1,
         maxStock: 3
     },
@@ -175,7 +175,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 4.0,
         basePrice: 4500,
         description: 'Funciona bien con Pokémon dormidos.',
-        sprite: '💜',
+        sprite: '/pokeballs/Dream Ball_model.png',
         minStock: 1,
         maxStock: 2
     },
@@ -186,11 +186,11 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 5.0,
         basePrice: 8000,
         description: 'Diseñada para capturar Ultraentes.',
-        sprite: '🔷',
+        sprite: '/pokeballs/Beast Ball_model.png',
         minStock: 0,
         maxStock: 2
     },
-    
+
     // ULTRA RARA
     {
         id: 'master_ball',
@@ -199,7 +199,7 @@ export const POKEBALLS: Pokeball[] = [
         catchRate: 255.0,
         basePrice: 100000,
         description: '¡Captura CUALQUIER Pokémon sin fallar! ULTRA RARA.',
-        sprite: '🟣',
+        sprite: '/pokeballs/Master Ball_model.png',
         minStock: 0,
         maxStock: 1
     }

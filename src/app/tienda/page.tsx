@@ -60,12 +60,33 @@ export default function TiendaPage() {
             }
 
             if (session?.user) {
-                const uuid = (session.user as any).minecraftUuid;
-                if (uuid) {
-                    const balanceRes = await fetch(`/api/shop/balance?uuid=${uuid}`);
-                    if (balanceRes.ok) {
-                        const balanceData = await balanceRes.json();
-                        setBalance(balanceData.balance || 0);
+                const discordId = (session.user as any).id || (session.user as any).discordId;
+                console.log('[SHOP] Fetching balance for Discord ID:', discordId);
+
+                if (discordId) {
+                    try {
+                        // First get user data by Discord ID to find UUID
+                        const userRes = await fetch(`/api/players/sync?discordId=${discordId}`);
+                        if (userRes.ok) {
+                            const userData = await userRes.json();
+                            const uuid = userData.minecraftUuid;
+
+                            if (uuid) {
+                                console.log('[SHOP] Found UUID:', uuid);
+                                const balanceRes = await fetch(`/api/shop/balance?uuid=${uuid}`);
+                                if (balanceRes.ok) {
+                                    const balanceData = await balanceRes.json();
+                                    console.log('[SHOP] Balance loaded:', balanceData.balance);
+                                    setBalance(balanceData.balance || 0);
+                                } else {
+                                    console.error('[SHOP] Balance API error:', balanceRes.status);
+                                }
+                            } else {
+                                console.log('[SHOP] No Minecraft UUID found for user');
+                            }
+                        }
+                    } catch (e) {
+                        console.error('[SHOP] Error fetching balance:', e);
                     }
                 }
             }
@@ -207,8 +228,8 @@ export default function TiendaPage() {
                                 className="bg-gray-800/70 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:scale-105"
                             >
                                 <div className="flex items-center justify-between mb-4">
-                                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center text-5xl">
-                                        {ball.sprite}
+                                    <div className="w-16 h-16 bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
+                                        <img src={ball.sprite} alt={ball.name} className="w-12 h-12 object-contain" />
                                     </div>
                                     <div className="text-right">
                                         <div className={`text-sm font-bold ${getStockColor(ball.currentStock, ball.maxStock)}`}>
@@ -271,12 +292,12 @@ export default function TiendaPage() {
                                         onClick={() => handlePurchase(ball.id, qty)}
                                         disabled={!inStock || !canAfford || purchasing === ball.id}
                                         className={`w-full py-2 rounded-lg font-bold transition-colors ${!inStock
-                                                ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                                                : !canAfford
-                                                    ? 'bg-red-600/50 text-red-300 cursor-not-allowed'
-                                                    : purchasing === ball.id
-                                                        ? 'bg-blue-500 text-white cursor-wait'
-                                                        : 'bg-blue-600 text-white hover:bg-blue-500'
+                                            ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                                            : !canAfford
+                                                ? 'bg-red-600/50 text-red-300 cursor-not-allowed'
+                                                : purchasing === ball.id
+                                                    ? 'bg-blue-500 text-white cursor-wait'
+                                                    : 'bg-blue-600 text-white hover:bg-blue-500'
                                             }`}
                                     >
                                         {!inStock ? 'AGOTADO' : !canAfford ? 'SIN FONDOS' : purchasing === ball.id ? 'COMPRANDO...' : 'COMPRAR'}

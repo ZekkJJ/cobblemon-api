@@ -7,15 +7,28 @@ export function TournamentTicker() {
 
     useEffect(() => {
         fetch('/api/tournaments')
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    console.error('Tournaments API error:', res.status);
+                    return [];
+                }
+                return res.json();
+            })
             .then(data => {
+                // Safely check if data is an array
                 if (Array.isArray(data)) {
                     // Filter for active or upcoming
                     const active = data.filter((t: any) => t.status === 'active' || t.status === 'upcoming');
                     setTournaments(active);
+                } else {
+                    console.error('Tournaments API returned non-array data:', data);
+                    setTournaments([]);
                 }
             })
-            .catch(err => console.error(err));
+            .catch(err => {
+                console.error('Tournaments fetch error:', err);
+                setTournaments([]);
+            });
     }, []);
 
     if (tournaments.length === 0) return null;

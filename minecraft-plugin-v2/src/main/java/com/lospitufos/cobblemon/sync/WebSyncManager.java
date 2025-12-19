@@ -154,14 +154,17 @@ public class WebSyncManager {
             }
             payload.add("party", partyArray);
             
-            // Add PC Storage data - using Kotlin collection iteration
+            // Add PC Storage data - OPTIMIZED: Only sync first 2 boxes to reduce payload
             try {
                 PCStore pc = Cobblemon.INSTANCE.getStorage().getPC(player);
                 JsonArray pcData = new JsonArray();
                 
-                // Iterate through boxes using Kotlin collection
+                // Only sync first 2 boxes (60 Pokemon max) to reduce payload size
+                int maxBoxes = Math.min(2, pc.getBoxes().size());
                 int boxIndex = 0;
                 for (Object boxObj : pc.getBoxes()) {
+                    if (boxIndex >= maxBoxes) break;
+                    
                     com.cobblemon.mod.common.api.storage.pc.PCBox box = (com.cobblemon.mod.common.api.storage.pc.PCBox) boxObj;
                     JsonObject boxData = new JsonObject();
                     boxData.addProperty("boxNumber", boxIndex);
@@ -188,54 +191,6 @@ public class WebSyncManager {
             // Add CobbleDollars balance if mod is installed
             int balance = cobbleDollarsManager.getPlayerBalance(uuid);
             payload.addProperty("cobbleDollarsBalance", balance);
-            
-            // Add inventory data (with components for 1.21)
-            JsonArray inventory = new JsonArray();
-            for (int i = 0; i < player.getInventory().size(); i++) {
-                ItemStack stack = player.getInventory().getStack(i);
-                if (!stack.isEmpty()) {
-                    JsonObject itemObj = new JsonObject();
-                    itemObj.addProperty("slot", i);
-                    itemObj.addProperty("item", Registries.ITEM.getId(stack.getItem()).toString());
-                    itemObj.addProperty("count", stack.getCount());
-                    
-                    // Add component data (Minecraft 1.21 replacement for NBT)
-                    try {
-                        if (stack.getComponents() != null) {
-                            itemObj.addProperty("components", stack.getComponents().toString());
-                        }
-                    } catch (Exception e) {
-                        logger.debug("Could not get components for item: " + e.getMessage());
-                    }
-                    
-                    inventory.add(itemObj);
-                }
-            }
-            payload.add("inventory", inventory);
-            
-            // Add ender chest data (with components for 1.21)
-            JsonArray enderChest = new JsonArray();
-            for (int i = 0; i < player.getEnderChestInventory().size(); i++) {
-                ItemStack stack = player.getEnderChestInventory().getStack(i);
-                if (!stack.isEmpty()) {
-                    JsonObject itemObj = new JsonObject();
-                    itemObj.addProperty("slot", i);
-                    itemObj.addProperty("item", Registries.ITEM.getId(stack.getItem()).toString());
-                    itemObj.addProperty("count", stack.getCount());
-                    
-                    // Add component data (Minecraft 1.21 replacement for NBT)
-                    try {
-                        if (stack.getComponents() != null) {
-                            itemObj.addProperty("components", stack.getComponents().toString());
-                        }
-                    } catch (Exception e) {
-                        logger.debug("Could not get components for item: " + e.getMessage());
-                    }
-                    
-                    enderChest.add(itemObj);
-                }
-            }
-            payload.add("enderChest", enderChest);
             
             // Send to API
             httpClient.postAsync("/api/players/sync", payload)

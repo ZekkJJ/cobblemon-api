@@ -32,11 +32,26 @@ export default function GalleryPage() {
     const fetchClaimed = async () => {
         try {
             const res = await fetch('/api/starters');
+
+            if (!res.ok) {
+                console.error('Starters API error:', res.status);
+                setClaimed([]);
+                setLoading(false);
+                return;
+            }
+
             const data = await res.json();
-            const claimedOnly = data.starters.filter((s: any) => s.isClaimed);
-            setClaimed(claimedOnly);
+
+            if (Array.isArray(data.starters)) {
+                const claimedOnly = data.starters.filter((s: any) => s.isClaimed);
+                setClaimed(claimedOnly);
+            } else {
+                console.error('Starters API returned invalid data:', data);
+                setClaimed([]);
+            }
         } catch (e) {
-            console.error('Error:', e);
+            console.error('Error fetching starters:', e);
+            setClaimed([]);
         } finally {
             setLoading(false);
         }

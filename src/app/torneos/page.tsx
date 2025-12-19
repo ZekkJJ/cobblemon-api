@@ -7,12 +7,22 @@ export default function PublicTournamentsPage() {
 
     useEffect(() => {
         fetch('/api/tournaments')
-            .then(res => res.json())
+            .then(res => {
+                if (!res.ok) {
+                    console.error('Tournaments API error:', res.status);
+                    setLoading(false);
+                    return [];
+                }
+                return res.json();
+            })
             .then(data => {
                 if (Array.isArray(data)) setTournaments(data);
                 setLoading(false);
             })
-            .catch(err => setLoading(false));
+            .catch(err => {
+                console.error('Tournaments fetch error:', err);
+                setLoading(false);
+            });
     }, []);
 
     const active = tournaments.filter(t => t.status === 'active');
@@ -80,8 +90,8 @@ function TournamentCard({ tournament }: { tournament: any }) {
         `}>
             <div className="flex justify-between items-start mb-4">
                 <span className={`px-2 py-1 rounded text-xs font-bold uppercase tracking-wider ${tournament.status === 'active' ? 'bg-green-500/20 text-green-400' :
-                        tournament.status === 'upcoming' ? 'bg-blue-500/20 text-blue-400' :
-                            'bg-slate-700 text-slate-400'
+                    tournament.status === 'upcoming' ? 'bg-blue-500/20 text-blue-400' :
+                        'bg-slate-700 text-slate-400'
                     }`}>
                     {tournament.status === 'active' ? 'Live' : tournament.status}
                 </span>

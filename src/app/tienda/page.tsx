@@ -40,21 +40,38 @@ export default function TiendaPage() {
     async function loadShopData() {
         try {
             const stockRes = await fetch('/api/shop/stock');
+
+            if (!stockRes.ok) {
+                console.error('Shop stock API error:', stockRes.status);
+                setBalls([]);
+                setLoading(false);
+                return;
+            }
+
             const stockData = await stockRes.json();
-            
-            setBalls(stockData.balls);
-            setNextRefresh(stockData.nextRefresh);
+
+            // Validate that balls is an array
+            if (Array.isArray(stockData.balls)) {
+                setBalls(stockData.balls);
+                setNextRefresh(stockData.nextRefresh || 0);
+            } else {
+                console.error('Shop stock API returned invalid data:', stockData);
+                setBalls([]);
+            }
 
             if (session?.user) {
                 const uuid = (session.user as any).minecraftUuid;
                 if (uuid) {
                     const balanceRes = await fetch(`/api/shop/balance?uuid=${uuid}`);
-                    const balanceData = await balanceRes.json();
-                    setBalance(balanceData.balance || 0);
+                    if (balanceRes.ok) {
+                        const balanceData = await balanceRes.json();
+                        setBalance(balanceData.balance || 0);
+                    }
                 }
             }
         } catch (error) {
             console.error('Failed to load shop data:', error);
+            setBalls([]);
         } finally {
             setLoading(false);
         }
@@ -185,7 +202,7 @@ export default function TiendaPage() {
                         const inStock = ball.currentStock > 0;
 
                         return (
-                            <div 
+                            <div
                                 key={ball.id}
                                 className="bg-gray-800/70 backdrop-blur-sm rounded-xl p-6 border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:scale-105"
                             >
@@ -203,7 +220,7 @@ export default function TiendaPage() {
 
                                 <h3 className="text-xl font-bold text-white mb-2">{ball.name}</h3>
                                 <p className="text-sm text-gray-400 mb-3 line-clamp-2">{ball.description}</p>
-                                
+
                                 <div className="flex items-center gap-2 mb-4 text-sm">
                                     <span className="px-2 py-1 bg-blue-600/30 text-blue-300 rounded text-xs">
                                         {ball.type}
@@ -253,15 +270,14 @@ export default function TiendaPage() {
                                     <button
                                         onClick={() => handlePurchase(ball.id, qty)}
                                         disabled={!inStock || !canAfford || purchasing === ball.id}
-                                        className={`w-full py-2 rounded-lg font-bold transition-colors ${
-                                            !inStock 
+                                        className={`w-full py-2 rounded-lg font-bold transition-colors ${!inStock
                                                 ? 'bg-gray-600 text-gray-400 cursor-not-allowed'
                                                 : !canAfford
-                                                ? 'bg-red-600/50 text-red-300 cursor-not-allowed'
-                                                : purchasing === ball.id
-                                                ? 'bg-blue-500 text-white cursor-wait'
-                                                : 'bg-blue-600 text-white hover:bg-blue-500'
-                                        }`}
+                                                    ? 'bg-red-600/50 text-red-300 cursor-not-allowed'
+                                                    : purchasing === ball.id
+                                                        ? 'bg-blue-500 text-white cursor-wait'
+                                                        : 'bg-blue-600 text-white hover:bg-blue-500'
+                                            }`}
                                     >
                                         {!inStock ? 'AGOTADO' : !canAfford ? 'SIN FONDOS' : purchasing === ball.id ? 'COMPRANDO...' : 'COMPRAR'}
                                     </button>

@@ -10,7 +10,27 @@ async function generateStocks() {
     const stocks: any = {};
     const now = Date.now();
 
-    POKEBALLS.forEach(ball => {
+    // Siempre incluir las 3 básicas
+    const basicBalls = POKEBALLS.filter(b => b.type === 'standard');
+    
+    // Pool de bolas especiales (sin Master Ball)
+    const specialBalls = POKEBALLS.filter(b => b.type === 'special' && b.id !== 'master_ball');
+    
+    // Seleccionar 2 bolas especiales aleatorias
+    const shuffled = specialBalls.sort(() => Math.random() - 0.5);
+    const selectedSpecial = shuffled.slice(0, 2);
+    
+    // 5% de probabilidad de que aparezca Master Ball
+    const hasMasterBall = Math.random() < 0.05;
+    const masterBall = POKEBALLS.find(b => b.id === 'master_ball');
+    
+    // Combinar las bolas seleccionadas
+    const selectedBalls = [...basicBalls, ...selectedSpecial];
+    if (hasMasterBall && masterBall) {
+        selectedBalls.push(masterBall);
+    }
+
+    selectedBalls.forEach(ball => {
         const stock = getRandomStock(ball);
         const price = getPriceWithStock(ball.basePrice, stock, ball.maxStock);
         

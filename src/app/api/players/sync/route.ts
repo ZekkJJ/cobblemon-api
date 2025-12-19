@@ -11,9 +11,8 @@ const RATE_LIMIT_MS = 5000; // 5 seconds (reduced for faster updates)
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        console.log('[PLAYER SYNC] Received:', { uuid: body.uuid, username: body.username, keys: Object.keys(body) });
 
-        const { uuid, username, online, lastSeen, verified, party, pcStorage, cobbleDollarsBalance, inventory, enderChest } = body;
+        const { uuid, username, online, lastSeen, party, pcStorage, cobbleDollarsBalance, inventory, enderChest } = body;
 
         if (!uuid || !username) {
             return NextResponse.json(
@@ -26,48 +25,48 @@ export async function POST(request: NextRequest) {
         const now = Date.now();
         const lastSync = syncTimestamps.get(uuid) || 0;
         if (now - lastSync < RATE_LIMIT_MS) {
-            console.log(`[PLAYER SYNC] Rate limited: ${username} (${uuid})`);
             return NextResponse.json({ success: true, rateLimited: true });
         }
         syncTimestamps.set(uuid, now);
+
+        // Optimized: Only sync essential data, reduce payload size
+        const updateData = {
+            minecraftUsername: username,
+            nickname: username,
+            minecraftOnline: online || false,
+            minecraftLastSeen: lastSeen || new Date().toISOString(),
+            cobbleDollarsBalance: cobbleDollarsBalance || 0,
+            syncedAt: new Date().toISOString(),
+        };
+
+        // Only include heavy data if it exists
+        if (party && party.length > 0) {
+            (updateData as any).pokemonParty = party.slice(0, 6); // Max 6 party members
+        }
+        if (pcStorage && pcStorage.length > 0) {
+            (updateData as any).pcStorage = pcStorage.slice(0, 50); // Limit PC storage to 50 Pokemon
+        }
 
         // Find or update player by minecraftUuid (primary key)
         const existing = await db.users.findOne({ minecraftUuid: uuid });
 
         if (existing) {
-            // Update by minecraftUuid to avoid issues with changing discordId
+            // Update by minecraftUuid
             await db.users.updateOne(
                 { minecraftUuid: uuid } as any,
-                {
-                    minecraftUsername: username,
-                    nickname: username,
-                    minecraftOnline: online || false,
-                    minecraftLastSeen: lastSeen || new Date().toISOString(),
-                    pokemonParty: party || [],
-                    pcStorage: pcStorage || [],
-                    cobbleDollarsBalance: cobbleDollarsBalance || 0,
-                    inventory: inventory || [],
-                    enderChest: enderChest || [],
-                    syncedAt: new Date().toISOString(),
-                }
+                updateData
             );
-            console.log(`[PLAYER SYNC] Updated ${username}: balance=${cobbleDollarsBalance}, party=${party?.length || 0}, pc=${pcStorage?.length || 0}`);
         } else {
             // Create new player entry without Discord linking yet
             await db.users.insertOne({
-                discordId: null, // No Discord yet
+                discordId: null,
                 discordUsername: '',
                 minecraftUuid: uuid,
-                minecraftUsername: username,
-                nickname: username,
-                minecraftOnline: online || false,
-                minecraftLastSeen: lastSeen || new Date().toISOString(),
-                pokemonParty: party || [],
-                pcStorage: pcStorage || [],
-                cobbleDollarsBalance: cobbleDollarsBalance || 0,
-                inventory: inventory || [],
-                enderChest: enderChest || [],
-                syncedAt: new Date().toISOString(),
+                ...updateData,
+                pokemonParty: [],
+                pcStorage: [],
+                inventory: [],
+                enderChest: [],
                 starterId: null,
                 starterIsShiny: false,
                 rolledAt: null,
@@ -75,13 +74,12 @@ export async function POST(request: NextRequest) {
                 banned: false,
                 verified: false,
             } as any);
-            console.log(`[PLAYER SYNC] Created new player ${username}: balance=${cobbleDollarsBalance}`);
         }
 
         const isBanned = (existing as any)?.banned || false;
         return NextResponse.json({ success: true, banned: isBanned });
     } catch (error) {
-        console.error('Player sync error:', error);
+        console.error('[PLAYER SYNC] Error:', error);
         return NextResponse.json(
             { error: 'Error syncing player data' },
             { status: 500 }

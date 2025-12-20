@@ -1,7 +1,7 @@
 import { MongoClient, Db, Collection } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
-const MONGODB_DB = process.env.MONGODB_DB || 'cobblemon';
+const MONGODB_DB = process.env.MONGODB_DB || 'admin';
 
 if (!MONGODB_URI) {
     throw new Error('Please define MONGODB_URI in .env.local');

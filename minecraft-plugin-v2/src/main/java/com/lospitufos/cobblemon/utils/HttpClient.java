@@ -17,7 +17,9 @@ import java.util.concurrent.*;
 public class HttpClient {
 
     private static final Gson GSON = new GsonBuilder().create();
-    private static final int TIMEOUT_MS = 30000; // 30 seconds
+    private static final int TIMEOUT_MS = 60000; // 60 seconds - increased for slow connections
+    private static final int MAX_RETRIES = 3; // Maximum retry attempts
+    private static final int INITIAL_RETRY_DELAY_MS = 1000; // Start with 1 second
 
     private final String baseUrl;
     private final ModLogger logger;
@@ -45,9 +47,16 @@ public class HttpClient {
     }
 
     /**
-     * Sync GET request
+     * Sync GET request with retry logic
      */
     public JsonObject get(String endpoint) throws IOException {
+        return executeWithRetry(() -> getInternal(endpoint), endpoint, "GET");
+    }
+
+    /**
+     * Internal GET request implementation
+     */
+    private JsonObject getInternal(String endpoint) throws IOException {
         URL url = new URL(baseUrl + endpoint);
         HttpURLConnection conn = null;
 
@@ -79,19 +88,19 @@ public class HttpClient {
                 } catch (Exception e) {
                     // Ignore if can't read error body
                 }
-                
-                logger.warn("GET failed: " + endpoint + 
-                           " (Status: " + responseCode + ")" + 
-                           (errorBody.isEmpty() ? "" : " Body: " + errorBody));
+
+                logger.warn("GET failed: " + endpoint +
+                        " (Status: " + responseCode + ")" +
+                        (errorBody.isEmpty() ? "" : " Body: " + errorBody));
                 return null;
             }
         } catch (java.net.ConnectException e) {
-            logger.error("Failed to connect to API: " + baseUrl + 
-                        ". Is the web server running?");
+            logger.error("Failed to connect to API: " + baseUrl +
+                    ". Is the web server running?");
             throw e;
         } catch (java.net.SocketTimeoutException e) {
-            logger.error("Request timeout: " + endpoint + 
-                        ". API is taking too long to respond.");
+            logger.error("Request timeout: " + endpoint +
+                    ". API is taking too long to respond.");
             throw e;
         } finally {
             if (conn != null) {
@@ -115,9 +124,16 @@ public class HttpClient {
     }
 
     /**
-     * Sync POST request
+     * Sync POST request with retry logic
      */
     public JsonObject post(String endpoint, JsonObject payload) throws IOException {
+        return executeWithRetry(() -> postInternal(endpoint, payload), endpoint, "POST");
+    }
+
+    /**
+     * Internal POST request implementation
+     */
+    private JsonObject postInternal(String endpoint, JsonObject payload) throws IOException {
         URL url = new URL(baseUrl + endpoint);
         HttpURLConnection conn = null;
 
@@ -156,25 +172,68 @@ public class HttpClient {
                 } catch (Exception e) {
                     // Ignore if can't read error body
                 }
-                
-                logger.warn("POST failed: " + endpoint + 
-                           " (Status: " + responseCode + ")" + 
-                           (errorBody.isEmpty() ? "" : " Body: " + errorBody));
+
+                logger.warn("POST failed: " + endpoint +
+                        " (Status: " + responseCode + ")" +
+                        (errorBody.isEmpty() ? "" : " Body: " + errorBody));
                 return null;
             }
         } catch (java.net.ConnectException e) {
-            logger.error("Failed to connect to API: " + baseUrl + 
-                        ". Is the web server running?");
+            logger.error("Failed to connect to API: " + baseUrl +
+                    ". Is the web server running?");
             throw e;
         } catch (java.net.SocketTimeoutException e) {
-            logger.error("Request timeout: " + endpoint + 
-                        ". API is taking too long to respond.");
+            logger.error("Request timeout: " + endpoint +
+                    ". API is taking too long to respond.");
             throw e;
         } finally {
             if (conn != null) {
                 conn.disconnect();
             }
         }
+    }
+
+    /**
+     * Execute request with exponential backoff retry logic
+     */
+    private JsonObject executeWithRetry(IOSupplier<JsonObject> supplier, String endpoint, String method)
+            throws IOException {
+        int attempt = 0;
+        IOException lastException = null;
+
+        while (attempt < MAX_RETRIES) {
+            try {
+                return supplier.get();
+            } catch (java.net.SocketTimeoutException | java.net.ConnectException e) {
+                lastException = e;
+                attempt++;
+
+                if (attempt < MAX_RETRIES) {
+                    int delayMs = INITIAL_RETRY_DELAY_MS * (int) Math.pow(2, attempt - 1);
+                    logger.warn(method + " request failed (attempt " + attempt + "/" + MAX_RETRIES + "): " + endpoint +
+                            ". Retrying in " + delayMs + "ms...");
+
+                    try {
+                        Thread.sleep(delayMs);
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        throw new IOException("Request interrupted during retry", ie);
+                    }
+                } else {
+                    logger.error(method + " request failed after " + MAX_RETRIES + " attempts: " + endpoint);
+                }
+            }
+        }
+
+        throw lastException;
+    }
+
+    /**
+     * Functional interface for IO operations
+     */
+    @FunctionalInterface
+    private interface IOSupplier<T> {
+        T get() throws IOException;
     }
 
     /**

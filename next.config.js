@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Base path for reverse proxy deployment
-  basePath: '/port/25644',
+  basePath: '/port/25567',
   images: {
     remotePatterns: [
       {

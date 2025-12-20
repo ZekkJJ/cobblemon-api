@@ -18,14 +18,21 @@ const fs = require('fs');
 const { execSync } = require('child_process');
 const nextDir = path.join(__dirname, '.next');
 const buildIdFile = path.join(nextDir, 'BUILD_ID');
+const standaloneServer = path.join(nextDir, 'standalone', 'server.js');
 
 // Check if we need to build
-// We need to build if .next doesn't exist OR if BUILD_ID is missing
-const needsBuild = !fs.existsSync(nextDir) || !fs.existsSync(buildIdFile);
+// We need to build if .next doesn't exist OR if BUILD_ID is missing OR if standalone server is missing
+const needsBuild = !fs.existsSync(nextDir) || !fs.existsSync(buildIdFile) || !fs.existsSync(standaloneServer);
 
 if (needsBuild) {
-    console.log('⚠️  No se encontró build válido de Next.js');
+    console.log('⚠️  No se encontró build válido de Next.js o servidor standalone');
     console.log('🏗️  Ejecutando build automáticamente...\n');
+
+    // Remove old .next if exists
+    if (fs.existsSync(nextDir)) {
+        console.log('🗑️  Eliminando build anterior...\n');
+        execSync('rm -rf .next', { cwd: __dirname });
+    }
 
     try {
         execSync('npm run build', {
@@ -44,7 +51,7 @@ if (needsBuild) {
 }
 
 // Iniciar Next.js en modo standalone
-const standaloneServer = path.join(__dirname, '.next', 'standalone', 'server.js');
+// standaloneServer already declared above
 
 // Check if standalone server exists, otherwise use next start
 const useStandalone = fs.existsSync(standaloneServer);

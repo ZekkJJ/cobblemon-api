@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 
+// Force dynamic rendering - this route makes external API calls
+export const dynamic = 'force-dynamic';
+
 const MINECRAFT_SERVER = 'cobblemon2.pals.army';
 const MINECRAFT_PORT = 25565;
 

@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { db } from '@/lib/mongodb';
 import type { TimeBasedLevelCapRule, EffectiveCapsResponse } from '@/lib/types/level-caps';
 
+// Force dynamic rendering - this route uses request.url
+export const dynamic = 'force-dynamic';
+
 // Función para evaluar una fórmula simple
 function evaluateFormula(formula: string, player: any): number {
     try {

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/mongodb';
 
 export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic'; // Uses request.url
 
 // GET: Check verification status for a player
 export async function GET(request: NextRequest) {
@@ -20,13 +21,13 @@ export async function GET(request: NextRequest) {
 
         if (!user) {
             // Player doesn't exist yet - not verified
-            return NextResponse.json({ 
+            return NextResponse.json({
                 verified: false,
                 exists: false
             });
         }
 
-        return NextResponse.json({ 
+        return NextResponse.json({
             verified: (user as any).verified === true,
             exists: true,
             discordLinked: !!(user as any).discordId,

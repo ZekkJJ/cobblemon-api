@@ -17,9 +17,14 @@ console.log('');
 const fs = require('fs');
 const { execSync } = require('child_process');
 const nextDir = path.join(__dirname, '.next');
+const buildIdFile = path.join(nextDir, 'BUILD_ID');
 
-if (!fs.existsSync(nextDir)) {
-    console.log('⚠️  No se encontró build de Next.js (.next)');
+// Check if we need to build
+// We need to build if .next doesn't exist OR if BUILD_ID is missing
+const needsBuild = !fs.existsSync(nextDir) || !fs.existsSync(buildIdFile);
+
+if (needsBuild) {
+    console.log('⚠️  No se encontró build válido de Next.js');
     console.log('🏗️  Ejecutando build automáticamente...\n');
 
     try {
@@ -31,8 +36,11 @@ if (!fs.existsSync(nextDir)) {
     } catch (err) {
         console.error('\n❌ ERROR: Falló el build de Next.js');
         console.error('💡 Ejecuta manualmente: npm run build');
+        console.error('Error:', err.message);
         process.exit(1);
     }
+} else {
+    console.log('✅ Build de Next.js encontrado\n');
 }
 
 // Iniciar Next.js directamente

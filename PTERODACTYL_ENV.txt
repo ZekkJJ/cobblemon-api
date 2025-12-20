@@ -1,0 +1,22 @@
+# Cobblemon Los Pitufos - Pterodactyl Environment Variables
+# Add these to your Pterodactyl Panel → Startup → Environment Variables
+
+# MongoDB Oracle Cloud
+MONGODB_URI=mongodb://ADMIN:9XMsZKF34EAVeSRW@G3CF75C71B99C87-OP9QWIYLW1WNEBAB.adb.us-ashburn-1.oraclecloudapps.com:27017/brave?authMechanism=PLAIN&authSource=$external&ssl=true&retryWrites=false&loadBalanced=true
+MONGODB_DB=admin
+
+# NextAuth (IMPORTANT!)
+# Your actual URL with the reverse proxy path
+NEXTAUTH_URL=https://api.playadoradarp.xyz/port/25644
+NEXTAUTH_SECRET=YOUR_SECRET_HERE_GENERATE_WITH_openssl_rand_base64_32
+
+# Discord OAuth
+DISCORD_CLIENT_ID=your_discord_client_id
+DISCORD_CLIENT_SECRET=your_discord_client_secret
+
+# Optional - Gemini API for Soul Driven
+GEMINI_API_KEY=your_gemini_api_key
+
+# Node Environment
+NODE_ENV=production
+PORT=25567

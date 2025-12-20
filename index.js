@@ -43,8 +43,23 @@ if (needsBuild) {
     console.log('✅ Build de Next.js encontrado\n');
 }
 
-// Iniciar Next.js directamente
-const nextStart = spawn('npx', ['next', 'start'], {
+// Iniciar Next.js en modo standalone
+const standaloneServer = path.join(__dirname, '.next', 'standalone', 'server.js');
+
+// Check if standalone server exists, otherwise use next start
+const useStandalone = fs.existsSync(standaloneServer);
+
+const startCommand = useStandalone
+    ? ['node', [standaloneServer]]
+    : ['npx', ['next', 'start']];
+
+if (useStandalone) {
+    console.log('🚀 Usando servidor standalone\n');
+} else {
+    console.log('🚀 Usando next start\n');
+}
+
+const nextStart = spawn(startCommand[0], startCommand[1], {
     stdio: 'inherit',
     shell: true,
     cwd: __dirname,

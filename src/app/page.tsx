@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { TournamentTicker } from '@/components/TournamentTicker';
 import StarterCard from '@/components/StarterCard';
 import SoulDrivenQuestionnaire from '@/components/SoulDrivenQuestionnaire';
+import { gachaAPI } from '@/lib/api-client';
 
 export default function HomePage() {
     const { data: session, status } = useSession();
@@ -43,8 +44,7 @@ export default function HomePage() {
             if (!discordId) return;
 
             try {
-                const res = await fetch(`/api/gacha/roll?discordId=${discordId}`);
-                const data = await res.json();
+                const data = await gachaAPI.getStatus(discordId);
                 setUserStatus(data);
                 if (data.starter) {
                     setRollResult(data.starter);
@@ -157,23 +157,13 @@ export default function HomePage() {
         try {
             const discordId = (session?.user as any)?.discordId || localUser?.discordId;
             const discordUsername = (session?.user as any)?.name || localUser?.discordUsername || '';
+            const minecraftUsername = (session?.user as any)?.minecraftUsername || localUser?.minecraftUsername || '';
 
-            const res = await fetch('/api/gacha/roll', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    discordId: discordId,
-                    discordUsername: discordUsername,
-                }),
+            const data = await gachaAPI.roll({
+                discordId,
+                discordUsername,
+                minecraftUsername,
             });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                setError(data.error);
-                setIsRolling(false);
-                return;
-            }
 
             setShowFlash(true);
             setTimeout(() => setShowFlash(false), 500);
@@ -200,24 +190,14 @@ export default function HomePage() {
         try {
             const discordId = (session?.user as any)?.discordId || localUser?.discordId;
             const discordUsername = (session?.user as any)?.name || localUser?.discordUsername || '';
+            const minecraftUsername = (session?.user as any)?.minecraftUsername || localUser?.minecraftUsername || '';
 
-            const res = await fetch('/api/gacha/soul-driven', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    discordId: discordId,
-                    discordUsername: discordUsername,
-                    answers: answers,
-                }),
+            const data = await gachaAPI.soulDriven({
+                discordId,
+                discordUsername,
+                minecraftUsername,
+                preferences: answers.join(', '),
             });
-
-            const data = await res.json();
-
-            if (!res.ok) {
-                setError(data.error);
-                setIsRolling(false);
-                return;
-            }
 
             setShowFlash(true);
             setTimeout(() => setShowFlash(false), 500);
@@ -412,22 +392,20 @@ export default function HomePage() {
                                         <div className="w-full mb-4 flex gap-2 bg-gray-700/50 p-1 rounded-lg">
                                             <button
                                                 onClick={() => setGachaMode('classic')}
-                                                className={`flex-1 px-4 py-2 rounded text-sm font-medium transition-all ${
-                                                    gachaMode === 'classic'
+                                                className={`flex-1 px-4 py-2 rounded text-sm font-medium transition-all ${gachaMode === 'classic'
                                                         ? 'bg-red-600 text-white shadow-lg'
                                                         : 'text-gray-400 hover:text-white'
-                                                }`}
+                                                    }`}
                                             >
                                                 <i className="fas fa-dice mr-2"></i>
                                                 Clásico
                                             </button>
                                             <button
                                                 onClick={() => setGachaMode('soul-driven')}
-                                                className={`flex-1 px-4 py-2 rounded text-sm font-medium transition-all ${
-                                                    gachaMode === 'soul-driven'
+                                                className={`flex-1 px-4 py-2 rounded text-sm font-medium transition-all ${gachaMode === 'soul-driven'
                                                         ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
                                                         : 'text-gray-400 hover:text-white'
-                                                }`}
+                                                    }`}
                                             >
                                                 <i className="fas fa-sparkles mr-2"></i>
                                                 Soul Driven
@@ -501,11 +479,10 @@ export default function HomePage() {
                         <button
                             onClick={handleRoll}
                             disabled={!isLoggedIn || isRolling || userStatus?.canRoll === false}
-                            className={`group relative px-8 py-5 text-white pixel-font rounded-2xl shadow-[0_6px_0_rgb(153,27,27),0_15px_20px_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-[6px] transition-all hover:brightness-110 w-full disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden btn-press ${
-                                gachaMode === 'soul-driven'
+                            className={`group relative px-8 py-5 text-white pixel-font rounded-2xl shadow-[0_6px_0_rgb(153,27,27),0_15px_20px_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-[6px] transition-all hover:brightness-110 w-full disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden btn-press ${gachaMode === 'soul-driven'
                                     ? 'bg-gradient-to-r from-purple-500 to-pink-500'
                                     : 'bg-gradient-to-b from-red-500 to-red-600'
-                            }`}
+                                }`}
                         >
                             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity"></div>
                             <span className="flex items-center justify-center gap-3 text-sm relative z-10">
@@ -551,7 +528,7 @@ export default function HomePage() {
                             <li>• Nadie más podrá obtener el mismo starter</li>
                             <li>• ¡Hay un 1% de probabilidad de obtener un <span className="text-yellow-400">SHINY</span>!</li>
                         </ul>
-                        
+
                         <div className="mt-4 pt-4 border-t border-gray-600">
                             <h4 className="font-bold text-purple-400 mb-2 text-sm flex items-center justify-center gap-2">
                                 <i className="fas fa-sparkles"></i>

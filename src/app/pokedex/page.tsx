@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import StarterCard from '@/components/StarterCard';
 import { playSound, playCry, preloadSounds } from '@/lib/sounds';
+import { startersAPI } from '@/lib/api-client';
 
 interface SpawnData {
     rarity: string;
@@ -119,8 +120,7 @@ export default function PokedexPage() {
 
     const fetchStarters = async () => {
         try {
-            const res = await fetch('/api/starters');
-            const data = await res.json();
+            const data = await startersAPI.getAll();
             if (data.starters) {
                 setStarters(data.starters);
                 setStats(data.stats || { total: 27, claimed: 0, available: 27 });
@@ -339,18 +339,18 @@ export default function PokedexPage() {
                             {/* Compact Header */}
                             <div className="relative overflow-hidden">
                                 {/* Animated background */}
-                                <div 
+                                <div
                                     className="absolute inset-0 opacity-20"
                                     style={{
                                         background: `radial-gradient(circle at 30% 50%, ${TIPO_COLORES[pokemon.types[0]]}60, transparent 50%), radial-gradient(circle at 70% 50%, ${TIPO_COLORES[pokemon.types[1] || pokemon.types[0]]}60, transparent 50%)`
                                     }}
                                 ></div>
-                                
+
                                 <div className="relative p-3 sm:p-4">
                                     <div className="flex items-start gap-4 sm:gap-6">
                                         {/* Sprite Section */}
                                         <div className="relative flex-shrink-0">
-                                            <div 
+                                            <div
                                                 className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl flex items-center justify-center relative overflow-hidden"
                                                 style={{
                                                     background: `linear-gradient(135deg, ${TIPO_COLORES[pokemon.types[0]]}20, ${TIPO_COLORES[pokemon.types[1] || pokemon.types[0]]}10)`,
@@ -492,7 +492,7 @@ export default function PokedexPage() {
                                 {/* Stats & Type Matchups Side by Side */}
                                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                     {/* Stats */}
-                                    <div 
+                                    <div
                                         className="bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-xl p-4 border backdrop-blur-sm"
                                         style={{ borderColor: `${TIPO_COLORES[pokemon.types[0]]}30` }}
                                     >
@@ -718,7 +718,7 @@ export default function PokedexPage() {
                                                         <div className="flex items-center gap-1.5 text-[10px]">
                                                             <span className="text-gray-500">Cielo visible:</span>
                                                             <span className="text-white font-medium">
-                                                                {typeof spawnInfo.canSeeSky === 'boolean' 
+                                                                {typeof spawnInfo.canSeeSky === 'boolean'
                                                                     ? (spawnInfo.canSeeSky ? 'Sí' : 'No')
                                                                     : spawnInfo.canSeeSky}
                                                             </span>

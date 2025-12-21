@@ -7,7 +7,7 @@ MONGODB_DB=admin
 
 # NextAuth (IMPORTANT!)
 # Your actual URL with the reverse proxy path
-NEXTAUTH_URL=https://api.playadoradarp.xyz/port/25644
+NEXTAUTH_URL=https://api.playadoradarp.xyz/port/25567
 NEXTAUTH_SECRET=YOUR_SECRET_HERE_GENERATE_WITH_openssl_rand_base64_32
 
 # Discord OAuth

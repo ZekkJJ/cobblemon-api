@@ -1,27 +1,21 @@
 'use client';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { tournamentsAPI } from '@/lib/api-client';
 
 export function TournamentTicker() {
     const [tournaments, setTournaments] = useState<any[]>([]);
 
     useEffect(() => {
-        fetch('/api/tournaments')
-            .then(res => {
-                if (!res.ok) {
-                    console.error('Tournaments API error:', res.status);
-                    return [];
-                }
-                return res.json();
-            })
+        tournamentsAPI.getAll()
             .then(data => {
-                // Safely check if data is an array
-                if (Array.isArray(data)) {
+                // Safely check if data.tournaments is an array
+                if (data && Array.isArray(data.tournaments)) {
                     // Filter for active or upcoming
-                    const active = data.filter((t: any) => t.status === 'active' || t.status === 'upcoming');
+                    const active = data.tournaments.filter((t: any) => t.status === 'active' || t.status === 'upcoming');
                     setTournaments(active);
                 } else {
-                    console.error('Tournaments API returned non-array data:', data);
+                    console.error('Tournaments API returned invalid data:', data);
                     setTournaments([]);
                 }
             })

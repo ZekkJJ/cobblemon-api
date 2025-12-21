@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import StarterCard from '@/components/StarterCard';
+import { startersAPI } from '@/lib/api-client';
 
 interface ClaimedStarter {
     pokemonId: number;
@@ -31,16 +32,7 @@ export default function GalleryPage() {
 
     const fetchClaimed = async () => {
         try {
-            const res = await fetch('/api/starters');
-
-            if (!res.ok) {
-                console.error('Starters API error:', res.status);
-                setClaimed([]);
-                setLoading(false);
-                return;
-            }
-
-            const data = await res.json();
+            const data = await startersAPI.getAll();
 
             if (Array.isArray(data.starters)) {
                 const claimedOnly = data.starters.filter((s: any) => s.isClaimed);

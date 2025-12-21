@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { startersAPI } from '@/lib/api-client';
 
 interface StarterData {
     pokemonId: number;
@@ -162,8 +163,7 @@ export default function ComparadorPage() {
 
     const fetchStarters = async () => {
         try {
-            const res = await fetch('/api/starters');
-            const data = await res.json();
+            const data = await startersAPI.getAll();
             if (data.starters) {
                 setStarters(data.starters);
             }
@@ -233,10 +233,10 @@ export default function ComparadorPage() {
                                 key={index}
                                 onClick={() => setActiveSlot(index)}
                                 className={`relative p-2 sm:p-4 rounded-xl border-2 transition-all cursor-pointer min-h-[100px] sm:min-h-[150px] ${activeSlot === index
-                                        ? 'border-yellow-500 bg-yellow-500/10'
-                                        : selected[index]
-                                            ? 'border-gray-600 bg-gray-800/50'
-                                            : 'border-dashed border-gray-600 hover:border-gray-500'
+                                    ? 'border-yellow-500 bg-yellow-500/10'
+                                    : selected[index]
+                                        ? 'border-gray-600 bg-gray-800/50'
+                                        : 'border-dashed border-gray-600 hover:border-gray-500'
                                     }`}
                                 style={selected[index] ? { borderColor: TIPO_COLORES[selected[index]!.types[0]] } : {}}
                             >
@@ -300,8 +300,8 @@ export default function ComparadorPage() {
                                         onClick={() => !isSelected && selectPokemon(s)}
                                         disabled={isSelected}
                                         className={`p-1 sm:p-2 rounded-lg border transition-all ${isSelected
-                                                ? 'opacity-30 cursor-not-allowed border-gray-700'
-                                                : 'border-gray-700 hover:border-white hover:bg-white/10'
+                                            ? 'opacity-30 cursor-not-allowed border-gray-700'
+                                            : 'border-gray-700 hover:border-white hover:bg-white/10'
                                             }`}
                                     >
                                         <img

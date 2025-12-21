@@ -1,22 +1,19 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { tournamentsAPI } from '@/lib/api-client';
 
 export default function PublicTournamentsPage() {
     const [tournaments, setTournaments] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/tournaments')
-            .then(res => {
-                if (!res.ok) {
-                    console.error('Tournaments API error:', res.status);
-                    setLoading(false);
-                    return [];
-                }
-                return res.json();
-            })
+        tournamentsAPI.getAll()
             .then(data => {
-                if (Array.isArray(data)) setTournaments(data);
+                if (data && Array.isArray(data.tournaments)) {
+                    setTournaments(data.tournaments);
+                } else {
+                    console.error('Tournaments API returned invalid data:', data);
+                }
                 setLoading(false);
             })
             .catch(err => {

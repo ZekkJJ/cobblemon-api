@@ -46,3 +46,6 @@ dev.log
 
 # Environment files (handled separately)
 .env.local
+
+# Backend API (separate deployment)
+backend/

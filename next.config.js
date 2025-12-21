@@ -1,7 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // BasePath for Pterodactyl reverse proxy
-  basePath: process.env.NEXT_PUBLIC_API_URL?.includes('/port/') ? '/port/25567' : '',
   images: {
     remotePatterns: [
       {
@@ -17,22 +15,10 @@ const nextConfig = {
     ],
   },
   output: 'standalone', // Para Docker
-  experimental: {
-    serverComponentsExternalPackages: ['mongodb'],
-  },
-  // Proxy API requests to Pterodactyl backend
-  async rewrites() {
-    // Only rewrite in production (Vercel)
-    if (process.env.NEXT_PUBLIC_API_URL) {
-      return [
-        {
-          source: '/api/:path*',
-          destination: `${process.env.NEXT_PUBLIC_API_URL}/api/:path*`,
-        },
-      ];
-    }
-    return [];
-  },
+  // No longer need MongoDB in frontend
+  // experimental: {
+  //   serverComponentsExternalPackages: ['mongodb'],
+  // },
 };
 
 module.exports = nextConfig;

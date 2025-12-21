@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { shopAPI, playersAPI } from '@/lib/api-client';
 
 interface Ball {
     id: string;
@@ -39,21 +40,12 @@ export default function TiendaPage() {
 
     async function loadShopData() {
         try {
-            const stockRes = await fetch('/api/shop/stock');
+            const stockData = await shopAPI.getStock();
 
-            if (!stockRes.ok) {
-                console.error('Shop stock API error:', stockRes.status);
-                setBalls([]);
-                setLoading(false);
-                return;
-            }
-
-            const stockData = await stockRes.json();
-
-            // Validate that balls is an array
-            if (Array.isArray(stockData.balls)) {
-                setBalls(stockData.balls);
-                setNextRefresh(stockData.nextRefresh || 0);
+            // Validate that balls/stock is an array
+            if (Array.isArray(stockData.stock)) {
+                setBalls(stockData.stock);
+                setNextRefresh((stockData as any).nextRefresh || 0);
             } else {
                 console.error('Shop stock API returned invalid data:', stockData);
                 setBalls([]);
@@ -66,24 +58,16 @@ export default function TiendaPage() {
                 if (discordId) {
                     try {
                         // First get user data by Discord ID to find UUID
-                        const userRes = await fetch(`/api/players/sync?discordId=${discordId}`);
-                        if (userRes.ok) {
-                            const userData = await userRes.json();
-                            const uuid = userData.minecraftUuid;
+                        const userData = await playersAPI.getByDiscordId(discordId);
+                        const uuid = userData.minecraftUuid;
 
-                            if (uuid) {
-                                console.log('[SHOP] Found UUID:', uuid);
-                                const balanceRes = await fetch(`/api/shop/balance?uuid=${uuid}`);
-                                if (balanceRes.ok) {
-                                    const balanceData = await balanceRes.json();
-                                    console.log('[SHOP] Balance loaded:', balanceData.balance);
-                                    setBalance(balanceData.balance || 0);
-                                } else {
-                                    console.error('[SHOP] Balance API error:', balanceRes.status);
-                                }
-                            } else {
-                                console.log('[SHOP] No Minecraft UUID found for user');
-                            }
+                        if (uuid) {
+                            console.log('[SHOP] Found UUID:', uuid);
+                            const balanceData = await shopAPI.getBalance(uuid);
+                            console.log('[SHOP] Balance loaded:', balanceData.balance);
+                            setBalance(balanceData.balance || 0);
+                        } else {
+                            console.log('[SHOP] No Minecraft UUID found for user');
                         }
                     } catch (e) {
                         console.error('[SHOP] Error fetching balance:', e);
@@ -113,24 +97,14 @@ export default function TiendaPage() {
         setPurchasing(ballId);
 
         try {
-            const res = await fetch('/api/shop/purchase', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ uuid, ballId, quantity })
-            });
+            const data = await shopAPI.purchase({ uuid, itemId: ballId, quantity });
 
-            const data = await res.json();
-
-            if (res.ok) {
-                alert(`✅ ${data.message}`);
-                setBalance(data.newBalance);
-                setQuantities(prev => ({ ...prev, [ballId]: 1 }));
-                await loadShopData();
-            } else {
-                alert(`❌ ${data.error}`);
-            }
-        } catch (error) {
-            alert('Error al realizar la compra');
+            alert(`✅ ${data.message}`);
+            setBalance(data.newBalance);
+            setQuantities(prev => ({ ...prev, [ballId]: 1 }));
+            await loadShopData();
+        } catch (error: any) {
+            alert(`❌ ${error.message || 'Error al realizar la compra'}`);
             console.error(error);
         } finally {
             setPurchasing(null);

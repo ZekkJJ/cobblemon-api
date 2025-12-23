@@ -1,0 +1,258 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --red-primary: #EF4444;
+  --red-dark: #991B1B;
+  --blue-primary: #3B82F6;
+  --yellow-primary: #EAB308;
+  --purple-primary: #A855F7;
+  --green-primary: #10B981;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: white;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 25px 25px, 15px 15px;
+  animation: scrollBg 6s linear infinite;
+}
+
+@keyframes scrollBg {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 25px 25px, 15px 15px;
+  }
+}
+
+@layer utilities {
+  /* Glass morphism effect */
+  .glass-dark {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-light {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  /* Glow effects */
+  .glow-green {
+    box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+  }
+
+  .glow-red {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
+  }
+
+  .glow-yellow {
+    box-shadow: 0 0 20px rgba(234, 179, 8, 0.5);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  }
+
+  /* Pixel font for retro titles */
+  .pixel-font {
+    font-family: 'Press Start 2P', cursive;
+    image-rendering: pixelated;
+  }
+
+  /* Type badges */
+  .type-badge {
+    @apply px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider;
+  }
+}
+
+@layer components {
+  /* Button styles */
+  .btn-primary {
+    @apply bg-poke-red hover:bg-poke-red-dark text-white font-bold py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100;
+  }
+
+  .btn-secondary {
+    @apply bg-poke-blue hover:bg-blue-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-success {
+    @apply bg-poke-green hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 active:scale-95;
+  }
+
+  /* Input styles */
+  .input-field {
+    @apply bg-slate-800 border border-slate-700 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-poke-blue focus:border-transparent;
+  }
+
+  /* Card styles */
+  .card {
+    @apply glass-dark rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply card hover:scale-105 cursor-pointer;
+  }
+}
+
+/* Shake animation for gacha */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out;
+}
+
+/* Floating animation for Pokemon sprites */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Pulse animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-slow {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Spin animation */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+/* Flash overlay for gacha */
+.flash-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  pointer-events: none;
+  z-index: 100;
+  animation: flash 0.5s ease-out forwards;
+}
+
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Sparkle animation for shinies */
+@keyframes sparkle {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5) rotate(180deg);
+    opacity: 0;
+  }
+}
+
+.animate-sparkle {
+  animation: sparkle 1s linear infinite;
+}
+
+/* Floating Pokemon background */
+.pokemon-float {
+  position: fixed;
+  pointer-events: none;
+  opacity: 0.15;
+  z-index: 0;
+  animation: floatAcross 30s linear infinite;
+}
+
+@keyframes floatAcross {
+  0% {
+    transform: translateX(-100px) translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(calc(100vw + 100px)) translateY(-50px) rotate(180deg);
+  }
+  100% {
+    transform: translateX(-100px) translateY(0) rotate(360deg);
+  }
+}
+
+.pokemon-float:nth-child(2) {
+  animation-delay: -10s;
+  animation-duration: 35s;
+}
+
+.pokemon-float:nth-child(3) {
+  animation-delay: -20s;
+  animation-duration: 40s;
+}
+
+.pokemon-float:nth-child(4) {
+  animation-delay: -15s;
+  animation-duration: 32s;
+}
+
+.pokemon-float:nth-child(5) {
+  animation-delay: -25s;
+  animation-duration: 38s;
+}
+

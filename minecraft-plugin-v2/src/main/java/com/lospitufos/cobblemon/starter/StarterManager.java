@@ -58,11 +58,11 @@ public class StarterManager {
     private void checkAndGiveStarter(ServerPlayerEntity player) {
         UUID uuid = player.getUuid();
         
-        // Check if player has pending starter from API
-        httpClient.getAsync("/api/players/starter?uuid=" + uuid.toString())
+        // Check if player has pending starter from API - FIXED ENDPOINT
+        httpClient.getAsync("/api/gacha/delivery/status?uuid=" + uuid.toString())
             .thenAcceptAsync(response -> {
-                if (response != null && response.has("pending") && response.get("pending").getAsBoolean()) {
-                    int pokemonId = response.get("pokemonId").getAsInt();
+                if (response != null && response.has("deliveryInProgress") && response.get("deliveryInProgress").getAsBoolean()) {
+                    int pokemonId = response.get("starterId").getAsInt();
                     boolean isShiny = response.has("isShiny") && response.get("isShiny").getAsBoolean();
                     
                     logger.info("Giving starter to " + player.getName().getString() + " - ID: " + pokemonId + ", Shiny: " + isShiny);
@@ -81,8 +81,8 @@ public class StarterManager {
                 logger.info("Player " + player.getName().getString() + " already has Pokemon in party - skipping starter");
                 player.sendMessage(Text.literal("§e⚠ Ya tienes Pokémon en tu equipo"));
                 
-                // Notify API that starter was already given (mark as complete)
-                notifyStarterGiven(player.getUuid(), pokemonId);
+                // Notify API that starter delivery failed (already has Pokemon)
+                notifyStarterFailed(player.getUuid(), "Player already has Pokemon in party");
                 return;
             }
             
@@ -92,6 +92,7 @@ public class StarterManager {
             if (species == null) {
                 logger.error("Species not found for Pokedex ID: " + pokemonId);
                 player.sendMessage(Text.literal("§cError: Pokémon no encontrado"));
+                notifyStarterFailed(player.getUuid(), "Species not found for ID: " + pokemonId);
                 return;
             }
             
@@ -108,25 +109,37 @@ public class StarterManager {
             player.sendMessage(Text.literal("§a✓ ¡Has recibido tu Pokémon inicial!"));
             logger.info("Successfully gave starter " + species.getName() + " to " + player.getName().getString());
             
-            // Notify API that starter was given
-            notifyStarterGiven(player.getUuid(), pokemonId);
+            // Notify API that starter was successfully delivered
+            notifyStarterSuccess(player.getUuid());
             
         } catch (Exception e) {
             logger.error("Error giving starter: " + e.getMessage(), e);
             player.sendMessage(Text.literal("§cError al dar el Pokémon inicial"));
+            notifyStarterFailed(player.getUuid(), "Exception: " + e.getMessage());
         }
     }
     
-    private void notifyStarterGiven(UUID playerUuid, int pokemonId) {
+    private void notifyStarterSuccess(UUID playerUuid) {
         JsonObject payload = new JsonObject();
         payload.addProperty("uuid", playerUuid.toString());
-        payload.addProperty("pokemonId", pokemonId);
-        payload.addProperty("given", true);
         
-        httpClient.postAsync("/api/players/starter-given", payload)
+        httpClient.postAsync("/api/gacha/delivery/success", payload)
             .thenAccept(response -> {
                 if (response != null && response.has("success")) {
-                    logger.info("Notified API about starter given for " + playerUuid);
+                    logger.info("Notified API about successful starter delivery for " + playerUuid);
+                }
+            });
+    }
+    
+    private void notifyStarterFailed(UUID playerUuid, String reason) {
+        JsonObject payload = new JsonObject();
+        payload.addProperty("uuid", playerUuid.toString());
+        payload.addProperty("reason", reason);
+        
+        httpClient.postAsync("/api/gacha/delivery/failed", payload)
+            .thenAccept(response -> {
+                if (response != null && response.has("success")) {
+                    logger.info("Notified API about failed starter delivery for " + playerUuid);
                 }
             });
     }

@@ -3,7 +3,7 @@
  * Centralizes all API calls to the Express backend
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'https://api.playadoradarp.xyz/port/25617';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_BACKEND_URL || '';
 
 interface FetchOptions extends RequestInit {
   params?: Record<string, string>;
@@ -170,18 +170,18 @@ export const tournamentsAPI = {
   /**
    * Get all tournaments
    */
-  getAll: () => apiFetch<{ tournaments: any[] }>('/api/tournaments'),
+  getAll: () => apiFetch<Tournament[]>('/api/tournaments'),
 
   /**
    * Get tournament by ID
    */
-  getById: (id: string) => apiFetch<any>(`/api/tournaments/${id}`),
+  getById: (id: string) => apiFetch<Tournament>(`/api/tournaments/${id}`),
 
   /**
    * Create tournament (admin)
    */
   create: (data: any) =>
-    apiFetch<any>('/api/tournaments', {
+    apiFetch<Tournament>('/api/tournaments', {
       method: 'POST',
       body: JSON.stringify(data),
     }),
@@ -190,11 +190,37 @@ export const tournamentsAPI = {
    * Update tournament (admin)
    */
   update: (id: string, data: any) =>
-    apiFetch<any>(`/api/tournaments/${id}`, {
-      method: 'PATCH',
+    apiFetch<Tournament>(`/api/tournaments/${id}`, {
+      method: 'PUT',
       body: JSON.stringify(data),
     }),
+
+  /**
+   * Delete tournament (admin)
+   */
+  delete: (id: string) =>
+    apiFetch<{ success: boolean }>(`/api/tournaments/${id}`, {
+      method: 'DELETE',
+    }),
 };
+
+// Tournament type for type safety
+interface Tournament {
+  _id: string;
+  title: string;
+  name: string; // Alias for title, used in some pages
+  description?: string;
+  startDate: string;
+  maxParticipants: number;
+  prizes?: string;
+  status: 'upcoming' | 'active' | 'completed';
+  participants: any[];
+  winnerId?: string;
+  createdBy: string;
+  createdAt: Date;
+  rounds?: any[]; // Tournament bracket rounds
+  bracketType?: string; // single, double, etc.
+}
 
 // ============================================================================
 // VERIFICATION API

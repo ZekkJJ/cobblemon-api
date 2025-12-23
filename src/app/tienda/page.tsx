@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { shopAPI, playersAPI } from '@/lib/api-client';
 
 interface Ball {
@@ -18,15 +17,23 @@ interface Ball {
 }
 
 export default function TiendaPage() {
-    const { data: session } = useSession();
+    const [localUser, setLocalUser] = useState<any>(null);
     const [balls, setBalls] = useState<Ball[]>([]);
     const [balance, setBalance] = useState(0);
     const [loading, setLoading] = useState(true);
     const [purchasing, setPurchasing] = useState<string | null>(null);
     const [nextRefresh, setNextRefresh] = useState(0);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('all');
     const [quantities, setQuantities] = useState<Record<string, number>>({});
+
+    useEffect(() => {
+        const stored = localStorage.getItem('cobblemon_user');
+        if (stored) {
+            setLocalUser(JSON.parse(stored));
+        }
+    }, []);
 
     useEffect(() => {
         loadShopData();
@@ -51,8 +58,8 @@ export default function TiendaPage() {
                 setBalls([]);
             }
 
-            if (session?.user) {
-                const discordId = (session.user as any).id || (session.user as any).discordId;
+            if (localUser) {
+                const discordId = localUser.discordId;
                 console.log('[SHOP] Fetching balance for Discord ID:', discordId);
 
                 if (discordId) {
@@ -74,8 +81,10 @@ export default function TiendaPage() {
                     }
                 }
             }
+            setBalls([]);
         } catch (error) {
             console.error('Failed to load shop data:', error);
+            setErrorMessage('No se pudo conectar con la tienda. Verifica tu conexión.');
             setBalls([]);
         } finally {
             setLoading(false);
@@ -83,12 +92,12 @@ export default function TiendaPage() {
     }
 
     async function handlePurchase(ballId: string, quantity: number) {
-        if (!session?.user) {
+        if (!localUser) {
             alert('Debes iniciar sesión para comprar');
             return;
         }
 
-        const uuid = (session.user as any).minecraftUuid;
+        const uuid = localUser.minecraftUuid;
         if (!uuid) {
             alert('No se encontró tu UUID de Minecraft');
             return;
@@ -111,8 +120,9 @@ export default function TiendaPage() {
         }
     }
 
-    const filteredBalls = balls.filter(ball => {
-        const matchesSearch = ball.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const filteredBalls = (balls || []).filter(ball => {
+        if (!ball) return false;
+        const matchesSearch = (ball.name || '').toLowerCase().includes(searchTerm.toLowerCase());
         const matchesType = filterType === 'all' || ball.type === filterType;
         return matchesSearch && matchesType;
     });
@@ -145,6 +155,29 @@ export default function TiendaPage() {
             </div>
         );
     }
+
+    /* 
+    if (errorMessage) {
+        return (
+            <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center p-4">
+                <div className="bg-red-900/50 border border-red-500 rounded-xl p-8 text-center max-w-lg">
+                    <i className="fas fa-exclamation-triangle text-4xl text-red-400 mb-4"></i>
+                    <h2 className="text-2xl font-bold text-white mb-2">Error de Conexión</h2>
+                    <p className="text-gray-300 mb-6">{errorMessage}</p>
+                    <button 
+                        onClick={() => { setErrorMessage(null); setLoading(true); loadShopData(); }}
+                        className="px-6 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg transition-colors"
+                    >
+                        Reintentar
+                    </button>
+                    <p className="text-xs text-gray-500 mt-4">
+                        Si el problema persiste, asegúrate de que el backend esté actualizado y corriendo.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+    */
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 py-12 px-4">

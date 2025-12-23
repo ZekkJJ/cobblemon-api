@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { playSound } from '@/lib/sounds';
 import { PlayerSummary } from '@/lib/types/pokemon';
+import { playersAPI } from '@/lib/api-client';
 
 export default function JugadoresPage() {
     const [players, setPlayers] = useState<PlayerSummary[]>([]);
@@ -20,10 +21,13 @@ export default function JugadoresPage() {
     const fetchPlayers = async () => {
         try {
             setLoading(true);
-            const res = await fetch('/api/players');
-            const data = await res.json();
+            const data = await playersAPI.getAll();
+            console.log('[PLAYERS PAGE] Received data:', data);
+            if (data.players && data.players.length === 0) {
+                console.warn('[PLAYERS PAGE] API returned 0 players');
+            }
             setPlayers(data.players || []);
-            setIsMock(data.mock || false);
+            setIsMock(false); // Backend real data
         } catch (err) {
             setError('Error al cargar jugadores');
             console.error(err);
@@ -230,7 +234,7 @@ export default function JugadoresPage() {
                                     <div className="bg-gray-900/60 rounded-xl p-4 border border-gray-700/50">
                                         <p className="text-xs text-gray-500 mb-3 uppercase tracking-wider font-medium">Equipo Actual</p>
                                         <div className="grid grid-cols-3 gap-2">
-                                            {player.partyPreview.length > 0 ? (
+                                            {(player.partyPreview || []).length > 0 ? (
                                                 player.partyPreview.map((poke, i) => (
                                                     <div
                                                         key={i}
@@ -255,8 +259,8 @@ export default function JugadoresPage() {
                                             ) : (
                                                 <span className="col-span-3 text-gray-500 text-sm text-center py-4">Sin equipo</span>
                                             )}
-                                            {player.partyPreview.length > 0 && player.partyPreview.length < 6 && (
-                                                [...Array(6 - player.partyPreview.length)].map((_, i) => (
+                                            {(player.partyPreview || []).length > 0 && (player.partyPreview || []).length < 6 && (
+                                                [...Array(6 - (player.partyPreview || []).length)].map((_, i) => (
                                                     <div
                                                         key={`empty-${i}`}
                                                         className="aspect-square bg-gray-800/50 rounded-lg border border-dashed border-gray-700"

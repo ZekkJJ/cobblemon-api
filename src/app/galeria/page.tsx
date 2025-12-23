@@ -35,7 +35,8 @@ export default function GalleryPage() {
             const data = await startersAPI.getAll();
 
             if (Array.isArray(data.starters)) {
-                const claimedOnly = data.starters.filter((s: any) => s.isClaimed);
+                // Ensure s is a valid object and has types
+                const claimedOnly = data.starters.filter((s: any) => s && s.isClaimed && Array.isArray(s.types));
                 setClaimed(claimedOnly);
             } else {
                 console.error('Starters API returned invalid data:', data);
@@ -117,6 +118,9 @@ export default function GalleryPage() {
                                             }
                                             alt={starter.name}
                                             className="w-20 h-20 object-contain"
+                                            onError={(e) => {
+                                                (e.target as HTMLImageElement).src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${starter.pokemonId}.png`;
+                                            }}
                                         />
                                         {starter.isShiny && (
                                             <span className="absolute -top-1 -right-1 text-yellow-400 animate-pulse">
@@ -136,7 +140,7 @@ export default function GalleryPage() {
                                             )}
                                         </div>
                                         <div className="flex gap-1 mb-2">
-                                            {starter.types.map((type) => (
+                                            {starter.types && Array.isArray(starter.types) && starter.types.map((type) => (
                                                 <span
                                                     key={type}
                                                     className="type-badge text-[10px]"

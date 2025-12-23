@@ -4,22 +4,19 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { requireAdmin } from '@/lib/auth-middleware';
 
-// GET /api/tournaments - List all tournaments
-// POST /api/tournaments - Create new tournament (Admin only)
 export async function GET() {
     try {
         const tournaments = await db.tournaments.find({});
-        // Sort by start date, newest first
         tournaments.sort((a: any, b: any) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime());
-        return NextResponse.json(tournaments);
+        return NextResponse.json({ tournaments });
     } catch (error) {
-        return NextResponse.json({ error: 'Error fetching tournaments' }, { status: 500 });
+        console.error('[API] Tournaments GET error:', error);
+        return NextResponse.json({ tournaments: [], error: 'Error fetching tournaments' }, { status: 200 });
     }
 }
 
 export async function POST(request: NextRequest) {
     try {
-        // Check admin authentication
         const authError = await requireAdmin(request);
         if (authError) return authError;
 
@@ -30,7 +27,6 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        // Validate start date is in the future
         const start = new Date(startDate);
         if (start < new Date()) {
             return NextResponse.json(
@@ -46,17 +42,15 @@ export async function POST(request: NextRequest) {
             startDate,
             maxParticipants: maxParticipants || 32,
             prizes: prizes || '',
-            status: 'upcoming', // upcoming, active, completed
+            status: 'upcoming',
             participants: [],
             winner: null,
             createdBy: session?.user?.name || 'Admin'
         });
 
-        // Send webhook announcement if requested (could be a separate action)
-
         return NextResponse.json(newTournament);
     } catch (error) {
-        console.error('Create tournament error:', error);
+        console.error('[API] Create tournament error:', error);
         return NextResponse.json({ error: 'Error creating tournament' }, { status: 500 });
     }
 }

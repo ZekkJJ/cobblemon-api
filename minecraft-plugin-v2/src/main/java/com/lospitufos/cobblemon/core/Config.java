@@ -20,7 +20,8 @@ public class Config {
     private static final String CONFIG_FILE = "config.json";
 
     // Web API settings
-    private String webApiUrl = "https://cobblemon-los-pitufos.vercel.app";
+    private String webApiUrl = "https://api.playadoradarp.xyz/port/25617";
+    private String frontendUrl = "https://cobblemon-los-pitufos.vercel.app";
 
     // Feature toggles
     private boolean verificationEnabled = true;
@@ -85,6 +86,10 @@ public class Config {
     // Getters
     public String getWebApiUrl() {
         return webApiUrl;
+    }
+
+    public String getFrontendUrl() {
+        return frontendUrl;
     }
 
     public boolean isVerificationEnabled() {

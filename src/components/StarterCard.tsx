@@ -31,7 +31,9 @@ export default function StarterCard({
     claimedBy,
     onClick,
 }: StarterCardProps) {
-    const primaryType = starter.types[0];
+    if (!starter) return null;
+
+    const primaryType = starter.types?.[0] || 'Normal';
     const typeColor = getTypeColor(primaryType);
 
     // Get sprite URLs
@@ -139,7 +141,7 @@ export default function StarterCard({
                     #{String(starter.pokemonId).padStart(3, '0')}
                 </span>
                 <div className="flex gap-1">
-                    {starter.types.map((type) => (
+                    {(starter.types || []).map((type) => (
                         <span
                             key={type}
                             className="type-badge flex items-center gap-1"

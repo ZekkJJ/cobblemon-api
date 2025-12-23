@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession, signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { TournamentTicker } from '@/components/TournamentTicker';
 import StarterCard from '@/components/StarterCard';
 import SoulDrivenQuestionnaire from '@/components/SoulDrivenQuestionnaire';
 import { gachaAPI } from '@/lib/api-client';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
 export default function HomePage() {
-    const { data: session, status } = useSession();
     const [localUser, setLocalUser] = useState<any>(null);
     const [authMode, setAuthMode] = useState<'oauth' | 'username'>('oauth');
     const [discordUsername, setDiscordUsername] = useState('');
@@ -26,7 +26,7 @@ export default function HomePage() {
     const [gachaMode, setGachaMode] = useState<'classic' | 'soul-driven'>('classic');
     const [showQuestionnaire, setShowQuestionnaire] = useState(false);
 
-    const user = session?.user || localUser;
+    const user = localUser;
     const isLoggedIn = !!user;
 
     // Load local user on mount
@@ -40,7 +40,7 @@ export default function HomePage() {
     // Check user roll status
     useEffect(() => {
         const checkStatus = async () => {
-            const discordId = (session?.user as any)?.discordId || localUser?.discordId;
+            const discordId = localUser?.discordId;
             if (!discordId) return;
 
             try {
@@ -60,7 +60,7 @@ export default function HomePage() {
         if (isLoggedIn) {
             checkStatus();
         }
-    }, [session, localUser, isLoggedIn]);
+    }, [localUser, isLoggedIn]);
 
     // Handle username verification (non-OAuth)
     const handleUsernameVerify = async () => {
@@ -112,8 +112,8 @@ export default function HomePage() {
         setError('');
 
         try {
-            const discordId = (session?.user as any)?.discordId || localUser?.discordId;
-            const discordName = (session?.user as any)?.name || localUser?.discordUsername || 'Usuario';
+            const discordId = localUser?.discordId;
+            const discordName = localUser?.discordUsername || 'Usuario';
 
             const res = await fetch('/api/verify/check', {
                 method: 'POST',
@@ -155,9 +155,9 @@ export default function HomePage() {
         await new Promise((r) => setTimeout(r, 2500));
 
         try {
-            const discordId = (session?.user as any)?.discordId || localUser?.discordId;
-            const discordUsername = (session?.user as any)?.name || localUser?.discordUsername || '';
-            const minecraftUsername = (session?.user as any)?.minecraftUsername || localUser?.minecraftUsername || '';
+            const discordId = localUser?.discordId;
+            const discordUsername = localUser?.discordUsername || '';
+            const minecraftUsername = localUser?.minecraftUsername || '';
 
             const data = await gachaAPI.roll({
                 discordId,
@@ -188,9 +188,9 @@ export default function HomePage() {
         await new Promise((r) => setTimeout(r, 2500));
 
         try {
-            const discordId = (session?.user as any)?.discordId || localUser?.discordId;
-            const discordUsername = (session?.user as any)?.name || localUser?.discordUsername || '';
-            const minecraftUsername = (session?.user as any)?.minecraftUsername || localUser?.minecraftUsername || '';
+            const discordId = localUser?.discordId;
+            const discordUsername = localUser?.discordUsername || '';
+            const minecraftUsername = localUser?.minecraftUsername || '';
 
             const data = await gachaAPI.soulDriven({
                 discordId,
@@ -320,7 +320,19 @@ export default function HomePage() {
 
                                 {authMode === 'oauth' ? (
                                     <button
-                                        onClick={() => signIn('discord')}
+                                        onClick={async () => {
+                                            try {
+                                                const response = await fetch(`${API_BASE_URL}/api/auth/discord`);
+                                                const data = await response.json();
+                                                if (data.success && data.authUrl) {
+                                                    window.location.href = data.authUrl;
+                                                } else {
+                                                    setError('Error al obtener URL de autenticación');
+                                                }
+                                            } catch (e) {
+                                                setError('Error al conectar con el servidor');
+                                            }
+                                        }}
                                         className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all"
                                     >
                                         <i className="fab fa-discord text-xl"></i>
@@ -393,8 +405,8 @@ export default function HomePage() {
                                             <button
                                                 onClick={() => setGachaMode('classic')}
                                                 className={`flex-1 px-4 py-2 rounded text-sm font-medium transition-all ${gachaMode === 'classic'
-                                                        ? 'bg-red-600 text-white shadow-lg'
-                                                        : 'text-gray-400 hover:text-white'
+                                                    ? 'bg-red-600 text-white shadow-lg'
+                                                    : 'text-gray-400 hover:text-white'
                                                     }`}
                                             >
                                                 <i className="fas fa-dice mr-2"></i>
@@ -403,8 +415,8 @@ export default function HomePage() {
                                             <button
                                                 onClick={() => setGachaMode('soul-driven')}
                                                 className={`flex-1 px-4 py-2 rounded text-sm font-medium transition-all ${gachaMode === 'soul-driven'
-                                                        ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
-                                                        : 'text-gray-400 hover:text-white'
+                                                    ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white shadow-lg'
+                                                    : 'text-gray-400 hover:text-white'
                                                     }`}
                                             >
                                                 <i className="fas fa-sparkles mr-2"></i>
@@ -480,8 +492,8 @@ export default function HomePage() {
                             onClick={handleRoll}
                             disabled={!isLoggedIn || isRolling || userStatus?.canRoll === false}
                             className={`group relative px-8 py-5 text-white pixel-font rounded-2xl shadow-[0_6px_0_rgb(153,27,27),0_15px_20px_rgba(0,0,0,0.3)] active:shadow-none active:translate-y-[6px] transition-all hover:brightness-110 w-full disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden btn-press ${gachaMode === 'soul-driven'
-                                    ? 'bg-gradient-to-r from-purple-500 to-pink-500'
-                                    : 'bg-gradient-to-b from-red-500 to-red-600'
+                                ? 'bg-gradient-to-r from-purple-500 to-pink-500'
+                                : 'bg-gradient-to-b from-red-500 to-red-600'
                                 }`}
                         >
                             <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity"></div>

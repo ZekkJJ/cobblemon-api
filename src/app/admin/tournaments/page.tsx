@@ -4,6 +4,7 @@ import { DndContext, DragEndEvent, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Trash2, Plus, Users, Trophy, Play, CheckCircle, Edit } from 'lucide-react';
+import { tournamentsAPI, playersAPI } from '@/lib/api-client';
 
 interface Player {
     _id: string;
@@ -15,7 +16,7 @@ interface Player {
 interface Tournament {
     _id: string;
     name: string;
-    status: 'draft' | 'active' | 'completed';
+    status: 'draft' | 'upcoming' | 'active' | 'completed';
     participants: Array<{ visitorId: string; seed: number; }>;
     rounds: any[];
     bracketType: string;
@@ -81,9 +82,8 @@ export default function AdminTournamentsPage() {
 
     async function loadTournaments() {
         try {
-            const res = await fetch('/api/tournament');
-            const data = await res.json();
-            setTournaments(data.tournaments || []);
+            const tournaments = await tournamentsAPI.getAll();
+            setTournaments((tournaments || []) as unknown as Tournament[]);
         } catch (error) {
             console.error('Error loading tournaments:', error);
         }
@@ -91,9 +91,8 @@ export default function AdminTournamentsPage() {
 
     async function loadPlayers() {
         try {
-            const res = await fetch('/api/users');
-            const data = await res.json();
-            setAllPlayers(data.users || []);
+            const data = await playersAPI.getAll();
+            setAllPlayers(data.players || []);
         } catch (error) {
             console.error('Error loading players:', error);
         }
@@ -128,27 +127,18 @@ export default function AdminTournamentsPage() {
 
         setLoading(true);
         try {
-            const res = await fetch('/api/tournament', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: formData.name,
-                    participantIds: selectedPlayers.map(p => p._id),
-                    bracketType: formData.bracketType,
-                    creatorId: 'admin'
-                })
+            await tournamentsAPI.create({
+                name: formData.name,
+                participantIds: selectedPlayers.map(p => p._id),
+                bracketType: formData.bracketType,
+                creatorId: 'admin'
             });
 
-            const data = await res.json();
-            if (data.success) {
-                alert('¡Torneo creado exitosamente!');
-                setView('list');
-                setFormData({ name: '', bracketType: 'single' });
-                setSelectedPlayers([]);
-                loadTournaments();
-            } else {
-                alert(data.error || 'Error al crear torneo');
-            }
+            alert('¡Torneo creado exitosamente!');
+            setView('list');
+            setFormData({ name: '', bracketType: 'single' });
+            setSelectedPlayers([]);
+            loadTournaments();
         } catch (error) {
             console.error('Error:', error);
             alert('Error al crear torneo');
@@ -159,15 +149,7 @@ export default function AdminTournamentsPage() {
 
     async function updateTournamentStatus(id: string, status: string) {
         try {
-            await fetch('/api/tournament', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    tournamentId: id,
-                    action: 'updateStatus',
-                    data: { status }
-                })
-            });
+            await tournamentsAPI.update(id, { status });
             loadTournaments();
         } catch (error) {
             console.error('Error updating status:', error);

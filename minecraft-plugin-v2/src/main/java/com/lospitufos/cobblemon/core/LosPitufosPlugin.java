@@ -8,6 +8,9 @@ import com.lospitufos.cobblemon.starter.StarterManager;
 import com.lospitufos.cobblemon.sync.WebSyncManager;
 import com.lospitufos.cobblemon.levelcaps.LevelCapManager;
 import com.lospitufos.cobblemon.shop.ShopManager;
+import com.lospitufos.cobblemon.tournament.TournamentManager;
+import com.lospitufos.cobblemon.tournament.TournamentCommands;
+import com.lospitufos.cobblemon.tournament.BattleListener;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -47,6 +50,8 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
     private WebSyncManager syncManager;
     private LevelCapManager levelCapManager;
     private ShopManager shopManager;
+    private TournamentManager tournamentManager;
+    private BattleListener battleListener;
 
     @Override
     public void onInitializeServer() {
@@ -157,6 +162,41 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
                 );
                 logger.info("✓ Admin commands registered");
             }
+
+            // Tournament commands: /torneo join|leave|info
+            dispatcher.register(
+                CommandManager.literal("torneo")
+                    .then(CommandManager.literal("join")
+                        .then(CommandManager.argument("code", StringArgumentType.string())
+                            .executes(context -> {
+                                if (tournamentManager != null) {
+                                    tournamentManager.handleJoinCommand(
+                                        context.getSource().getPlayer(),
+                                        StringArgumentType.getString(context, "code")
+                                    );
+                                }
+                                return 1;
+                            })
+                        )
+                    )
+                    .then(CommandManager.literal("leave")
+                        .executes(context -> {
+                            if (tournamentManager != null) {
+                                tournamentManager.handleLeaveCommand(context.getSource().getPlayer());
+                            }
+                            return 1;
+                        })
+                    )
+                    .then(CommandManager.literal("info")
+                        .executes(context -> {
+                            if (tournamentManager != null) {
+                                tournamentManager.handleInfoCommand(context.getSource().getPlayer());
+                            }
+                            return 1;
+                        })
+                    )
+            );
+            logger.info("✓ Tournament commands registered");
         });
     }
 
@@ -194,6 +234,13 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
             shopManager.initialize(server);
             logger.info("✓ Shop system enabled");
 
+            // Initialize tournament system
+            tournamentManager = new TournamentManager(httpClient, logger);
+            tournamentManager.initialize(server);
+            battleListener = new BattleListener(tournamentManager, logger);
+            battleListener.initialize(server);
+            logger.info("✓ Tournament system enabled");
+
             logger.info("=".repeat(50));
             logger.info("✓ All systems operational!");
             logger.info("=".repeat(50));
@@ -208,6 +255,10 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
         logger.info("Server stopping - Shutting down gracefully...");
 
         // Cleanup managers
+        if (tournamentManager != null)
+            tournamentManager.shutdown();
+        if (battleListener != null)
+            battleListener.shutdown();
         if (shopManager != null)
             shopManager.shutdown();
         if (syncManager != null)
@@ -261,6 +312,10 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
     
     public ShopManager getShopManager() {
         return shopManager;
+    }
+    
+    public TournamentManager getTournamentManager() {
+        return tournamentManager;
     }
     
     public DiscordWebhookManager getDiscordWebhook() {

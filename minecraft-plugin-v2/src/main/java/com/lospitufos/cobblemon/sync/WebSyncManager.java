@@ -178,6 +178,12 @@ public class WebSyncManager {
             payload.addProperty("username", player.getName().getString());
             payload.addProperty("online", true);
             payload.addProperty("lastSeen", java.time.Instant.now().toString());
+            
+            // Add player position for BlueMap integration
+            payload.addProperty("x", player.getX());
+            payload.addProperty("y", player.getY());
+            payload.addProperty("z", player.getZ());
+            payload.addProperty("world", player.getWorld().getRegistryKey().getValue().getPath());
 
             // Add party data with full details
             JsonArray partyArray = new JsonArray();

@@ -2,14 +2,14 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useSession, signIn, signOut } from 'next-auth/react';
 import { useState, useEffect } from 'react';
 import { playSound } from '@/lib/sounds';
 import ServerIndicator from '@/components/ServerIndicator';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
 export default function Navbar() {
     const pathname = usePathname();
-    const { data: session } = useSession();
     const [localUser, setLocalUser] = useState<any>(null);
     const [menuOpen, setMenuOpen] = useState(false);
     const [sfxMuted, setSfxMuted] = useState(false);
@@ -22,7 +22,7 @@ export default function Navbar() {
         setSfxMuted(localStorage.getItem('sfx_muted') === 'true');
     }, []);
 
-    const user = session?.user || localUser;
+    const user = localUser;
     const isLoggedIn = !!user;
 
     const navLinks = [
@@ -38,12 +38,29 @@ export default function Navbar() {
 
     const handleLogout = () => {
         playSound('cancel');
-        if (session) {
-            signOut();
-        } else {
-            localStorage.removeItem('cobblemon_user');
-            setLocalUser(null);
-            window.location.reload();
+        localStorage.removeItem('cobblemon_user');
+        setLocalUser(null);
+        window.location.reload();
+    };
+
+    const handleLogin = async () => {
+        playSound('confirm');
+
+        try {
+            // Get Discord auth URL from backend
+            const response = await fetch(`${API_BASE_URL}/api/auth/discord`);
+            const data = await response.json();
+
+            if (data.success && data.authUrl) {
+                // Redirect to Discord OAuth
+                window.location.href = data.authUrl;
+            } else {
+                console.error('Failed to get auth URL:', data);
+                alert('Error al iniciar sesión. Por favor intenta de nuevo.');
+            }
+        } catch (error) {
+            console.error('Login error:', error);
+            alert('Error al conectar con el servidor.');
         }
     };
 
@@ -137,7 +154,7 @@ export default function Navbar() {
                             </div>
                         ) : (
                             <button
-                                onClick={() => { playSound('confirm'); signIn('discord'); }}
+                                onClick={handleLogin}
                                 className="hidden sm:flex items-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] px-4 py-2.5 rounded-lg font-medium transition-colors text-sm"
                             >
                                 <i className="fab fa-discord"></i>
@@ -162,7 +179,7 @@ export default function Navbar() {
                         <div className="lg:hidden mb-2">
                             <ServerIndicator />
                         </div>
-                        
+
                         {navLinks.map((link) => (
                             <Link
                                 key={link.href}
@@ -175,7 +192,7 @@ export default function Navbar() {
                                 {link.label}
                             </Link>
                         ))}
-                        
+
                         {/* Mobile User Actions */}
                         {isLoggedIn ? (
                             <div className="sm:hidden mt-2 pt-2 border-t border-red-800 flex flex-col gap-2">
@@ -201,7 +218,7 @@ export default function Navbar() {
                             </div>
                         ) : (
                             <button
-                                onClick={() => { playSound('confirm'); signIn('discord'); setMenuOpen(false); }}
+                                onClick={() => { handleLogin(); setMenuOpen(false); }}
                                 className="sm:hidden mt-2 pt-2 border-t border-red-800 flex items-center justify-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] px-4 py-3 rounded-lg font-medium transition-colors text-base"
                             >
                                 <i className="fab fa-discord"></i>

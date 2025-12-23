@@ -1,0 +1,188 @@
+# Implementation Plan
+
+## Player Profile Page - Full Pokemon Info
+
+- [ ] 1. Create shared utility functions and types
+  - [ ] 1.1 Create TypeBadge component with TYPE_COLORS mapping
+    - Create `frontend/src/components/TypeBadge.tsx`
+    - Implement TYPE_COLORS constant with all 18 Pokémon types
+    - Support size variants (sm, md, lg)
+    - _Requirements: 2.3, 8.2_
+  - [ ]* 1.2 Write property test for type color mapping
+    - **Property 3: Type Badge Color Mapping**
+    - **Validates: Requirements 2.3, 8.2**
+  - [ ] 1.3 Create IV/EV color utility functions
+    - Create `frontend/src/lib/pokemon-utils.ts`
+    - Implement getIVColor function with thresholds (0-10: red, 11-20: yellow, 21-30: green, 31: gold)
+    - Implement getEVPercentage function
+    - _Requirements: 3.2_
+  - [ ]* 1.4 Write property test for IV color coding
+    - **Property 2: IV Color Coding Consistency**
+    - **Validates: Requirements 3.2**
+  - [ ] 1.5 Create sprite URL generation utility
+    - Implement getPokemonSprites function in pokemon-utils.ts
+    - Handle animated sprites for Gen 1-5 (speciesId <= 649)
+    - Handle showdown sprites for Gen 6+
+    - _Requirements: 2.2_
+
+- [ ] 2. Create StatsDisplay component
+  - [ ] 2.1 Implement StatsDisplay component
+    - Create `frontend/src/components/StatsDisplay.tsx`
+    - Support IVs, EVs, and base stats display modes
+    - Render 6 stat bars (HP, Attack, Defense, Sp.Attack, Sp.Defense, Speed)
+    - Apply color coding for IVs
+    - Show MAX badge for perfect stats (31 IV or 252 EV)
+    - Calculate and display stat total
+    - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
+  - [ ]* 2.2 Write property test for stats constraint validation
+    - **Property 12: Stats Constraint Validation**
+    - **Validates: Requirements 11.3**
+
+- [ ] 3. Create PokemonCard component
+  - [ ] 3.1 Implement base PokemonCard component
+    - Create `frontend/src/components/PokemonCard.tsx`
+    - Display sprite (animated if available), species name, nickname, level
+    - Display type badges using TypeBadge component
+    - Display nature, ability, gender icon, held item
+    - Apply shiny styling (ring-2 ring-poke-yellow glow-yellow) when shiny=true
+    - Support size variants (compact, normal, full)
+    - _Requirements: 2.2, 2.3, 2.4, 2.5_
+  - [ ]* 3.2 Write property test for shiny styling application
+    - **Property 4: Shiny Styling Application**
+    - **Validates: Requirements 2.5, 8.4**
+  - [ ] 3.3 Add moves display to PokemonCard
+    - Display up to 4 moves with type-colored backgrounds
+    - Show move name and category icon (physical/special/status)
+    - Render empty slots with dashed borders for missing moves
+    - _Requirements: 4.1, 4.2, 4.4_
+  - [ ]* 3.4 Write property test for move slot rendering
+    - **Property 6: Move Slot Rendering**
+    - **Validates: Requirements 4.1, 4.4**
+
+- [ ] 4. Create PokemonDetailModal component
+  - [ ] 4.1 Implement PokemonDetailModal
+    - Create `frontend/src/components/PokemonDetailModal.tsx`
+    - Full-screen modal with backdrop blur
+    - Display large artwork sprite
+    - Include StatsDisplay for IVs and EVs
+    - Show all moves with tooltips (power, accuracy, PP)
+    - Display ball type, friendship, experience
+    - Close on backdrop click or X button
+    - _Requirements: 2.6, 4.3_
+
+- [ ] 5. Checkpoint - Ensure all component tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 6. Update Backend API for complete profile data
+  - [ ] 6.1 Extend PlayersService.getPlayerProfile method
+    - Add tournament participation data
+    - Calculate type distribution
+    - Include starter information with sprites
+    - Add isOnline and isVerified flags
+    - _Requirements: 10.1, 10.2, 10.3, 10.4_
+  - [ ]* 6.2 Write property test for API response completeness
+    - **Property 10: API Response Completeness**
+    - **Validates: Requirements 10.1, 10.2, 10.3**
+  - [ ] 6.3 Add data sanitization for Pokémon
+    - Implement sanitizePokemon function
+    - Handle missing optional fields with defaults
+    - Validate IV/EV constraints
+    - _Requirements: 11.1, 11.4, 11.5_
+  - [ ]* 6.4 Write property test for serialization round-trip
+    - **Property 11: Pokémon Data Serialization Round-Trip**
+    - **Validates: Requirements 11.2**
+
+- [ ] 7. Implement ProfileHeader component
+  - [ ] 7.1 Create ProfileHeader component
+    - Create `frontend/src/components/ProfileHeader.tsx`
+    - Display username with avatar (first letter styled)
+    - Show CobbleDollars balance with coin icon
+    - Display verification badge if verified
+    - Show online indicator with pulse animation if online
+    - Display starter badge with sprite if starter exists
+    - Show stat cards (total Pokémon, unique species, shinies)
+    - _Requirements: 1.1, 1.2, 1.3, 1.4, 1.5_
+  - [ ]* 7.2 Write property test for stat calculation
+    - **Property 1: Stat Calculation Correctness**
+    - **Validates: Requirements 1.4, 6.1**
+
+- [ ] 8. Implement PartySection component
+  - [ ] 8.1 Create PartySection component
+    - Create `frontend/src/components/PartySection.tsx`
+    - Display up to 6 PokemonCards in responsive grid
+    - Handle empty party state with friendly message
+    - Click handler to open PokemonDetailModal
+    - _Requirements: 2.1_
+  - [ ]* 8.2 Write property test for party size constraint
+    - **Property 5: Party Size Constraint**
+    - **Validates: Requirements 2.1**
+
+- [ ] 9. Implement PCStorageSection component
+  - [ ] 9.1 Create PCStorageSection component
+    - Create `frontend/src/components/PCStorageSection.tsx`
+    - Box selector with navigation arrows
+    - 6x5 grid (30 slots) for each box
+    - Display Pokémon sprites or placeholder for empty slots
+    - Hover tooltip with species, level, shiny status
+    - Click to open PokemonDetailModal
+    - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5_
+  - [ ]* 9.2 Write property test for PC box grid size
+    - **Property 7: PC Box Grid Size**
+    - **Validates: Requirements 5.2**
+  - [ ]* 9.3 Write property test for empty slot placeholder
+    - **Property 13: Empty Slot Placeholder Rendering**
+    - **Validates: Requirements 5.5**
+
+- [ ] 10. Implement StatsSection component
+  - [ ] 10.1 Create StatsSection component
+    - Create `frontend/src/components/StatsSection.tsx`
+    - Display animated stat cards (total, unique, shinies, avg level)
+    - Show strongest Pokémon with sprite and details
+    - Display type distribution chart/bars
+    - Show registration date and last sync time
+    - _Requirements: 6.1, 6.2, 6.3, 6.4_
+  - [ ]* 10.2 Write property test for strongest Pokémon selection
+    - **Property 8: Strongest Pokémon Selection**
+    - **Validates: Requirements 6.2**
+  - [ ]* 10.3 Write property test for type distribution calculation
+    - **Property 9: Type Distribution Calculation**
+    - **Validates: Requirements 6.3**
+
+- [ ] 11. Implement TournamentsSection component
+  - [ ] 11.1 Create TournamentsSection component
+    - Create `frontend/src/components/TournamentsSection.tsx`
+    - Display list of tournament participations
+    - Show tournament name, date, position, result
+    - Display trophy icon with gold styling for wins
+    - Handle empty state with encouraging message
+    - _Requirements: 7.1, 7.2, 7.3, 7.4_
+  - [ ]* 11.2 Write property test for tournament win trophy display
+    - **Property 14: Tournament Win Trophy Display**
+    - **Validates: Requirements 7.3**
+
+- [ ] 12. Checkpoint - Ensure all section tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [ ] 13. Rebuild ProfilePage with all components
+  - [ ] 13.1 Update ProfilePage to use new components
+    - Replace existing implementation in `frontend/src/app/jugadores/[uuid]/page.tsx`
+    - Integrate ProfileHeader, TabNavigation
+    - Integrate PartySection, PCStorageSection, StatsSection, TournamentsSection
+    - Implement tab state management
+    - Add loading and error states
+    - _Requirements: 8.1, 8.3, 8.5_
+  - [ ] 13.2 Add responsive design classes
+    - Mobile: single column layout
+    - Tablet: 2-column grid for PokemonCards
+    - Desktop: 3-column grid for PokemonCards
+    - _Requirements: 9.1, 9.2, 9.3, 9.4_
+
+- [ ] 14. Update frontend API client
+  - [ ] 14.1 Update playersAPI.getByUuid to handle extended response
+    - Update type definitions in `frontend/src/lib/types/pokemon.ts`
+    - Add TournamentParticipation type
+    - Update PlayerProfile interface
+    - _Requirements: 10.1_
+
+- [ ] 15. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

@@ -133,8 +133,9 @@ export default function PokedexPage() {
     };
 
     const filteredStarters = (starters || []).filter((s) => {
+        if (!s) return false;
         if (filterGen && s.generation !== filterGen) return false;
-        if (filterType && !s.types.includes(filterType)) return false;
+        if (filterType && s.types && !s.types.includes(filterType)) return false;
         if (showOnlyAvailable && s.isClaimed) return false;
         return true;
     });
@@ -324,14 +325,14 @@ export default function PokedexPage() {
                     >
                         <div
                             className="relative w-full max-w-4xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-none sm:rounded-3xl border-0 sm:border-2 shadow-2xl my-0 sm:my-8 max-h-[85vh] overflow-y-auto"
-                            style={{ borderColor: `${TIPO_COLORES[pokemon.types[0]]}60` }}
+                            style={{ borderColor: `${TIPO_COLORES[pokemon.types?.[0] || 'Normal']}60` }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Close */}
                             <button
                                 onClick={() => { playSound('cancel'); setPokemon(null); }}
                                 className="sticky top-2 right-2 sm:absolute sm:-top-3 sm:-right-3 z-50 w-10 h-10 rounded-full flex items-center justify-center text-white shadow-2xl transition-all ml-auto mr-2 sm:mr-0 hover:scale-110"
-                                style={{ background: `linear-gradient(135deg, ${TIPO_COLORES[pokemon.types[0]]}, ${TIPO_COLORES[pokemon.types[1] || pokemon.types[0]]})` }}
+                                style={{ background: `linear-gradient(135deg, ${TIPO_COLORES[pokemon.types?.[0] || 'Normal']}, ${TIPO_COLORES[pokemon.types?.[1] || pokemon.types?.[0] || 'Normal']})` }}
                             >
                                 <i className="fas fa-times text-sm"></i>
                             </button>
@@ -342,7 +343,7 @@ export default function PokedexPage() {
                                 <div
                                     className="absolute inset-0 opacity-20"
                                     style={{
-                                        background: `radial-gradient(circle at 30% 50%, ${TIPO_COLORES[pokemon.types[0]]}60, transparent 50%), radial-gradient(circle at 70% 50%, ${TIPO_COLORES[pokemon.types[1] || pokemon.types[0]]}60, transparent 50%)`
+                                        background: `radial-gradient(circle at 30% 50%, ${TIPO_COLORES[pokemon.types?.[0] || 'Normal']}60, transparent 50%), radial-gradient(circle at 70% 50%, ${TIPO_COLORES[pokemon.types?.[1] || pokemon.types?.[0] || 'Normal']}60, transparent 50%)`
                                     }}
                                 ></div>
 
@@ -353,8 +354,8 @@ export default function PokedexPage() {
                                             <div
                                                 className="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl flex items-center justify-center relative overflow-hidden"
                                                 style={{
-                                                    background: `linear-gradient(135deg, ${TIPO_COLORES[pokemon.types[0]]}20, ${TIPO_COLORES[pokemon.types[1] || pokemon.types[0]]}10)`,
-                                                    boxShadow: `0 8px 32px ${TIPO_COLORES[pokemon.types[0]]}40`
+                                                    background: `linear-gradient(135deg, ${TIPO_COLORES[pokemon.types?.[0] || 'Normal']}20, ${TIPO_COLORES[pokemon.types?.[1] || pokemon.types?.[0] || 'Normal']}10)`,
+                                                    boxShadow: `0 8px 32px ${TIPO_COLORES[pokemon.types?.[0] || 'Normal']}40`
                                                 }}
                                             >
                                                 <img
@@ -393,7 +394,7 @@ export default function PokedexPage() {
 
                                             {/* Types & Physical Info */}
                                             <div className="flex flex-wrap items-center gap-2 mb-3">
-                                                {pokemon.types.map((t) => (
+                                                {(pokemon.types || []).map((t) => (
                                                     <span
                                                         key={t}
                                                         className="px-3 py-1 rounded-lg text-white text-xs font-bold shadow-lg"
@@ -428,7 +429,7 @@ export default function PokedexPage() {
                                                         onChange={(e) => setNivel(parseInt(e.target.value))}
                                                         className="flex-1 h-1 bg-gray-700/50 rounded-full appearance-none cursor-pointer"
                                                         style={{
-                                                            background: `linear-gradient(to right, ${TIPO_COLORES[pokemon.types[0]]} 0%, ${TIPO_COLORES[pokemon.types[0]]} ${nivel}%, #374151 ${nivel}%, #374151 100%)`
+                                                            background: `linear-gradient(to right, ${TIPO_COLORES[pokemon.types?.[0] || 'Normal']} 0%, ${TIPO_COLORES[pokemon.types?.[0] || 'Normal']} ${nivel}%, #374151 ${nivel}%, #374151 100%)`
                                                         }}
                                                     />
                                                     <span className="text-white font-bold text-sm w-8 text-right">{nivel}</span>
@@ -438,7 +439,7 @@ export default function PokedexPage() {
                                     </div>
 
                                     {/* Evolution chain - Compact */}
-                                    {pokemon.evolutions.length > 0 && (
+                                    {pokemon.evolutions && pokemon.evolutions.length > 0 && (
                                         <div className="mt-4 bg-black/30 backdrop-blur-sm rounded-xl p-3 border border-purple-500/20">
                                             <div className="flex items-center gap-2 mb-2">
                                                 <i className="fas fa-dna text-purple-400 text-xs"></i>
@@ -494,7 +495,7 @@ export default function PokedexPage() {
                                     {/* Stats */}
                                     <div
                                         className="bg-gradient-to-br from-blue-900/20 to-cyan-900/20 rounded-xl p-4 border backdrop-blur-sm"
-                                        style={{ borderColor: `${TIPO_COLORES[pokemon.types[0]]}30` }}
+                                        style={{ borderColor: `${TIPO_COLORES[pokemon.types?.[0] || 'Normal']}30` }}
                                     >
                                         <div className="flex items-center justify-between mb-3">
                                             <h4 className="text-sm font-bold text-white flex items-center gap-2">
@@ -502,7 +503,7 @@ export default function PokedexPage() {
                                                 Estadísticas
                                             </h4>
                                             <span className="text-xl font-bold text-blue-400">
-                                                {Object.values(pokemon.stats).reduce((a: number, b: any) => a + (b as number), 0)}
+                                                {pokemon.stats ? Object.values(pokemon.stats).reduce((a: number, b: any) => a + (b as number), 0) : 0}
                                             </span>
                                         </div>
                                         <div className="space-y-2">
@@ -595,7 +596,7 @@ export default function PokedexPage() {
                                             Habilidades
                                         </h4>
                                         <div className="space-y-2">
-                                            {pokemon.abilities.map((ab, i) => (
+                                            {(pokemon.abilities || []).map((ab, i) => (
                                                 <div key={i} className={`p-2.5 rounded-lg ${ab.isHidden ? 'bg-purple-500/20 border border-purple-400/40' : 'bg-black/30 border border-gray-600/30'}`}>
                                                     <div className="flex items-center gap-1.5 mb-1">
                                                         <span className={`font-bold text-xs ${ab.isHidden ? 'text-purple-300' : 'text-white'}`}>
@@ -616,7 +617,7 @@ export default function PokedexPage() {
                                             Movimientos
                                         </h4>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
-                                            {pokemon.signatureMoves.map((mv, i) => (
+                                            {(pokemon.signatureMoves || []).map((mv, i) => (
                                                 <div key={i} className="bg-black/30 rounded-lg p-2 border border-gray-600/30 hover:border-cyan-500/50 transition-colors">
                                                     <div className="text-white text-xs font-medium mb-1.5 truncate">{mv.name}</div>
                                                     <div className="flex items-center gap-1.5">

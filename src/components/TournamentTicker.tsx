@@ -8,14 +8,14 @@ export function TournamentTicker() {
 
     useEffect(() => {
         tournamentsAPI.getAll()
-            .then(data => {
-                // Safely check if data.tournaments is an array
-                if (data && Array.isArray(data.tournaments)) {
+            .then(tournaments => {
+                // Backend returns array directly, not {tournaments: []}
+                if (Array.isArray(tournaments)) {
                     // Filter for active or upcoming
-                    const active = data.tournaments.filter((t: any) => t.status === 'active' || t.status === 'upcoming');
+                    const active = tournaments.filter((t: any) => t.status === 'active' || t.status === 'upcoming');
                     setTournaments(active);
                 } else {
-                    console.error('Tournaments API returned invalid data:', data);
+                    console.error('Tournaments API returned invalid data:', tournaments);
                     setTournaments([]);
                 }
             })

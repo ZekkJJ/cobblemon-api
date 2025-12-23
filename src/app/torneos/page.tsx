@@ -8,11 +8,11 @@ export default function PublicTournamentsPage() {
 
     useEffect(() => {
         tournamentsAPI.getAll()
-            .then(data => {
-                if (data && Array.isArray(data.tournaments)) {
-                    setTournaments(data.tournaments);
+            .then(tournaments => {
+                if (Array.isArray(tournaments)) {
+                    setTournaments(tournaments);
                 } else {
-                    console.error('Tournaments API returned invalid data:', data);
+                    console.error('Tournaments API returned invalid data:', tournaments);
                 }
                 setLoading(false);
             })

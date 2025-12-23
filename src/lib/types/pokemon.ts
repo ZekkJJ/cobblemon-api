@@ -1,5 +1,52 @@
 // Cobblemon Pokemon Types
 
+export interface Starter {
+    pokemonId: number;
+    name: string;
+    nameEs: string;
+    generation: number;
+    types: string[];
+    stats: {
+        hp: number;
+        attack: number;
+        defense: number;
+        spAttack: number;
+        spDefense: number;
+        speed: number;
+    };
+    abilities: Array<{
+        name: string;
+        description: string;
+        isHidden: boolean;
+    }>;
+    signatureMoves: Array<{
+        name: string;
+        type: string;
+        power: number;
+        accuracy: number;
+    }>;
+    evolutions: Array<{
+        name: string;
+        level?: number;
+        method: string;
+    }>;
+    description: string;
+    height: number;
+    weight: number;
+    sprites: {
+        sprite: string;
+        spriteAnimated: string;
+        shiny: string;
+        shinyAnimated: string;
+        artwork: string;
+        cry: string;
+    };
+    isClaimed: boolean;
+    claimedBy?: string;
+    claimedAt?: string;
+    isShiny?: boolean;
+}
+
 export interface PokemonStats {
     hp: number;
     atk: number;

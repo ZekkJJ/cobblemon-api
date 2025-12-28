@@ -275,8 +275,14 @@ public class ShopManager {
                 return createMinecraftItem(ballId, quantity);
             }
             
-            // Check if it's a Cobblemon item
-            String itemId = "cobblemon:" + ballId;
+            // Check if it already has cobblemon: prefix
+            String itemId;
+            if (ballId.startsWith("cobblemon:")) {
+                itemId = ballId;
+            } else {
+                itemId = "cobblemon:" + ballId;
+            }
+            
             Identifier identifier = Identifier.tryParse(itemId);
             
             if (identifier == null) {
@@ -287,9 +293,11 @@ public class ShopManager {
             Item item = Registries.ITEM.get(identifier);
             if (item == null || item == Registries.ITEM.get(Identifier.tryParse("minecraft:air"))) {
                 // Try as plain Minecraft item
-                return createMinecraftItem(ballId, quantity);
+                logger.warn("Cobblemon item not found: " + itemId + ", trying as Minecraft item");
+                return createMinecraftItem(ballId.replace("cobblemon:", ""), quantity);
             }
             
+            logger.info("Created Cobblemon item: " + itemId + " x" + quantity);
             return new ItemStack(item, quantity);
             
         } catch (Exception e) {

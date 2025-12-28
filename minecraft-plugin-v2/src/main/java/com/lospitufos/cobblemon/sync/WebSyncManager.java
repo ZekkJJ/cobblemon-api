@@ -315,11 +315,15 @@ public class WebSyncManager {
         // Moves
         JsonArray moves = new JsonArray();
         try {
-            Iterable<?> moveSet = pokemon.getMoveSet();
-            for (Object moveEntry : moveSet) {
-                if (moveEntry != null) {
+            var moveSet = pokemon.getMoveSet();
+            for (var move : moveSet) {
+                if (move != null) {
                     JsonObject moveObj = new JsonObject();
-                    moveObj.addProperty("name", moveEntry.toString());
+                    // Get the move template name properly
+                    String moveName = move.getTemplate().getName();
+                    moveObj.addProperty("name", moveName);
+                    moveObj.addProperty("pp", move.getCurrentPp());
+                    moveObj.addProperty("maxPp", move.getTemplate().getPp());
                     moves.add(moveObj);
                 }
             }
@@ -375,5 +379,42 @@ public class WebSyncManager {
         } catch (InterruptedException e) {
             scheduler.shutdownNow();
         }
+    }
+
+    /**
+     * Handle /ranking sync command - syncs ALL online players immediately
+     * Only for OPs to force update the ranking data
+     */
+    public void handleRankingSyncCommand(net.minecraft.server.command.ServerCommandSource source) {
+        if (server == null) return;
+
+        var playerList = server.getPlayerManager().getPlayerList();
+        int playerCount = playerList.size();
+
+        if (playerCount == 0) {
+            source.sendFeedback(() -> net.minecraft.text.Text.literal("§c✗ No hay jugadores online para sincronizar."), false);
+            return;
+        }
+
+        source.sendFeedback(() -> net.minecraft.text.Text.literal("§a⏳ Sincronizando " + playerCount + " jugadores para el ranking..."), true);
+
+        // Sync all players in parallel
+        int[] synced = {0};
+        for (var player : playerList) {
+            if (player != null && !player.isDisconnected()) {
+                syncPlayerData(player);
+                synced[0]++;
+            }
+        }
+
+        // Send confirmation after a short delay
+        scheduler.schedule(() -> {
+            source.sendFeedback(() -> net.minecraft.text.Text.literal(
+                "§a✓ Ranking actualizado! " + synced[0] + " jugadores sincronizados.\n" +
+                "§7Los datos del ranking web se actualizarán en unos segundos."
+            ), true);
+        }, 3, TimeUnit.SECONDS);
+
+        logger.info("[RANKING SYNC] OP forced sync of " + synced[0] + " players");
     }
 }

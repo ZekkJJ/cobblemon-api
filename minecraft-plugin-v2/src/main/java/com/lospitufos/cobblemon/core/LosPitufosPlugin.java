@@ -8,16 +8,25 @@ import com.lospitufos.cobblemon.starter.StarterManager;
 import com.lospitufos.cobblemon.sync.WebSyncManager;
 import com.lospitufos.cobblemon.levelcaps.LevelCapManager;
 import com.lospitufos.cobblemon.shop.ShopManager;
+import com.lospitufos.cobblemon.playershop.PlayerShopManager;
 import com.lospitufos.cobblemon.tournament.TournamentManager;
 import com.lospitufos.cobblemon.tournament.TournamentCommands;
 import com.lospitufos.cobblemon.tournament.BattleListener;
+import com.lospitufos.cobblemon.economy.EconomyManager;
+import com.lospitufos.cobblemon.gacha.GachaManager;
+import com.lospitufos.cobblemon.tutorias.TutoriasManager;
+import com.lospitufos.cobblemon.admin.AdminSyncManager;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.command.CommandManager;
+import net.minecraft.command.argument.EntityArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+
+import java.util.List;
 
 /**
  * Cobblemon Los Pitufos Plugin V2
@@ -50,8 +59,13 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
     private WebSyncManager syncManager;
     private LevelCapManager levelCapManager;
     private ShopManager shopManager;
+    private PlayerShopManager playerShopManager;
     private TournamentManager tournamentManager;
     private BattleListener battleListener;
+    private EconomyManager economyManager;
+    private GachaManager gachaManager;
+    private TutoriasManager tutoriasManager;
+    private AdminSyncManager adminSyncManager;
 
     @Override
     public void onInitializeServer() {
@@ -132,6 +146,27 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
             );
             logger.info("✓ Shop commands registered");
 
+            // Player Shop (Marketplace) commands
+            dispatcher.register(
+                CommandManager.literal("claimmarket")
+                    .executes(context -> {
+                        if (playerShopManager != null) {
+                            playerShopManager.handleClaimCommand(context.getSource().getPlayer());
+                        }
+                        return 1;
+                    })
+            );
+            dispatcher.register(
+                CommandManager.literal("market")
+                    .executes(context -> {
+                        if (playerShopManager != null) {
+                            playerShopManager.handleMarketCommand(context.getSource().getPlayer());
+                        }
+                        return 1;
+                    })
+            );
+            logger.info("✓ Player Shop (Marketplace) commands registered");
+
             // Sync command
             if (config.isWebSyncEnabled()) {
                 dispatcher.register(
@@ -142,6 +177,20 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
                             }
                             return 1;
                         })
+                );
+                
+                // Ranking sync command for OPs - syncs ALL online players
+                dispatcher.register(
+                    CommandManager.literal("ranking")
+                        .then(CommandManager.literal("sync")
+                            .requires(source -> source.hasPermissionLevel(2)) // OP only
+                            .executes(context -> {
+                                if (syncManager != null) {
+                                    syncManager.handleRankingSyncCommand(context.getSource());
+                                }
+                                return 1;
+                            })
+                        )
                 );
                 logger.info("✓ Sync commands registered");
             }
@@ -197,6 +246,208 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
                     )
             );
             logger.info("✓ Tournament commands registered");
+
+            // Economy commands: /bounties
+            dispatcher.register(
+                CommandManager.literal("bounties")
+                    .executes(context -> {
+                        if (economyManager != null) {
+                            economyManager.showBounties(context.getSource().getPlayer());
+                        }
+                        return 1;
+                    })
+            );
+            dispatcher.register(
+                CommandManager.literal("recompensas")
+                    .executes(context -> {
+                        if (economyManager != null) {
+                            economyManager.showBounties(context.getSource().getPlayer());
+                        }
+                        return 1;
+                    })
+            );
+            // Synergy info command
+            dispatcher.register(
+                CommandManager.literal("sinergia")
+                    .executes(context -> {
+                        if (economyManager != null) {
+                            economyManager.showSynergyInfo(context.getSource().getPlayer());
+                        }
+                        return 1;
+                    })
+            );
+            dispatcher.register(
+                CommandManager.literal("synergy")
+                    .executes(context -> {
+                        if (economyManager != null) {
+                            economyManager.showSynergyInfo(context.getSource().getPlayer());
+                        }
+                        return 1;
+                    })
+            );
+            logger.info("✓ Economy commands registered");
+
+            // Gacha commands: /claimgacha
+            dispatcher.register(
+                CommandManager.literal("claimgacha")
+                    .executes(context -> {
+                        if (gachaManager != null) {
+                            gachaManager.handleClaimCommand(context.getSource().getPlayer());
+                        }
+                        return 1;
+                    })
+            );
+            dispatcher.register(
+                CommandManager.literal("gacha")
+                    .then(CommandManager.literal("claim")
+                        .executes(context -> {
+                            if (gachaManager != null) {
+                                gachaManager.handleClaimCommand(context.getSource().getPlayer());
+                            }
+                            return 1;
+                        })
+                    )
+            );
+            
+            // Admin: /cleargacha <player> [refund] - Clear all gacha pokemon from player's PC and DB
+            dispatcher.register(
+                CommandManager.literal("cleargacha")
+                    .requires(source -> source.hasPermissionLevel(2)) // OP only
+                    .then(CommandManager.argument("player", EntityArgumentType.player())
+                        .executes(context -> {
+                            if (gachaManager != null) {
+                                ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "player");
+                                gachaManager.handleClearGachaCommand(
+                                    context.getSource().getPlayer(),
+                                    target,
+                                    false // no refund by default
+                                );
+                            }
+                            return 1;
+                        })
+                        .then(CommandManager.literal("refund")
+                            .executes(context -> {
+                                if (gachaManager != null) {
+                                    ServerPlayerEntity target = EntityArgumentType.getPlayer(context, "player");
+                                    gachaManager.handleClearGachaCommand(
+                                        context.getSource().getPlayer(),
+                                        target,
+                                        true // with refund
+                                    );
+                                }
+                                return 1;
+                            })
+                        )
+                    )
+            );
+            
+            // Admin: /cleargachauuid <uuid> [refund] - Clear gacha DB for offline player by UUID
+            dispatcher.register(
+                CommandManager.literal("cleargachauuid")
+                    .requires(source -> source.hasPermissionLevel(2)) // OP only
+                    .then(CommandManager.argument("uuid", StringArgumentType.string())
+                        .executes(context -> {
+                            if (gachaManager != null) {
+                                String uuid = StringArgumentType.getString(context, "uuid");
+                                gachaManager.handleClearGachaOffline(
+                                    context.getSource().getPlayer(),
+                                    uuid,
+                                    false // no refund by default
+                                );
+                            }
+                            return 1;
+                        })
+                        .then(CommandManager.literal("refund")
+                            .executes(context -> {
+                                if (gachaManager != null) {
+                                    String uuid = StringArgumentType.getString(context, "uuid");
+                                    gachaManager.handleClearGachaOffline(
+                                        context.getSource().getPlayer(),
+                                        uuid,
+                                        true // with refund
+                                    );
+                                }
+                                return 1;
+                            })
+                        )
+                    )
+            );
+            
+            // Casino commands: /casino deposit|withdraw|balance
+            dispatcher.register(
+                CommandManager.literal("casino")
+                    .executes(context -> {
+                        // Show balance by default
+                        if (gachaManager != null) {
+                            gachaManager.handleCasinoBalance(context.getSource().getPlayer());
+                        }
+                        return 1;
+                    })
+                    .then(CommandManager.literal("deposit")
+                        .then(CommandManager.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+                            .executes(context -> {
+                                if (gachaManager != null) {
+                                    int amount = com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "amount");
+                                    gachaManager.handleCasinoDeposit(context.getSource().getPlayer(), amount);
+                                }
+                                return 1;
+                            })
+                        )
+                    )
+                    .then(CommandManager.literal("withdraw")
+                        .then(CommandManager.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1))
+                            .executes(context -> {
+                                if (gachaManager != null) {
+                                    int amount = com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "amount");
+                                    gachaManager.handleCasinoWithdraw(context.getSource().getPlayer(), amount);
+                                }
+                                return 1;
+                            })
+                        )
+                    )
+                    .then(CommandManager.literal("balance")
+                        .executes(context -> {
+                            if (gachaManager != null) {
+                                gachaManager.handleCasinoBalance(context.getSource().getPlayer());
+                            }
+                            return 1;
+                        })
+                    )
+            );
+            
+            // Pitufi commands: /pitufi fusionar <pokemon>
+            // Fuses duplicate Pokemon (3+), keeps the BEST one, converts rest to Stardust
+            dispatcher.register(
+                CommandManager.literal("pitufi")
+                    .then(CommandManager.literal("fusionar")
+                        .then(CommandManager.argument("pokemon", StringArgumentType.string())
+                            .suggests((context, builder) -> {
+                                // Autocomplete with Pokemon species that have 3+ duplicates
+                                if (gachaManager != null) {
+                                    ServerPlayerEntity player = context.getSource().getPlayer();
+                                    if (player != null) {
+                                        List<String> duplicates = gachaManager.getDuplicatePokemonSpecies(player);
+                                        String input = builder.getRemaining().toLowerCase();
+                                        for (String species : duplicates) {
+                                            if (species.startsWith(input)) {
+                                                builder.suggest(species);
+                                            }
+                                        }
+                                    }
+                                }
+                                return builder.buildFuture();
+                            })
+                            .executes(context -> {
+                                if (gachaManager != null) {
+                                    String pokemon = StringArgumentType.getString(context, "pokemon");
+                                    gachaManager.handleFusionCommand(context.getSource().getPlayer(), pokemon);
+                                }
+                                return 1;
+                            })
+                        )
+                    )
+            );
+            logger.info("✓ Gacha, Casino & Fusion commands registered");
         });
     }
 
@@ -234,12 +485,37 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
             shopManager.initialize(server);
             logger.info("✓ Shop system enabled");
 
+            // Initialize Player Shop (Marketplace) system
+            playerShopManager = new PlayerShopManager(httpClient, logger);
+            playerShopManager.initialize(server);
+            logger.info("✓ Player Shop (Marketplace) system enabled");
+
             // Initialize tournament system
             tournamentManager = new TournamentManager(httpClient, logger);
             tournamentManager.initialize(server);
             battleListener = new BattleListener(tournamentManager, logger);
             battleListener.initialize(server);
             logger.info("✓ Tournament system enabled");
+
+            // Initialize economy system (rewards for captures, battles, etc.)
+            economyManager = new EconomyManager(httpClient, logger);
+            economyManager.initialize(server);
+            logger.info("✓ Economy system enabled");
+
+            // Initialize gacha system (Pokemon gacha rewards delivery)
+            gachaManager = new GachaManager(httpClient, logger);
+            gachaManager.initialize(server);
+            logger.info("✓ Gacha system enabled");
+
+            // Initialize tutorías system (battle log capture for AI analysis)
+            tutoriasManager = new TutoriasManager(httpClient, logger);
+            tutoriasManager.initialize(server);
+            logger.info("✓ Tutorías system enabled");
+
+            // Initialize admin sync system (bidirectional Pokemon sync + in-game announcements)
+            adminSyncManager = new AdminSyncManager(httpClient, logger);
+            adminSyncManager.initialize(server);
+            logger.info("✓ Admin sync system enabled");
 
             logger.info("=".repeat(50));
             logger.info("✓ All systems operational!");
@@ -255,10 +531,20 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
         logger.info("Server stopping - Shutting down gracefully...");
 
         // Cleanup managers
+        if (adminSyncManager != null)
+            adminSyncManager.shutdown();
+        if (tutoriasManager != null)
+            tutoriasManager.shutdown();
+        if (gachaManager != null)
+            gachaManager.shutdown();
+        if (economyManager != null)
+            economyManager.shutdown();
         if (tournamentManager != null)
             tournamentManager.shutdown();
         if (battleListener != null)
             battleListener.shutdown();
+        if (playerShopManager != null)
+            playerShopManager.shutdown();
         if (shopManager != null)
             shopManager.shutdown();
         if (syncManager != null)
@@ -314,11 +600,27 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
         return shopManager;
     }
     
+    public PlayerShopManager getPlayerShopManager() {
+        return playerShopManager;
+    }
+    
     public TournamentManager getTournamentManager() {
         return tournamentManager;
     }
     
     public DiscordWebhookManager getDiscordWebhook() {
         return discordWebhook;
+    }
+    
+    public EconomyManager getEconomyManager() {
+        return economyManager;
+    }
+    
+    public GachaManager getGachaManager() {
+        return gachaManager;
+    }
+    
+    public TutoriasManager getTutoriasManager() {
+        return tutoriasManager;
     }
 }

@@ -37,6 +37,9 @@ public class TournamentManager {
     // Cache of known tournaments (to detect new ones)
     private final Set<String> knownTournamentIds = ConcurrentHashMap.newKeySet();
     
+    // Cache of tournament statuses (to detect status changes)
+    private final Map<String, String> tournamentStatuses = new ConcurrentHashMap<>();
+    
     // Notification manager for announcements
     private NotificationManager notificationManager;
     
@@ -87,7 +90,9 @@ public class TournamentManager {
     }
     
     /**
-     * Poll backend for tournaments with open registration and announce new ones
+     * Poll backend for tournaments and detect status changes
+     * - Announce new tournaments with open registration
+     * - Trigger epic teleport when tournament starts
      */
     private void pollForNewTournaments() {
         if (server == null) return;
@@ -103,6 +108,16 @@ public class TournamentManager {
                         JsonObject tournament = elem.getAsJsonObject();
                         String id = getIdFromJson(tournament.get("_id"));
                         String status = tournament.get("status").getAsString();
+                        String previousStatus = tournamentStatuses.get(id);
+                        
+                        // Update status cache
+                        tournamentStatuses.put(id, status);
+                        
+                        // Check if tournament just started (status changed to "active")
+                        if ("active".equals(status) && previousStatus != null && !"active".equals(previousStatus)) {
+                            logger.info("Tournament " + id + " just started! Triggering epic teleport...");
+                            onTournamentStart(id);
+                        }
                         
                         // Only announce tournaments with open registration
                         if (!"registration".equals(status)) continue;
@@ -676,6 +691,296 @@ public class TournamentManager {
     }
     
     // ============================================
+    // EPIC TOURNAMENT START - TELEPORT WITH EFFECTS
+    // ============================================
+    
+    // Arena coordinates
+    private static final double ARENA_X = 1382;
+    private static final double ARENA_Y = 64;
+    private static final double ARENA_Z = 1494;
+    private static final int SPAWN_RADIUS = 5;
+    private static final long TELEPORT_INTERVAL_MS = 4000; // 4 seconds between each player
+    
+    /**
+     * Participant data for epic intro
+     */
+    private static class ParticipantData {
+        UUID uuid;
+        String username;
+        int seed;
+        
+        ParticipantData(UUID uuid, String username, int seed) {
+            this.uuid = uuid;
+            this.username = username;
+            this.seed = seed;
+        }
+    }
+    
+    /**
+     * Match data for announcements
+     */
+    private static class MatchData {
+        String player1Name;
+        String player2Name;
+        int matchNumber;
+        
+        MatchData(String p1, String p2, int num) {
+            this.player1Name = p1;
+            this.player2Name = p2;
+            this.matchNumber = num;
+        }
+    }
+    
+    /**
+     * Epic tournament start sequence:
+     * 1. Set weather to thunder (dramatic)
+     * 2. Teleport players one by one with lightning (4 seconds apart)
+     * 3. Announce each player globally as they arrive
+     * 4. After all teleports, announce matches in order
+     * 5. Clear weather
+     */
+    public void startTournamentEpic(String tournamentId, List<ParticipantData> participants, List<MatchData> matches, String tournamentName) {
+        if (server == null || participants.isEmpty()) return;
+        
+        logger.info("Starting epic tournament teleport for " + participants.size() + " players");
+        
+        // Step 1: Set weather to thunder for dramatic effect
+        server.execute(() -> {
+            // Set thundering weather for longer duration
+            int weatherDuration = (int) ((participants.size() * TELEPORT_INTERVAL_MS / 50) + 600); // Extra 30 seconds
+            server.getOverworld().setWeather(0, weatherDuration, true, true);
+            
+            // Epic announcement
+            announceToServer("");
+            announceToServer("§0§l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+            announceToServer("");
+            announceToServer("§5§l          ⚡ TORNEO: " + tournamentName.toUpperCase() + " ⚡");
+            announceToServer("");
+            announceToServer("§d§l              ¡ESTÁ POR COMENZAR!");
+            announceToServer("");
+            announceToServer("§7              " + participants.size() + " participantes");
+            announceToServer("");
+            announceToServer("§0§l▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬");
+            announceToServer("");
+        });
+        
+        // Step 2: Teleport players one by one with 4 second intervals
+        for (int i = 0; i < participants.size(); i++) {
+            final int index = i;
+            final ParticipantData participant = participants.get(i);
+            
+            scheduler.schedule(() -> {
+                server.execute(() -> teleportPlayerWithLightningSmooth(participant, index, participants.size()));
+            }, 3000 + (i * TELEPORT_INTERVAL_MS), TimeUnit.MILLISECONDS); // Start after 3 seconds
+        }
+        
+        // Step 3: After all teleports, announce matches in order
+        long afterTeleportsTime = 3000 + (participants.size() * TELEPORT_INTERVAL_MS) + 3000; // Extra 3 seconds
+        
+        // Announce "all players ready"
+        scheduler.schedule(() -> {
+            server.execute(() -> {
+                announceToServer("");
+                announceToServer("§a§l✓ ¡TODOS LOS PARTICIPANTES HAN LLEGADO!");
+                announceToServer("");
+            });
+        }, afterTeleportsTime, TimeUnit.MILLISECONDS);
+        
+        // Announce matches one by one (2 seconds apart)
+        for (int i = 0; i < matches.size(); i++) {
+            final int matchIndex = i;
+            final MatchData match = matches.get(i);
+            
+            scheduler.schedule(() -> {
+                server.execute(() -> announceMatch(match, matchIndex + 1, matches.size()));
+            }, afterTeleportsTime + 2000 + (i * 2000L), TimeUnit.MILLISECONDS);
+        }
+        
+        // Final announcement
+        long finalAnnouncementTime = afterTeleportsTime + 2000 + (matches.size() * 2000L) + 2000;
+        scheduler.schedule(() -> {
+            server.execute(() -> {
+                announceToServer("");
+                announceToServer("§6§l⚔ ═══════════════════════════════════════ ⚔");
+                announceToServer("");
+                announceToServer("§e§l          ¡QUE COMIENCE EL TORNEO!");
+                announceToServer("");
+                announceToServer("§a§l              ¡BUENA SUERTE A TODOS!");
+                announceToServer("");
+                announceToServer("§6§l⚔ ═══════════════════════════════════════ ⚔");
+                announceToServer("");
+            });
+        }, finalAnnouncementTime, TimeUnit.MILLISECONDS);
+        
+        // Clear weather after everything
+        scheduler.schedule(() -> {
+            server.execute(() -> {
+                server.getOverworld().setWeather(6000, 0, false, false);
+                logger.info("Weather cleared after tournament start");
+            });
+        }, finalAnnouncementTime + 5000, TimeUnit.MILLISECONDS);
+    }
+    
+    /**
+     * Announce a single match globally
+     */
+    private void announceMatch(MatchData match, int matchNumber, int totalMatches) {
+        announceToServer("");
+        announceToServer("§6§l⚔ COMBATE #" + matchNumber + " de " + totalMatches + " ⚔");
+        announceToServer("");
+        announceToServer("§c§l  " + match.player1Name);
+        announceToServer("§7§l         VS");
+        announceToServer("§9§l  " + match.player2Name);
+        announceToServer("");
+    }
+    
+    /**
+     * Teleport a single player with lightning effect - SMOOTH version
+     * Announces globally when each player arrives
+     */
+    private void teleportPlayerWithLightningSmooth(ParticipantData participant, int index, int totalPlayers) {
+        ServerPlayerEntity player = server.getPlayerManager().getPlayer(participant.uuid);
+        if (player == null || player.isDisconnected()) {
+            logger.warn("Player " + participant.username + " not online for tournament teleport");
+            // Still announce they were supposed to arrive
+            announceToServer("§8[§c✗§8] §7" + participant.username + " §8(no conectado)");
+            return;
+        }
+        
+        // Calculate spawn position in a circle around the arena center
+        double angle = (2 * Math.PI * index) / Math.max(totalPlayers, 1);
+        double spawnX = ARENA_X + (SPAWN_RADIUS * Math.cos(angle));
+        double spawnZ = ARENA_Z + (SPAWN_RADIUS * Math.sin(angle));
+        
+        // Spawn lightning at destination (visual only, no damage)
+        net.minecraft.entity.LightningEntity lightning = net.minecraft.entity.EntityType.LIGHTNING_BOLT.create(server.getOverworld());
+        if (lightning != null) {
+            lightning.setPosition(spawnX, ARENA_Y, spawnZ);
+            lightning.setCosmetic(true); // No damage!
+            server.getOverworld().spawnEntity(lightning);
+        }
+        
+        // Teleport player
+        player.teleport(
+            server.getOverworld(),
+            spawnX,
+            ARENA_Y,
+            spawnZ,
+            player.getYaw(),
+            player.getPitch()
+        );
+        
+        // Global announcement of player arrival
+        announceToServer("");
+        announceToServer("§5⚡ §e§l" + participant.username + " §7ha llegado a la arena §8[§a" + (index + 1) + "§8/§a" + totalPlayers + "§8]");
+        
+        // Personal message to the player
+        player.sendMessage(Text.literal(""));
+        player.sendMessage(Text.literal("§5§l⚡ ¡BIENVENIDO AL TORNEO! ⚡"));
+        player.sendMessage(Text.literal("§7Tu seed: §e#" + participant.seed));
+        player.sendMessage(Text.literal("§7Posición: §a" + (index + 1) + " §7de §a" + totalPlayers));
+        player.sendMessage(Text.literal(""));
+        
+        // Play thunder sound to everyone nearby
+        for (ServerPlayerEntity nearby : server.getPlayerManager().getPlayerList()) {
+            if (nearby != null && !nearby.isDisconnected()) {
+                nearby.playSoundToPlayer(
+                    net.minecraft.sound.SoundEvents.ENTITY_LIGHTNING_BOLT_THUNDER,
+                    net.minecraft.sound.SoundCategory.WEATHER,
+                    0.8f,
+                    1.0f
+                );
+            }
+        }
+        
+        logger.info("Teleported " + participant.username + " to tournament arena (position " + (index + 1) + ")");
+    }
+    
+    /**
+     * Called when a tournament transitions from registration to active
+     * Triggers the epic teleport sequence with match announcements
+     */
+    public void onTournamentStart(String tournamentId) {
+        // Fetch tournament participants and bracket
+        httpClient.getAsync("/api/tournaments/" + tournamentId)
+            .thenAccept(response -> {
+                if (response == null || !response.has("data")) return;
+                
+                try {
+                    JsonObject tournament = response.getAsJsonObject("data");
+                    String tournamentName = tournament.get("name").getAsString();
+                    JsonArray participantsArray = tournament.getAsJsonArray("participants");
+                    
+                    // Build participant list sorted by seed
+                    List<ParticipantData> participants = new java.util.ArrayList<>();
+                    Map<String, String> participantIdToName = new java.util.HashMap<>();
+                    
+                    for (JsonElement elem : participantsArray) {
+                        JsonObject p = elem.getAsJsonObject();
+                        if (p.has("minecraftUuid") && !p.get("minecraftUuid").isJsonNull()) {
+                            String uuidStr = p.get("minecraftUuid").getAsString();
+                            String username = p.get("username").getAsString();
+                            int seed = p.get("seed").getAsInt();
+                            String participantId = p.get("id").getAsString();
+                            
+                            participantIdToName.put(participantId, username);
+                            
+                            try {
+                                participants.add(new ParticipantData(UUID.fromString(uuidStr), username, seed));
+                            } catch (Exception e) {
+                                logger.debug("Invalid UUID: " + uuidStr);
+                            }
+                        }
+                    }
+                    
+                    // Sort by seed
+                    participants.sort((a, b) -> Integer.compare(a.seed, b.seed));
+                    
+                    // Build match list from bracket (first round only)
+                    List<MatchData> matches = new java.util.ArrayList<>();
+                    if (tournament.has("bracket") && !tournament.get("bracket").isJsonNull()) {
+                        JsonObject bracket = tournament.getAsJsonObject("bracket");
+                        if (bracket.has("rounds")) {
+                            JsonArray rounds = bracket.getAsJsonArray("rounds");
+                            if (rounds.size() > 0) {
+                                JsonObject firstRound = rounds.get(0).getAsJsonObject();
+                                JsonArray matchesArray = firstRound.getAsJsonArray("matches");
+                                
+                                int matchNum = 1;
+                                for (JsonElement matchElem : matchesArray) {
+                                    JsonObject match = matchElem.getAsJsonObject();
+                                    String p1Id = match.has("player1Id") && !match.get("player1Id").isJsonNull() 
+                                        ? match.get("player1Id").getAsString() : null;
+                                    String p2Id = match.has("player2Id") && !match.get("player2Id").isJsonNull() 
+                                        ? match.get("player2Id").getAsString() : null;
+                                    
+                                    String p1Name = p1Id != null ? participantIdToName.getOrDefault(p1Id, "TBD") : "TBD";
+                                    String p2Name = p2Id != null ? participantIdToName.getOrDefault(p2Id, "TBD") : "TBD";
+                                    
+                                    if (!"TBD".equals(p1Name) && !"TBD".equals(p2Name)) {
+                                        matches.add(new MatchData(p1Name, p2Name, matchNum++));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    
+                    if (!participants.isEmpty()) {
+                        startTournamentEpic(tournamentId, participants, matches, tournamentName);
+                    }
+                    
+                } catch (Exception e) {
+                    logger.error("Error starting epic tournament: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            })
+            .exceptionally(ex -> {
+                logger.error("Error fetching tournament for epic start: " + ex.getMessage());
+                return null;
+            });
+    }
+    
+    // ============================================
     // UTILITY METHODS
     // ============================================
     
@@ -775,6 +1080,7 @@ public class TournamentManager {
         playerTournaments.clear();
         activeMatches.clear();
         knownTournamentIds.clear();
+        tournamentStatuses.clear();
         
         if (notificationManager != null) {
             notificationManager.shutdown();

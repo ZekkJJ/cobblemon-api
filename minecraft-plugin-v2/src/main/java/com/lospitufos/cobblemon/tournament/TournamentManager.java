@@ -440,9 +440,18 @@ public class TournamentManager {
                                     notifyMatchResult(winnerUuid, loserUuid, tournament.get("name").getAsString());
                                 });
                                 
-                                // Refresh tournament cache
-                                refreshPlayerTournament(winnerUuid);
-                                refreshPlayerTournament(loserUuid);
+                                // Force refresh tournament cache immediately to detect next round matches
+                                scheduler.schedule(() -> {
+                                    refreshPlayerTournament(winnerUuid);
+                                    refreshPlayerTournament(loserUuid);
+                                    // Also check for active matches after a short delay
+                                    scheduler.schedule(() -> {
+                                        CachedTournament cachedWinner = playerTournaments.get(winnerUuid);
+                                        if (cachedWinner != null && "active".equals(cachedWinner.status)) {
+                                            checkPlayerActiveMatch(winnerUuid, cachedWinner);
+                                        }
+                                    }, 2, TimeUnit.SECONDS);
+                                }, 1, TimeUnit.SECONDS);
                             } else {
                                 logger.warn("Failed to report battle result: " + 
                                     (resultResponse != null ? resultResponse.toString() : "null response"));
@@ -461,6 +470,169 @@ public class TournamentManager {
                 logger.error("Error finding match: " + ex.getMessage());
                 return null;
             });
+    }
+    
+    /**
+     * Report a 2v2 battle result to the backend
+     * Called by BattleListener when a 2v2 Cobblemon battle ends
+     */
+    public void reportBattleResult2v2(List<UUID> winnerUuids, List<UUID> loserUuids, String victoryType) {
+        // Check if any players are in tournaments
+        boolean anyInTournament = false;
+        for (UUID uuid : winnerUuids) {
+            if (playerTournaments.containsKey(uuid)) {
+                anyInTournament = true;
+                break;
+            }
+        }
+        if (!anyInTournament) {
+            for (UUID uuid : loserUuids) {
+                if (playerTournaments.containsKey(uuid)) {
+                    anyInTournament = true;
+                    break;
+                }
+            }
+        }
+        
+        if (!anyInTournament) {
+            logger.debug("2v2 Battle between non-tournament players, ignoring");
+            return;
+        }
+        
+        logger.info("Reporting 2v2 battle result: " + winnerUuids + " defeated " + loserUuids + " (" + victoryType + ")");
+        
+        // For 2v2 tournaments, we need to find matches for each pair
+        // Try to find a match between any winner and any loser
+        for (UUID winnerUuid : winnerUuids) {
+            for (UUID loserUuid : loserUuids) {
+                // Check if these two are in the same tournament match
+                JsonObject payload = new JsonObject();
+                payload.addProperty("player1Uuid", winnerUuid.toString());
+                payload.addProperty("player2Uuid", loserUuid.toString());
+                
+                final UUID finalWinnerUuid = winnerUuid;
+                final UUID finalLoserUuid = loserUuid;
+                
+                httpClient.postAsync("/api/tournaments/find-match", payload)
+                    .thenAccept(response -> {
+                        if (response == null || !response.has("data") || response.get("data").isJsonNull()) {
+                            return; // No match between these two, try next pair
+                        }
+                        
+                        try {
+                            JsonObject data = response.getAsJsonObject("data");
+                            JsonObject match = data.getAsJsonObject("match");
+                            JsonObject tournament = data.getAsJsonObject("tournament");
+                            
+                            String matchId = match.get("id").getAsString();
+                            String tournamentId = getIdFromJson(tournament.get("_id"));
+                            
+                            // Get participant IDs
+                            String winnerId = getParticipantIdByUuid(tournament, finalWinnerUuid.toString());
+                            String loserId = getParticipantIdByUuid(tournament, finalLoserUuid.toString());
+                            
+                            if (winnerId == null || loserId == null) {
+                                logger.error("Could not find participant IDs for 2v2 battle result");
+                                return;
+                            }
+                            
+                            // Report the result
+                            JsonObject resultPayload = new JsonObject();
+                            resultPayload.addProperty("winnerId", winnerId);
+                            resultPayload.addProperty("loserId", loserId);
+                            resultPayload.addProperty("victoryType", victoryType);
+                            resultPayload.addProperty("tournamentId", tournamentId);
+                            resultPayload.addProperty("is2v2", true);
+                            
+                            // Add all UUIDs for reference
+                            JsonArray winnerUuidsArray = new JsonArray();
+                            for (UUID uuid : winnerUuids) {
+                                winnerUuidsArray.add(uuid.toString());
+                            }
+                            JsonArray loserUuidsArray = new JsonArray();
+                            for (UUID uuid : loserUuids) {
+                                loserUuidsArray.add(uuid.toString());
+                            }
+                            resultPayload.add("winnerUuids", winnerUuidsArray);
+                            resultPayload.add("loserUuids", loserUuidsArray);
+                            
+                            httpClient.postAsync("/api/tournaments/matches/" + matchId + "/result", resultPayload)
+                                .thenAccept(resultResponse -> {
+                                    if (resultResponse != null && resultResponse.has("success") && 
+                                        resultResponse.get("success").getAsBoolean()) {
+                                        logger.info("2v2 Battle result reported successfully for match " + matchId);
+                                        
+                                        // Notify all players
+                                        server.execute(() -> {
+                                            String tournamentName = tournament.get("name").getAsString();
+                                            for (UUID uuid : winnerUuids) {
+                                                notifyWinner(uuid, tournamentName);
+                                            }
+                                            for (UUID uuid : loserUuids) {
+                                                notifyLoser(uuid, tournamentName);
+                                                playerTournaments.remove(uuid);
+                                                activeMatches.remove(uuid);
+                                            }
+                                        });
+                                        
+                                        // Refresh tournament cache for all players
+                                        scheduler.schedule(() -> {
+                                            for (UUID uuid : winnerUuids) {
+                                                refreshPlayerTournament(uuid);
+                                            }
+                                            for (UUID uuid : loserUuids) {
+                                                refreshPlayerTournament(uuid);
+                                            }
+                                        }, 1, TimeUnit.SECONDS);
+                                    } else {
+                                        logger.warn("Failed to report 2v2 battle result: " + 
+                                            (resultResponse != null ? resultResponse.toString() : "null response"));
+                                    }
+                                })
+                                .exceptionally(ex -> {
+                                    logger.error("Error reporting 2v2 battle result: " + ex.getMessage());
+                                    return null;
+                                });
+                                
+                        } catch (Exception e) {
+                            logger.error("Error processing 2v2 match data: " + e.getMessage());
+                        }
+                    })
+                    .exceptionally(ex -> {
+                        logger.debug("Error finding 2v2 match: " + ex.getMessage());
+                        return null;
+                    });
+            }
+        }
+    }
+    
+    /**
+     * Notify winner of tournament match
+     */
+    private void notifyWinner(UUID winnerUuid, String tournamentName) {
+        ServerPlayerEntity winner = server.getPlayerManager().getPlayer(winnerUuid);
+        if (winner != null && !winner.isDisconnected()) {
+            winner.sendMessage(Text.literal(""));
+            winner.sendMessage(Text.literal("§a§l✓ ¡VICTORIA EN TORNEO!"));
+            winner.sendMessage(Text.literal("§7Torneo: §f" + tournamentName));
+            winner.sendMessage(Text.literal("§7¡Avanzas a la siguiente ronda!"));
+            winner.sendMessage(Text.literal("§eUsa §6/torneo info §epara ver tu próximo match."));
+            winner.sendMessage(Text.literal(""));
+        }
+    }
+    
+    /**
+     * Notify loser of tournament match
+     */
+    private void notifyLoser(UUID loserUuid, String tournamentName) {
+        ServerPlayerEntity loser = server.getPlayerManager().getPlayer(loserUuid);
+        if (loser != null && !loser.isDisconnected()) {
+            loser.sendMessage(Text.literal(""));
+            loser.sendMessage(Text.literal("§c§l✗ ELIMINADO DEL TORNEO"));
+            loser.sendMessage(Text.literal("§7Torneo: §f" + tournamentName));
+            loser.sendMessage(Text.literal("§7¡Gracias por participar!"));
+            loser.sendMessage(Text.literal(""));
+        }
     }
     
     private void notifyMatchResult(UUID winnerUuid, UUID loserUuid, String tournamentName) {
@@ -507,11 +679,20 @@ public class TournamentManager {
     
     /**
      * Announce a message to all online players
+     * THREAD SAFETY: Makes defensive copy of player list
      */
     public void announceToServer(String message) {
         if (server == null) return;
         
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playersCopy;
+        try {
+            playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
+        for (ServerPlayerEntity player : playersCopy) {
             if (player != null && !player.isDisconnected()) {
                 player.sendMessage(Text.literal(message));
             }
@@ -558,7 +739,15 @@ public class TournamentManager {
     private void refreshTournamentCache() {
         if (server == null) return;
         
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playersCopy;
+        try {
+            playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
+        for (ServerPlayerEntity player : playersCopy) {
             if (player == null || player.isDisconnected()) continue;
             refreshPlayerTournament(player.getUuid());
         }
@@ -582,6 +771,8 @@ public class TournamentManager {
                     cached.code = tournament.get("code").getAsString();
                     cached.name = tournament.get("name").getAsString();
                     cached.status = tournament.get("status").getAsString();
+                    cached.battleFormat = tournament.has("battleFormat") && !tournament.get("battleFormat").isJsonNull()
+                        ? tournament.get("battleFormat").getAsString() : "1v1";
                     cached.lastUpdated = System.currentTimeMillis();
                     
                     // Find participant info
@@ -634,6 +825,7 @@ public class TournamentManager {
                     JsonArray rounds = bracket.getAsJsonArray("rounds");
                     
                     // Find active match for this player
+                    // Check ALL rounds, not just current - matches might be ready in later rounds
                     for (JsonElement roundElem : rounds) {
                         JsonObject round = roundElem.getAsJsonObject();
                         JsonArray matches = round.getAsJsonArray("matches");
@@ -642,12 +834,23 @@ public class TournamentManager {
                             JsonObject match = matchElem.getAsJsonObject();
                             String status = match.get("status").getAsString();
                             
-                            if (!"ready".equals(status) && !"active".equals(status)) continue;
-                            
+                            // Check for ready, active, OR pending matches that have both players assigned
+                            // This is crucial for detecting second round matches!
                             String player1Id = match.has("player1Id") && !match.get("player1Id").isJsonNull() 
                                 ? match.get("player1Id").getAsString() : null;
                             String player2Id = match.has("player2Id") && !match.get("player2Id").isJsonNull() 
                                 ? match.get("player2Id").getAsString() : null;
+                            
+                            // Skip completed matches
+                            if ("completed".equals(status)) continue;
+                            
+                            // For pending matches, only consider if BOTH players are assigned
+                            if ("pending".equals(status)) {
+                                if (player1Id == null || player2Id == null) continue;
+                            }
+                            
+                            // Skip matches that aren't ready/active/pending-with-both-players
+                            if (!"ready".equals(status) && !"active".equals(status) && !"pending".equals(status)) continue;
                             
                             if (cached.participantId.equals(player1Id) || cached.participantId.equals(player2Id)) {
                                 // Found active match
@@ -663,8 +866,9 @@ public class TournamentManager {
                                 
                                 CachedMatch previousMatch = activeMatches.get(playerUuid);
                                 
-                                // Notify if this is a new match
+                                // Notify if this is a new match (different match ID)
                                 if (previousMatch == null || !previousMatch.matchId.equals(cachedMatch.matchId)) {
+                                    logger.info("New match detected for " + playerUuid + ": Round " + cachedMatch.roundNumber + " vs " + cachedMatch.opponentName);
                                     server.execute(() -> {
                                         notifyMatchScheduled(playerUuid, cachedMatch.opponentName, 
                                             cachedMatch.roundNumber, cached.name);
@@ -1054,6 +1258,22 @@ public class TournamentManager {
     }
     
     /**
+     * Check if a player's tournament is 2v2 format
+     */
+    public boolean isPlayerIn2v2Tournament(UUID playerUuid) {
+        CachedTournament cached = playerTournaments.get(playerUuid);
+        return cached != null && "2v2".equals(cached.battleFormat);
+    }
+    
+    /**
+     * Get the battle format for a player's tournament
+     */
+    public String getPlayerTournamentBattleFormat(UUID playerUuid) {
+        CachedTournament cached = playerTournaments.get(playerUuid);
+        return cached != null ? cached.battleFormat : "1v1";
+    }
+    
+    /**
      * Get cached tournament for a player
      */
     public CachedTournament getPlayerTournament(UUID playerUuid) {
@@ -1101,6 +1321,7 @@ public class TournamentManager {
         public String status;
         public String participantId;
         public int seed;
+        public String battleFormat; // "1v1" or "2v2"
         public long lastUpdated;
     }
     

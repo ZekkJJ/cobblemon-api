@@ -435,5 +435,361 @@ export const modsAPI = {
   },
 };
 
+// ============================================================================
+// PLAYER SHOP API
+// ============================================================================
+
+export const playerShopAPI = {
+  /**
+   * Obtiene listings activos con filtros
+   */
+  getListings: (filters?: {
+    species?: string;
+    type?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    shinyOnly?: boolean;
+    saleMethod?: 'direct' | 'bidding';
+    sortBy?: 'pitufipuntos' | 'price' | 'createdAt' | 'expiresAt';
+    sortOrder?: 'asc' | 'desc';
+    page?: number;
+    limit?: number;
+  }) => {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) {
+          params.set(key, String(value));
+        }
+      });
+    }
+    return apiCall(`/api/player-shop/listings?${params.toString()}`);
+  },
+
+  /**
+   * Obtiene detalle de un listing
+   */
+  getListing: (id: string) =>
+    apiCall(`/api/player-shop/listings/${id}`),
+
+  /**
+   * Crea un nuevo listing
+   */
+  createListing: (data: {
+    pokemonUuid: string;
+    saleMethod: 'direct' | 'bidding';
+    price?: number;
+    startingBid?: number;
+    duration?: number;
+  }) =>
+    apiCall('/api/player-shop/listings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  /**
+   * Cancela un listing
+   */
+  cancelListing: (id: string) =>
+    apiCall(`/api/player-shop/listings/${id}`, {
+      method: 'DELETE',
+    }),
+
+  /**
+   * Obtiene los listings del usuario autenticado
+   */
+  getMyListings: (uuid: string) =>
+    apiCall(`/api/player-shop/my-listings?uuid=${uuid}`),
+
+  /**
+   * Compra directa de un listing
+   */
+  purchaseListing: (id: string) =>
+    apiCall(`/api/player-shop/listings/${id}/purchase`, {
+      method: 'POST',
+    }),
+
+  /**
+   * Coloca una puja en una subasta
+   */
+  placeBid: (id: string, amount: number) =>
+    apiCall(`/api/player-shop/listings/${id}/bid`, {
+      method: 'POST',
+      body: JSON.stringify({ amount }),
+    }),
+
+  /**
+   * Obtiene el historial de pujas de un listing
+   */
+  getBidHistory: (id: string) =>
+    apiCall(`/api/player-shop/listings/${id}/bids`),
+};
+
+// ============================================================================
+// TUTORIAS API
+// ============================================================================
+
+export const tutoriasAPI = {
+  // ---- Pricing & Cooldowns ----
+  /**
+   * Obtiene los precios de todos los servicios
+   */
+  getPricing: () =>
+    apiCall('/api/tutorias/pricing'),
+
+  /**
+   * Obtiene los cooldowns del usuario
+   */
+  getCooldowns: () =>
+    apiCall('/api/tutorias/cooldowns'),
+
+  // ---- Battle Analysis ----
+  /**
+   * Obtiene el historial de batallas del usuario
+   */
+  getBattleHistory: () =>
+    apiCall('/api/tutorias/battle-analysis/history'),
+
+  /**
+   * Solicita análisis de una batalla
+   */
+  requestBattleAnalysis: (battleId: string) =>
+    apiCall('/api/tutorias/battle-analysis/request', {
+      method: 'POST',
+      body: JSON.stringify({ battleId }),
+    }),
+
+  /**
+   * Obtiene el análisis de una batalla específica
+   */
+  getBattleAnalysis: (battleId: string) =>
+    apiCall(`/api/tutorias/battle-analysis/${battleId}`),
+
+  // ---- Battle Logs (from Plugin) ----
+  /**
+   * Obtiene los battle logs del plugin (batallas PvP completas)
+   */
+  getBattleLogs: (params?: { discordId?: string; minecraftUuid?: string; limit?: number }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.discordId) searchParams.set('discordId', params.discordId);
+    if (params?.minecraftUuid) searchParams.set('minecraftUuid', params.minecraftUuid);
+    if (params?.limit) searchParams.set('limit', String(params.limit));
+    return apiCall(`/api/tutorias/battle-log/list?${searchParams.toString()}`);
+  },
+
+  /**
+   * Obtiene un battle log específico
+   */
+  getBattleLog: (battleId: string) =>
+    apiCall(`/api/tutorias/battle-log/${battleId}`),
+
+  /**
+   * Solicita análisis AI de un battle log
+   */
+  analyzeBattleLog: (battleId: string, discordId?: string) =>
+    apiCall('/api/tutorias/battle-log/analyze', {
+      method: 'POST',
+      body: JSON.stringify({ battleId, discordId }),
+    }),
+
+  // ---- AI Tutor ----
+  /**
+   * Hace una pregunta al AI Tutor
+   */
+  askAITutor: (question: string, includeTeamData: boolean = true) =>
+    apiCall('/api/tutorias/ai-tutor/ask', {
+      method: 'POST',
+      body: JSON.stringify({ question, includeTeamData }),
+    }),
+
+  /**
+   * Obtiene el historial de consultas al AI Tutor
+   */
+  getAITutorHistory: () =>
+    apiCall('/api/tutorias/ai-tutor/history'),
+
+  // ---- Breed Advisor ----
+  /**
+   * Solicita consejos de breeding
+   */
+  askBreedAdvisor: (request: {
+    targetSpecies?: string;
+    targetIVs?: Record<string, number>;
+    targetNature?: string;
+    targetAbility?: string;
+    includeShinyAdvice: boolean;
+  }) =>
+    apiCall('/api/tutorias/breed-advisor/ask', {
+      method: 'POST',
+      body: JSON.stringify(request),
+    }),
+
+  // ---- PokéBox ----
+  /**
+   * Obtiene los Pokémon del PC con filtros
+   */
+  getPokeBox: (filters?: {
+    discordId?: string;
+    species?: string;
+    shiny?: boolean;
+    ivMin?: number;
+    ivMax?: number;
+    nature?: string;
+    ability?: string;
+    levelMin?: number;
+    levelMax?: number;
+  }) => {
+    const params = new URLSearchParams();
+    if (filters) {
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value !== undefined) {
+          params.set(key, String(value));
+        }
+      });
+    }
+    return apiCall(`/api/tutorias/pokebox?${params.toString()}`);
+  },
+
+  /**
+   * Obtiene los Pokémon duplicados
+   */
+  getDuplicates: (params?: { discordId?: string }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.discordId) {
+      searchParams.set('discordId', params.discordId);
+    }
+    return apiCall(`/api/tutorias/pokebox/duplicates?${searchParams.toString()}`);
+  },
+
+  /**
+   * Actualiza la protección de un Pokémon
+   */
+  updateProtection: (pokemonUuid: string, isProtected: boolean, discordId?: string) =>
+    apiCall('/api/tutorias/pokebox/protect', {
+      method: 'POST',
+      body: JSON.stringify({ pokemonUuid, protected: isProtected, discordId }),
+    }),
+
+  // ---- Stat Planner ----
+  /**
+   * Guarda un plan de EVs
+   */
+  saveEVPlan: (data: {
+    pokemonUuid: string;
+    pokemonSpecies: string;
+    evDistribution: Record<string, number>;
+  }) =>
+    apiCall('/api/tutorias/stat-planner/save', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  /**
+   * Obtiene el plan de EVs de un Pokémon
+   */
+  getEVPlan: (pokemonUuid: string) =>
+    apiCall(`/api/tutorias/stat-planner/${pokemonUuid}`),
+};
+
+// ============================================================================
+// POKEMON SYNC API
+// ============================================================================
+
+export const pokemonSyncAPI = {
+  /**
+   * Smart remove duplicates - analyzes and removes duplicate Pokemon keeping the best
+   * @param dryRun - If true, only returns what would be removed without actually removing
+   */
+  smartRemoveDuplicates: (data: { 
+    discordId?: string; 
+    playerUuid?: string; 
+    dryRun?: boolean 
+  }) =>
+    apiCall('/api/pokemon-sync/smart-remove-duplicates', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  /**
+   * Bulk remove multiple Pokemon at once
+   */
+  bulkRemove: (data: {
+    discordId?: string;
+    playerUuid?: string;
+    pokemonUuids: string[];
+    reason?: string;
+  }) =>
+    apiCall('/api/pokemon-sync/bulk-remove', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  /**
+   * Get queue status for pending operations
+   */
+  getQueueStatus: () =>
+    apiCall('/api/pokemon-sync/queue-status'),
+
+  /**
+   * Add a Pokemon to a player (admin only)
+   */
+  addPokemon: (data: {
+    adminDiscordId: string;
+    playerUuid: string;
+    pokemon: {
+      species: string;
+      level?: number;
+      shiny?: boolean;
+      nature?: string;
+      ability?: string;
+      ivs?: Record<string, number>;
+      evs?: Record<string, number>;
+      moves?: string[];
+      heldItem?: string;
+    };
+  }) =>
+    apiCall('/api/pokemon-sync/add', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+
+  /**
+   * Remove a Pokemon from a player (admin only)
+   */
+  removePokemon: (data: {
+    adminDiscordId: string;
+    playerUuid: string;
+    pokemonUuid: string;
+    reason?: string;
+  }) =>
+    apiCall('/api/pokemon-sync/remove', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+};
+
+// ============================================================================
+// GENERIC API CLIENT
+// ============================================================================
+
+/**
+ * Cliente API genérico para uso directo
+ */
+export const apiClient = {
+  get: <T = any>(endpoint: string) => apiCall<T>(endpoint),
+  post: <T = any>(endpoint: string, data?: any) => 
+    apiCall<T>(endpoint, {
+      method: 'POST',
+      body: data ? JSON.stringify(data) : undefined,
+    }),
+  put: <T = any>(endpoint: string, data?: any) =>
+    apiCall<T>(endpoint, {
+      method: 'PUT',
+      body: data ? JSON.stringify(data) : undefined,
+    }),
+  delete: <T = any>(endpoint: string) =>
+    apiCall<T>(endpoint, { method: 'DELETE' }),
+};
+
 // Exportar la función base para uso directo si es necesario
 export { apiCall };

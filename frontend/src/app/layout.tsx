@@ -1,15 +1,16 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import Navbar from '@/src/components/Navbar';
-import Providers from '@/src/components/Providers';
-import AnimatedBackground from '@/src/components/AnimatedBackground';
-import MusicPlayer from '@/src/components/MusicPlayer';
+import Navbar from '@/components/Navbar';
+import Providers from '@/components/Providers';
+import AnimatedBackground from '@/components/AnimatedBackground';
+import MusicPlayer from '@/components/MusicPlayer';
+import AnnouncementTicker from '@/components/AnnouncementTicker';
 
 export const metadata: Metadata = {
   title: 'Cobblemon Los Pitufos',
-  description: 'Servidor de Cobblemon - Obtén tu Pokémon inicial',
+  description: 'Cobblemon Server - Get your starter Pokémon',
   icons: {
-    icon: '/icon.png',
+    icon: '/server-icon.png',
   },
 };
 
@@ -19,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -30,6 +31,7 @@ export default function RootLayout({
         <Providers>
           <AnimatedBackground />
           <Navbar />
+          <AnnouncementTicker />
           <main className="min-h-screen relative z-10 pt-20">
             {children}
           </main>

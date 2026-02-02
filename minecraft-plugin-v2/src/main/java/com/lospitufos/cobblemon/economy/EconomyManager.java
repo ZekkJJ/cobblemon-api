@@ -383,13 +383,22 @@ public class EconomyManager {
     
     /**
      * Check playtime rewards for all online players
+     * THREAD SAFETY: Makes defensive copy of player list
      */
     private void checkPlaytimeRewards() {
         if (server == null) return;
         
         long now = System.currentTimeMillis();
         
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playersCopy;
+        try {
+            playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
+        for (ServerPlayerEntity player : playersCopy) {
             if (player == null || player.isDisconnected()) continue;
             
             UUID uuid = player.getUuid();
@@ -560,12 +569,21 @@ public class EconomyManager {
     /**
      * Poll for pending economy syncs from web (gacha purchases)
      * This runs every 5 seconds to check if any player made a web purchase
+     * THREAD SAFETY: Makes defensive copy of player list
      */
     private void pollPendingEconomySyncs() {
         if (server == null) return;
         
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playersCopy;
+        try {
+            playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
         // Check for each online player
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        for (ServerPlayerEntity player : playersCopy) {
             if (player == null || player.isDisconnected()) continue;
             
             UUID uuid = player.getUuid();
@@ -766,11 +784,20 @@ public class EconomyManager {
     /**
      * Track player activity to detect AFK
      * Called every minute to update activity timestamps
+     * THREAD SAFETY: Makes defensive copy of player list
      */
     private void trackPlayerActivity() {
         if (server == null) return;
         
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playersCopy;
+        try {
+            playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
+        for (ServerPlayerEntity player : playersCopy) {
             if (player == null || player.isDisconnected()) continue;
             
             // Check if player has moved or done something recently
@@ -796,13 +823,22 @@ public class EconomyManager {
     
     /**
      * Distribute accumulated synergy pool to online active players
+     * THREAD SAFETY: Makes defensive copy of player list
      */
     private void distributeSynergyPool() {
         if (server == null || synergyDistributionPool <= 0) return;
         
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playersCopy;
+        try {
+            playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
         // Get active (non-AFK) online players
         List<ServerPlayerEntity> activePlayers = new ArrayList<>();
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        for (ServerPlayerEntity player : playersCopy) {
             if (player != null && !player.isDisconnected() && !isPlayerAFK(player.getUuid())) {
                 activePlayers.add(player);
             }
@@ -836,13 +872,23 @@ public class EconomyManager {
      * AFK penalty: If player was AFK, they get reduced reward:
      * - 40% of penalty goes as XP to lowest level Pokémon (respecting level cap)
      * - 60% of penalty goes to distribution pool for active players
+     * 
+     * THREAD SAFETY: Makes defensive copy of player list
      */
     private void checkSynergyRewards() {
         if (server == null) return;
         
         long now = System.currentTimeMillis();
         
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playersCopy;
+        try {
+            playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
+        for (ServerPlayerEntity player : playersCopy) {
             if (player == null || player.isDisconnected()) continue;
             
             UUID uuid = player.getUuid();

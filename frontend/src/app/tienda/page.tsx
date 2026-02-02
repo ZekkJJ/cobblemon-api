@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { shopAPI, verificationAPI } from '@/src/lib/api-client';
-import { LocalUser } from '@/src/lib/types/user';
-import { ShopItem } from '@/src/lib/types/shop';
-import { playSound } from '@/src/lib/sounds';
+import { shopAPI, verificationAPI } from '@/lib/api-client';
+import { LocalUser } from '@/lib/types/user';
+import { ShopItem } from '@/lib/types/shop';
+import { playSound } from '@/lib/sounds';
 
 type CategoryType = 'all' | 'pokeball' | 'food' | 'candy';
 
@@ -55,7 +55,7 @@ export default function TiendaPage() {
       setBalance(balanceData.balance || 0);
 
       const minecraftUuid = balanceData.minecraftUuid || verificationStatus.minecraftUuid;
-      
+
       if (minecraftUuid) {
         const updatedUser = { ...user, minecraftUuid };
         localStorage.setItem('user', JSON.stringify(updatedUser));
@@ -82,15 +82,15 @@ export default function TiendaPage() {
   const handlePurchase = async (item: ShopItem) => {
     if (!localUser) {
       playSound('error');
-      setError('Debes iniciar sesión para comprar');
+      setError('You must sign in to purchase');
       return;
     }
 
     const userMinecraftUuid = localUser.minecraftUuid;
-    
+
     if (!userMinecraftUuid) {
       playSound('error');
-      setError('Debes verificar tu cuenta de Minecraft para comprar.');
+      setError('You must verify your Minecraft account to purchase.');
       return;
     }
 
@@ -99,13 +99,13 @@ export default function TiendaPage() {
 
     if (totalCost > balance) {
       playSound('error');
-      setError('No tienes suficiente balance');
+      setError('Insufficient balance');
       return;
     }
 
     if (quantity > item.currentStock) {
       playSound('error');
-      setError('No hay suficiente stock');
+      setError('Insufficient stock');
       return;
     }
 
@@ -120,7 +120,7 @@ export default function TiendaPage() {
       });
 
       playSound('success');
-      alert(`✅ ${result.message || '¡Compra exitosa!'}\n\nRecibirás automáticamente ${quantity}x ${item.name} en el juego.`);
+      alert(`✅ ${result.message || 'Purchase successful!'}\n\nYou will automatically receive ${quantity}x ${item.name} in-game.`);
 
       setBalance(result.newBalance);
       setItems(items.map(i =>
@@ -130,7 +130,7 @@ export default function TiendaPage() {
       setError(null);
     } catch (error: any) {
       playSound('error');
-      setError(error.message || 'Error al realizar la compra');
+      setError(error.message || 'Error making purchase');
     } finally {
       setPurchasing(null);
     }
@@ -146,11 +146,11 @@ export default function TiendaPage() {
   };
 
   const getStockLabel = (item: ShopItem): string => {
-    if (item.currentStock === 0) return 'Agotado';
-    if (item.currentStock < 10) return 'Crítico';
-    if (item.currentStock < 25) return 'Bajo';
-    if (item.currentStock < 50) return 'Medio';
-    return 'Alto';
+    if (item.currentStock === 0) return 'Out of stock';
+    if (item.currentStock < 10) return 'Critical';
+    if (item.currentStock < 25) return 'Low';
+    if (item.currentStock < 50) return 'Medium';
+    return 'High';
   };
 
   const getRarityColor = (rarity?: string): string => {
@@ -192,9 +192,9 @@ export default function TiendaPage() {
   ))];
 
   const categories: { id: CategoryType; label: string; icon: string }[] = [
-    { id: 'all', label: 'Todo', icon: 'fa-store' },
+    { id: 'all', label: 'All', icon: 'fa-store' },
     { id: 'pokeball', label: 'Pokéballs', icon: 'fa-circle' },
-    { id: 'food', label: 'Comida', icon: 'fa-drumstick-bite' },
+    { id: 'food', label: 'Food', icon: 'fa-drumstick-bite' },
     { id: 'candy', label: 'Candies', icon: 'fa-candy-cane' },
   ];
 
@@ -203,7 +203,7 @@ export default function TiendaPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-poke-blue border-t-transparent"></div>
-          <p className="mt-4 text-xl">Cargando tienda...</p>
+          <p className="mt-4 text-xl">Loading shop...</p>
         </div>
       </div>
     );
@@ -214,9 +214,9 @@ export default function TiendaPage() {
       <div className="min-h-screen flex items-center justify-center py-8">
         <div className="card max-w-md text-center">
           <i className="fas fa-user-lock text-6xl text-poke-blue mb-4"></i>
-          <h2 className="text-2xl font-bold mb-4">Inicia Sesión</h2>
-          <p className="text-slate-300 mb-6">Necesitas iniciar sesión para acceder a la tienda</p>
-          <a href="/" className="btn-primary"><i className="fas fa-home mr-2"></i>Ir al Inicio</a>
+          <h2 className="text-2xl font-bold mb-4">Sign In</h2>
+          <p className="text-slate-300 mb-6">You need to sign in to access the shop</p>
+          <a href="/" className="btn-primary"><i className="fas fa-home mr-2"></i>Go Home</a>
         </div>
       </div>
     );
@@ -229,13 +229,13 @@ export default function TiendaPage() {
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-4 pixel-font text-poke-blue">TIENDA</h1>
-          <p className="text-xl text-slate-300">Compra items con tus CobbleDollars</p>
+          <h1 className="text-5xl font-bold mb-4 pixel-font text-poke-blue">SHOP</h1>
+          <p className="text-xl text-slate-300">Buy items with your CobbleDollars</p>
         </div>
 
         {/* Balance */}
         <div className="max-w-md mx-auto mb-8 card text-center">
-          <div className="text-sm text-slate-400 mb-2">Tu Balance</div>
+          <div className="text-sm text-slate-400 mb-2">Your Balance</div>
           <div className="text-4xl font-bold text-poke-yellow">
             <i className="fas fa-coins mr-2"></i>{balance.toLocaleString()}
           </div>
@@ -246,9 +246,9 @@ export default function TiendaPage() {
         {!isVerified && (
           <div className="max-w-md mx-auto mb-8 p-4 bg-poke-yellow/20 border border-poke-yellow rounded-lg text-center">
             <i className="fas fa-exclamation-triangle text-poke-yellow mr-2"></i>
-            <span className="text-poke-yellow font-medium">Necesitas verificar tu cuenta de Minecraft para comprar.</span>
+            <span className="text-poke-yellow font-medium">You need to verify your Minecraft account to purchase.</span>
             <a href="/verificar" className="block mt-2 text-sm text-poke-blue hover:underline">
-              <i className="fas fa-shield-alt mr-1"></i>Verificar ahora
+              <i className="fas fa-shield-alt mr-1"></i>Verify now
             </a>
           </div>
         )}
@@ -257,7 +257,7 @@ export default function TiendaPage() {
         {nextRefresh && (
           <div className="max-w-md mx-auto mb-8 text-center text-sm text-slate-400">
             <i className="fas fa-clock mr-2"></i>
-            Próxima actualización de stock: {nextRefresh.toLocaleTimeString('es-ES')}
+            Next stock update: {nextRefresh.toLocaleTimeString('en-US')}
           </div>
         )}
 
@@ -267,11 +267,10 @@ export default function TiendaPage() {
             <button
               key={cat.id}
               onClick={() => { setFilterCategory(cat.id); setFilterType('all'); }}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${
-                filterCategory === cat.id
+              className={`px-4 py-2 rounded-lg font-medium transition-all ${filterCategory === cat.id
                   ? 'bg-poke-blue text-white'
                   : 'bg-slate-800/50 text-slate-400 hover:bg-slate-700/50'
-              }`}
+                }`}
             >
               <i className={`fas ${cat.icon} mr-2`}></i>{cat.label}
             </button>
@@ -284,7 +283,7 @@ export default function TiendaPage() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar item..."
+            placeholder="Search item..."
             className="input-field flex-1"
           />
           <select
@@ -294,7 +293,7 @@ export default function TiendaPage() {
           >
             {availableTypes.map(type => (
               <option key={type} value={type}>
-                {type === 'all' ? 'Todos los tipos' : type}
+                {type === 'all' ? 'All types' : type}
               </option>
             ))}
           </select>
@@ -341,7 +340,7 @@ export default function TiendaPage() {
                       {/* Open Ball (on hover) - shows on hover */}
                       <img
                         src={item.spriteOpen}
-                        alt={`${item.name} abierta`}
+                        alt={`${item.name} open`}
                         className="w-20 h-20 object-contain absolute transition-all duration-300 opacity-0 scale-90 group-hover:opacity-100 group-hover:scale-100"
                         loading="lazy"
                       />
@@ -364,7 +363,7 @@ export default function TiendaPage() {
                 {/* Stats */}
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
-                    <span>Precio:</span>
+                    <span>Price:</span>
                     <span className="font-bold text-poke-yellow">
                       <i className="fas fa-coins mr-1"></i>{item.currentPrice.toLocaleString()}
                     </span>
@@ -377,7 +376,7 @@ export default function TiendaPage() {
                   </div>
                   {item.catchRate && (
                     <div className="flex justify-between text-sm">
-                      <span>Tasa de captura:</span>
+                      <span>Catch rate:</span>
                       <span className="font-bold">{item.catchRate}x</span>
                     </div>
                   )}
@@ -386,12 +385,11 @@ export default function TiendaPage() {
                 {/* Stock Bar */}
                 <div className="w-full bg-slate-700 rounded-full h-2 mb-4">
                   <div
-                    className={`h-2 rounded-full transition-all ${
-                      item.currentStock === 0 ? 'bg-slate-500' :
-                      item.currentStock < 10 ? 'bg-poke-red' :
-                      item.currentStock < 25 ? 'bg-orange-500' :
-                      item.currentStock < 50 ? 'bg-poke-yellow' : 'bg-poke-green'
-                    }`}
+                    className={`h-2 rounded-full transition-all ${item.currentStock === 0 ? 'bg-slate-500' :
+                        item.currentStock < 10 ? 'bg-poke-red' :
+                          item.currentStock < 25 ? 'bg-orange-500' :
+                            item.currentStock < 50 ? 'bg-poke-yellow' : 'bg-poke-green'
+                      }`}
                     style={{ width: `${(item.currentStock / item.maxStock) * 100}%` }}
                   ></div>
                 </div>
@@ -444,13 +442,13 @@ export default function TiendaPage() {
                   className="btn-primary w-full"
                 >
                   {purchasing === item.id ? (
-                    <><i className="fas fa-spinner fa-spin mr-2"></i>Comprando...</>
+                    <><i className="fas fa-spinner fa-spin mr-2"></i>Purchasing...</>
                   ) : !hasStock ? (
-                    <><i className="fas fa-times mr-2"></i>Sin Stock</>
+                    <><i className="fas fa-times mr-2"></i>Out of Stock</>
                   ) : !canAfford ? (
-                    <><i className="fas fa-exclamation-triangle mr-2"></i>Saldo Insuficiente</>
+                    <><i className="fas fa-exclamation-triangle mr-2"></i>Insufficient Balance</>
                   ) : (
-                    <><i className="fas fa-shopping-cart mr-2"></i>Comprar</>
+                    <><i className="fas fa-shopping-cart mr-2"></i>Buy</>
                   )}
                 </button>
               </div>
@@ -461,7 +459,7 @@ export default function TiendaPage() {
         {filteredItems.length === 0 && (
           <div className="text-center py-12">
             <i className="fas fa-search text-6xl text-slate-600 mb-4"></i>
-            <p className="text-xl text-slate-400">No se encontraron items</p>
+            <p className="text-xl text-slate-400">No items found</p>
           </div>
         )}
       </div>

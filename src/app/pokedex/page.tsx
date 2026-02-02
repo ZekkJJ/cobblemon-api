@@ -194,7 +194,7 @@ export default function PokedexPage() {
                         <i className="fas fa-book text-red-500 mr-2 sm:mr-3"></i>
                         POKÉDEX
                     </h1>
-                    <p className="text-gray-400 text-xs sm:text-base">Información de Pokémon iniciales</p>
+                    <p className="text-gray-400 text-xs sm:text-base">Starter Pokémon information</p>
                 </div>
 
                 {/* Stats */}
@@ -205,11 +205,11 @@ export default function PokedexPage() {
                     </div>
                     <div className="text-center">
                         <div className="text-xl sm:text-2xl font-bold text-green-400">{stats?.available ?? 27}</div>
-                        <div className="text-[10px] sm:text-xs text-gray-400">Disponibles</div>
+                        <div className="text-[10px] sm:text-xs text-gray-400">Available</div>
                     </div>
                     <div className="text-center">
                         <div className="text-xl sm:text-2xl font-bold text-red-400">{stats?.claimed ?? 0}</div>
-                        <div className="text-[10px] sm:text-xs text-gray-400">Reclamados</div>
+                        <div className="text-[10px] sm:text-xs text-gray-400">Claimed</div>
                     </div>
                 </div>
 
@@ -225,7 +225,7 @@ export default function PokedexPage() {
                                     className={`px-2 sm:px-3 py-1 rounded text-xs sm:text-sm font-medium transition-all ${!filterGen ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                                         }`}
                                 >
-                                    Todas
+                                    All
                                 </button>
                                 {generations.map((g) => (
                                     <button
@@ -243,7 +243,7 @@ export default function PokedexPage() {
                         {/* Type and available filter */}
                         <div className="flex flex-wrap items-center justify-between gap-2">
                             <div className="flex items-center gap-2">
-                                <span className="text-gray-400 text-xs sm:text-sm">Tipo:</span>
+                                <span className="text-gray-400 text-xs sm:text-sm">Type:</span>
                                 <div className="flex gap-1">
                                     {['Grass', 'Fire', 'Water'].map((t) => (
                                         <button
@@ -266,7 +266,7 @@ export default function PokedexPage() {
                                     onChange={(e) => { playSound('click'); setShowOnlyAvailable(e.target.checked); }}
                                     className="w-4 h-4 rounded bg-gray-700 border-gray-600 text-green-500"
                                 />
-                                <span className="text-xs sm:text-sm text-gray-300">Solo disponibles</span>
+                                <span className="text-xs sm:text-sm text-gray-300">Only available</span>
                             </label>
                         </div>
                     </div>
@@ -276,7 +276,7 @@ export default function PokedexPage() {
                 {loading && (
                     <div className="text-center py-12 sm:py-20">
                         <i className="fas fa-spinner fa-spin text-3xl sm:text-4xl text-white mb-4"></i>
-                        <p className="text-gray-400 text-sm">Cargando Pokédex...</p>
+                        <p className="text-gray-400 text-sm">Loading Pokédex...</p>
                     </div>
                 )}
 
@@ -295,7 +295,7 @@ export default function PokedexPage() {
                                 {s.isClaimed && (
                                     <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40 rounded-xl pointer-events-none gap-1">
                                         <span className="bg-red-600 text-white text-[8px] sm:text-[10px] px-1 sm:px-2 py-0.5 sm:py-1 rounded font-bold">
-                                            RECLAMADO
+                                            CLAIMED
                                         </span>
                                         {s.claimedBy && (
                                             <span className="bg-gray-800/90 text-white text-[7px] sm:text-[9px] px-1 sm:px-1.5 py-0.5 rounded font-medium">
@@ -313,7 +313,7 @@ export default function PokedexPage() {
                 {!loading && filteredStarters.length === 0 && (
                     <div className="text-center py-12 sm:py-20">
                         <i className="fas fa-search text-3xl sm:text-4xl text-gray-600 mb-4"></i>
-                        <p className="text-gray-400 text-sm">No se encontraron Pokémon</p>
+                        <p className="text-gray-400 text-sm">No Pokémon found</p>
                     </div>
                 )}
 
@@ -368,7 +368,7 @@ export default function PokedexPage() {
                                                     }}
                                                 />
                                             </div>
-                                            <p className="text-[9px] text-gray-500 text-center mt-1.5">Click para grito</p>
+                                            <p className="text-[9px] text-gray-500 text-center mt-1.5">Click for cry</p>
                                         </div>
 
                                         {/* Info Section */}
@@ -420,7 +420,7 @@ export default function PokedexPage() {
                                             {/* Level Slider - Compact */}
                                             <div className="bg-black/20 rounded-lg p-2 border border-gray-700/50">
                                                 <div className="flex items-center justify-between gap-3">
-                                                    <span className="text-gray-400 text-xs font-medium whitespace-nowrap">Nivel</span>
+                                                    <span className="text-gray-400 text-xs font-medium whitespace-nowrap">Level</span>
                                                     <input
                                                         type="range"
                                                         min="1"
@@ -443,7 +443,7 @@ export default function PokedexPage() {
                                         <div className="mt-4 bg-black/30 backdrop-blur-sm rounded-xl p-3 border border-purple-500/20">
                                             <div className="flex items-center gap-2 mb-2">
                                                 <i className="fas fa-dna text-purple-400 text-xs"></i>
-                                                <span className="text-gray-300 text-xs font-bold uppercase">Evoluciones</span>
+                                                <span className="text-gray-300 text-xs font-bold uppercase">Evolutions</span>
                                             </div>
                                             <div className="flex items-center justify-start gap-2 overflow-x-auto pb-1">
                                                 <div className={`flex flex-col items-center transition-all flex-shrink-0 p-2 rounded-lg ${nivel < 16 ? 'bg-purple-500/20 scale-105' : 'opacity-60'}`}>
@@ -500,7 +500,7 @@ export default function PokedexPage() {
                                         <div className="flex items-center justify-between mb-3">
                                             <h4 className="text-sm font-bold text-white flex items-center gap-2">
                                                 <i className="fas fa-chart-bar text-blue-400"></i>
-                                                Estadísticas
+                                                Stats
                                             </h4>
                                             <span className="text-xl font-bold text-blue-400">
                                                 {pokemon.stats ? Object.values(pokemon.stats).reduce((a: number, b: any) => a + (b as number), 0) : 0}
@@ -508,12 +508,12 @@ export default function PokedexPage() {
                                         </div>
                                         <div className="space-y-2">
                                             {[
-                                                { nombre: 'PS', key: 'hp', color: '#22c55e', icono: 'heart' },
-                                                { nombre: 'Ataque', key: 'atk', color: '#ef4444', icono: 'fist-raised' },
-                                                { nombre: 'Defensa', key: 'def', color: '#f59e0b', icono: 'shield-alt' },
-                                                { nombre: 'At.Esp', key: 'spa', color: '#8b5cf6', icono: 'magic' },
-                                                { nombre: 'Def.Esp', key: 'spd', color: '#06b6d4', icono: 'shield' },
-                                                { nombre: 'Velocidad', key: 'spe', color: '#ec4899', icono: 'bolt' },
+                                                { nombre: 'HP', key: 'hp', color: '#22c55e', icono: 'heart' },
+                                                { nombre: 'Attack', key: 'atk', color: '#ef4444', icono: 'fist-raised' },
+                                                { nombre: 'Defense', key: 'def', color: '#f59e0b', icono: 'shield-alt' },
+                                                { nombre: 'Sp.Atk', key: 'spa', color: '#8b5cf6', icono: 'magic' },
+                                                { nombre: 'Sp.Def', key: 'spd', color: '#06b6d4', icono: 'shield' },
+                                                { nombre: 'Speed', key: 'spe', color: '#ec4899', icono: 'bolt' },
                                             ].map((s) => (
                                                 <div key={s.key} className="flex items-center gap-2">
                                                     <div className="w-20 flex items-center gap-1.5">
@@ -542,12 +542,12 @@ export default function PokedexPage() {
                                     <div className="bg-gradient-to-br from-yellow-900/20 to-orange-900/20 rounded-xl p-4 border border-yellow-600/30 backdrop-blur-sm">
                                         <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
                                             <i className="fas fa-crosshairs text-yellow-400"></i>
-                                            Efectividad
+                                            Effectiveness
                                         </h4>
                                         <div className="space-y-3">
                                             <div>
                                                 <div className="text-xs text-red-400 font-bold mb-1.5 flex items-center gap-1.5">
-                                                    <i className="fas fa-arrow-down text-[10px]"></i> Débil ×2
+                                                    <i className="fas fa-arrow-down text-[10px]"></i> Weak ×2
                                                 </div>
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {matchups?.debilA.length ? matchups.debilA.map((t) => (
@@ -559,7 +559,7 @@ export default function PokedexPage() {
                                             </div>
                                             <div>
                                                 <div className="text-xs text-green-400 font-bold mb-1.5 flex items-center gap-1.5">
-                                                    <i className="fas fa-shield text-[10px]"></i> Resiste ×0.5
+                                                    <i className="fas fa-shield text-[10px]"></i> Resists ×0.5
                                                 </div>
                                                 <div className="flex flex-wrap gap-1.5">
                                                     {matchups?.resisteA.length ? matchups.resisteA.map((t) => (
@@ -572,7 +572,7 @@ export default function PokedexPage() {
                                             {matchups?.inmuneA && matchups.inmuneA.length > 0 && (
                                                 <div>
                                                     <div className="text-xs text-purple-400 font-bold mb-1.5 flex items-center gap-1.5">
-                                                        <i className="fas fa-ban text-[10px]"></i> Inmune ×0
+                                                        <i className="fas fa-ban text-[10px]"></i> Immune ×0
                                                     </div>
                                                     <div className="flex flex-wrap gap-1.5">
                                                         {matchups.inmuneA.map((t) => (
@@ -593,7 +593,7 @@ export default function PokedexPage() {
                                     <div className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 rounded-xl p-4 border border-purple-600/30 backdrop-blur-sm">
                                         <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
                                             <i className="fas fa-star text-purple-400"></i>
-                                            Habilidades
+                                            Abilities
                                         </h4>
                                         <div className="space-y-2">
                                             {(pokemon.abilities || []).map((ab, i) => (
@@ -602,7 +602,7 @@ export default function PokedexPage() {
                                                         <span className={`font-bold text-xs ${ab.isHidden ? 'text-purple-300' : 'text-white'}`}>
                                                             {ab.nameEs || ab.name}
                                                         </span>
-                                                        {ab.isHidden && <span className="text-[8px] text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded font-bold">OCULTA</span>}
+                                                        {ab.isHidden && <span className="text-[8px] text-purple-300 bg-purple-900/50 px-1.5 py-0.5 rounded font-bold">HIDDEN</span>}
                                                     </div>
                                                     <p className="text-gray-400 text-[10px] leading-relaxed">{ab.description}</p>
                                                 </div>
@@ -614,7 +614,7 @@ export default function PokedexPage() {
                                     <div className="lg:col-span-2 bg-gradient-to-br from-cyan-900/20 to-blue-900/20 rounded-xl p-4 border border-cyan-600/30 backdrop-blur-sm">
                                         <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
                                             <i className="fas fa-bolt text-cyan-400"></i>
-                                            Movimientos
+                                            Moves
                                         </h4>
                                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2">
                                             {(pokemon.signatureMoves || []).map((mv, i) => (
@@ -640,14 +640,14 @@ export default function PokedexPage() {
                                     <div className="bg-gradient-to-br from-emerald-900/20 to-green-900/20 rounded-xl p-4 border border-emerald-600/40 backdrop-blur-sm">
                                         <h4 className="text-sm font-bold text-white mb-3 flex items-center gap-2">
                                             <i className="fas fa-map-marked-alt text-emerald-400"></i>
-                                            Aparición en Cobblemon
+                                            Cobblemon Spawning
                                         </h4>
                                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
                                             {/* Rarity */}
                                             <div className="bg-black/30 rounded-lg p-2 border border-emerald-700/30">
                                                 <div className="flex items-center gap-1 mb-1">
                                                     <i className="fas fa-gem text-purple-400 text-[10px]"></i>
-                                                    <span className="text-gray-400 text-[10px] font-medium uppercase">Rareza</span>
+                                                    <span className="text-gray-400 text-[10px] font-medium uppercase">Rarity</span>
                                                 </div>
                                                 <span className="text-white text-xs font-bold">{spawnInfo.rarity}</span>
                                             </div>
@@ -656,7 +656,7 @@ export default function PokedexPage() {
                                             <div className="bg-black/30 rounded-lg p-2 border border-emerald-700/30">
                                                 <div className="flex items-center gap-1 mb-1">
                                                     <i className="fas fa-signal text-yellow-400 text-[10px]"></i>
-                                                    <span className="text-gray-400 text-[10px] font-medium uppercase">Niveles</span>
+                                                    <span className="text-gray-400 text-[10px] font-medium uppercase">Levels</span>
                                                 </div>
                                                 <span className="text-white text-xs font-bold">{spawnInfo.levels}</span>
                                             </div>
@@ -665,7 +665,7 @@ export default function PokedexPage() {
                                             <div className="bg-black/30 rounded-lg p-2 border border-emerald-700/30 col-span-2">
                                                 <div className="flex items-center gap-1 mb-1">
                                                     <i className="fas fa-cloud-sun text-cyan-400 text-[10px]"></i>
-                                                    <span className="text-gray-400 text-[10px] font-medium uppercase">Hora/Clima</span>
+                                                    <span className="text-gray-400 text-[10px] font-medium uppercase">Time/Weather</span>
                                                 </div>
                                                 <span className="text-white text-xs">{spawnInfo.timeWeather}</span>
                                             </div>
@@ -675,7 +675,7 @@ export default function PokedexPage() {
                                         <div className="mb-3">
                                             <div className="flex items-center gap-1 mb-1.5">
                                                 <i className="fas fa-location-arrow text-blue-400 text-[10px]"></i>
-                                                <span className="text-gray-400 text-[10px] font-medium uppercase">Tipos de Aparición</span>
+                                                <span className="text-gray-400 text-[10px] font-medium uppercase">Spawn Types</span>
                                             </div>
                                             <div className="flex flex-wrap gap-1">
                                                 {spawnInfo.spawnType.map((type, i) => (
@@ -690,7 +690,7 @@ export default function PokedexPage() {
                                         <div className="mb-3">
                                             <div className="flex items-center gap-1 mb-1.5">
                                                 <i className="fas fa-tree text-green-400 text-[10px]"></i>
-                                                <span className="text-gray-400 text-[10px] font-medium uppercase">Biomas</span>
+                                                <span className="text-gray-400 text-[10px] font-medium uppercase">Biomes</span>
                                             </div>
                                             <div className="flex flex-wrap gap-1">
                                                 {spawnInfo.biomes.map((biome, i) => (
@@ -706,21 +706,21 @@ export default function PokedexPage() {
                                             <div className="bg-black/20 rounded-lg p-2 border border-emerald-700/20">
                                                 <div className="flex items-center gap-1 mb-1.5">
                                                     <i className="fas fa-info-circle text-orange-400 text-[10px]"></i>
-                                                    <span className="text-gray-400 text-[10px] font-medium uppercase">Condiciones</span>
+                                                    <span className="text-gray-400 text-[10px] font-medium uppercase">Conditions</span>
                                                 </div>
                                                 <div className="space-y-1">
                                                     {spawnInfo.skylight && (
                                                         <div className="flex items-center gap-1.5 text-[10px]">
-                                                            <span className="text-gray-500">Luz:</span>
+                                                            <span className="text-gray-500">Light:</span>
                                                             <span className="text-white font-medium">{spawnInfo.skylight}</span>
                                                         </div>
                                                     )}
                                                     {spawnInfo.canSeeSky !== undefined && (
                                                         <div className="flex items-center gap-1.5 text-[10px]">
-                                                            <span className="text-gray-500">Cielo visible:</span>
+                                                            <span className="text-gray-500">Sky visible:</span>
                                                             <span className="text-white font-medium">
                                                                 {typeof spawnInfo.canSeeSky === 'boolean'
-                                                                    ? (spawnInfo.canSeeSky ? 'Sí' : 'No')
+                                                                    ? (spawnInfo.canSeeSky ? 'Yes' : 'No')
                                                                     : spawnInfo.canSeeSky}
                                                             </span>
                                                         </div>

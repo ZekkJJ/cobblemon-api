@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { startersAPI } from '@/src/lib/api-client';
-import { Starter } from '@/src/lib/types/pokemon';
-import { playSound } from '@/src/lib/sounds';
+import { startersAPI } from '@/lib/api-client';
+import { Starter } from '@/lib/types/pokemon';
+import { playSound } from '@/lib/sounds';
 
 const TYPE_COLORS: Record<string, string> = {
   normal: '#A8A878', fire: '#F08030', water: '#6890F0', electric: '#F8D030',

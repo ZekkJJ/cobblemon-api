@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { playSound } from '@/src/lib/sounds';
+import { playSound } from '@/lib/sounds';
 
 interface ServerStatusData {
   online: boolean;

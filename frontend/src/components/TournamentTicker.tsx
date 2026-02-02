@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { tournamentsAPI } from '@/src/lib/api-client';
+import { tournamentsAPI } from '@/lib/api-client';
 
 interface Tournament {
   _id: string;

@@ -29,7 +29,7 @@ export default function PublicTournamentsPage() {
     return (
         <div className="min-h-screen pt-20 px-8 pb-12 overflow-y-auto">
             <h1 className="text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-600">
-                Torneos y Eventos
+                Tournaments & Events
             </h1>
 
             {/* Active */}
@@ -40,7 +40,7 @@ export default function PublicTournamentsPage() {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
                         </span>
-                        En Curso
+                        Ongoing
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {active.map(t => <TournamentCard key={t._id} tournament={t} />)}
@@ -51,7 +51,7 @@ export default function PublicTournamentsPage() {
             {/* Upcoming */}
             {upcoming.length > 0 && (
                 <section className="mb-16">
-                    <h2 className="text-2xl font-bold mb-6 text-blue-400">Próximamente</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-blue-400">Coming Soon</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {upcoming.map(t => <TournamentCard key={t._id} tournament={t} />)}
                     </div>
@@ -60,7 +60,7 @@ export default function PublicTournamentsPage() {
 
             {/* Completed */}
             <section>
-                <h2 className="text-2xl font-bold mb-6 text-slate-500">Historial</h2>
+                <h2 className="text-2xl font-bold mb-6 text-slate-500">History</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-80">
                     {completed.map(t => <TournamentCard key={t._id} tournament={t} />)}
                 </div>
@@ -68,7 +68,7 @@ export default function PublicTournamentsPage() {
 
             {!loading && tournaments.length === 0 && (
                 <div className="text-center py-20 bg-slate-900/50 rounded-2xl border border-slate-800">
-                    <p className="text-slate-400">No hay torneos programados por el momento.</p>
+                    <p className="text-slate-400">No tournaments scheduled at the moment.</p>
                 </div>
             )}
         </div>
@@ -102,12 +102,12 @@ function TournamentCard({ tournament }: { tournament: any }) {
 
             <div className="space-y-2 border-t border-white/5 pt-4">
                 <div className="flex justify-between text-sm">
-                    <span className="text-slate-500">Participantes</span>
+                    <span className="text-slate-500">Participants</span>
                     <span className="text-slate-300">{tournament.participants?.length || 0} / {tournament.maxParticipants}</span>
                 </div>
                 {tournament.prizes && (
                     <div className="flex justify-between text-sm">
-                        <span className="text-slate-500">Premios</span>
+                        <span className="text-slate-500">Prizes</span>
                         <span className="text-yellow-400 truncate max-w-[60%]">{tournament.prizes}</span>
                     </div>
                 )}

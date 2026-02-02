@@ -19,6 +19,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -135,7 +137,14 @@ public class WebSyncManager {
         if (server == null)
             return;
 
-        var playerList = server.getPlayerManager().getPlayerList();
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playerList;
+        try {
+            playerList = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
         if (playerList.isEmpty())
             return;
 
@@ -384,11 +393,20 @@ public class WebSyncManager {
     /**
      * Handle /ranking sync command - syncs ALL online players immediately
      * Only for OPs to force update the ranking data
+     * THREAD SAFETY: Makes defensive copy of player list
      */
     public void handleRankingSyncCommand(net.minecraft.server.command.ServerCommandSource source) {
         if (server == null) return;
 
-        var playerList = server.getPlayerManager().getPlayerList();
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playerList;
+        try {
+            playerList = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            source.sendFeedback(() -> net.minecraft.text.Text.literal("§c✗ Error al obtener lista de jugadores."), false);
+            return;
+        }
+        
         int playerCount = playerList.size();
 
         if (playerCount == 0) {

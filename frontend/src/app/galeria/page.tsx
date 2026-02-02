@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { startersAPI } from '@/src/lib/api-client';
-import { Starter } from '@/src/lib/types/pokemon';
-import StarterCard from '@/src/components/StarterCard';
-import { playSound } from '@/src/lib/sounds';
+import { startersAPI } from '@/lib/api-client';
+import { Starter } from '@/lib/types/pokemon';
+import StarterCard from '@/components/StarterCard';
+import { playSound } from '@/lib/sounds';
 
 export default function GaleriaPage() {
   const [starters, setStarters] = useState<Starter[]>([]);
@@ -29,7 +29,7 @@ export default function GaleriaPage() {
       setError(null);
     } catch (err: any) {
       console.error('[GALERIA] Error loading starters:', err);
-      setError(err.message || 'Error al cargar la galería');
+      setError(err.message || 'Error loading gallery');
       setStarters([]); // Ensure starters is always an array
     } finally {
       setLoading(false);
@@ -46,7 +46,7 @@ export default function GaleriaPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-poke-red border-t-transparent mb-4"></div>
-          <p className="text-xl">Cargando galería...</p>
+          <p className="text-xl">Loading gallery...</p>
         </div>
       </div>
     );
@@ -61,7 +61,7 @@ export default function GaleriaPage() {
           <p className="text-slate-300 mb-6">{error}</p>
           <button onClick={fetchStarters} className="btn-primary">
             <i className="fas fa-redo mr-2"></i>
-            Reintentar
+            Retry
           </button>
         </div>
       </div>
@@ -75,10 +75,10 @@ export default function GaleriaPage() {
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-4 pixel-font text-poke-red">
             <i className="fas fa-images mr-3"></i>
-            GALERÍA DE STARTERS
+            STARTER GALLERY
           </h1>
           <p className="text-xl text-slate-300">
-            Starters únicos reclamados por los jugadores
+            Unique starters claimed by players
           </p>
         </div>
 
@@ -90,13 +90,13 @@ export default function GaleriaPage() {
                 <div className="text-4xl font-bold text-poke-green mb-2">
                   {claimedCount}
                 </div>
-                <div className="text-slate-400">Reclamados</div>
+                <div className="text-slate-400">Claimed</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-poke-blue mb-2">
                   {availableCount}
                 </div>
-                <div className="text-slate-400">Disponibles</div>
+                <div className="text-slate-400">Available</div>
               </div>
               <div className="text-center">
                 <div className="text-4xl font-bold text-poke-yellow mb-2">
@@ -109,7 +109,7 @@ export default function GaleriaPage() {
             {/* Progress Bar */}
             <div>
               <div className="flex justify-between text-sm mb-2">
-                <span className="text-slate-400">Progreso</span>
+                <span className="text-slate-400">Progress</span>
                 <span className="font-bold">{progressPercent.toFixed(1)}%</span>
               </div>
               <div className="w-full bg-slate-700 rounded-full h-4 overflow-hidden">
@@ -127,7 +127,7 @@ export default function GaleriaPage() {
           <div className="card text-center py-12">
             <i className="fas fa-inbox text-6xl text-slate-600 mb-4"></i>
             <p className="text-slate-400 text-xl">
-              Aún no hay starters reclamados
+              No starters claimed yet
             </p>
           </div>
         ) : (
@@ -230,7 +230,7 @@ export default function GaleriaPage() {
                 {/* Owner Badge */}
                 {selectedStarter.claimedBy && (
                   <div className="absolute top-4 left-4 z-10 bg-poke-purple/90 backdrop-blur-sm px-4 py-2 rounded-lg">
-                    <div className="text-xs text-slate-300 mb-1">Dueño</div>
+                    <div className="text-xs text-slate-300 mb-1">Owner</div>
                     <div className="font-bold">{selectedStarter.claimedBy}</div>
                   </div>
                 )}

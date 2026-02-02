@@ -21,11 +21,11 @@ function PokemonModal({ pokemon, onClose }: { pokemon: CobblemonPokemon; onClose
 
     const statLabels: Record<keyof PokemonStats, string> = {
         hp: 'HP',
-        atk: 'Ataque',
-        def: 'Defensa',
-        spa: 'At. Esp.',
-        spd: 'Def. Esp.',
-        spe: 'Velocidad',
+        atk: 'Attack',
+        def: 'Defense',
+        spa: 'Sp. Atk',
+        spd: 'Sp. Def',
+        spe: 'Speed',
     };
 
     const natureInfo = NATURE_MODIFIERS[pokemon.nature] || {};
@@ -89,11 +89,11 @@ function PokemonModal({ pokemon, onClose }: { pokemon: CobblemonPokemon; onClose
                     {/* Quick Info */}
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <div className="bg-gray-800/50 rounded-xl p-3 text-center border border-gray-700">
-                            <p className="text-xs text-gray-400 mb-1">Habilidad</p>
+                            <p className="text-xs text-gray-400 mb-1">Ability</p>
                             <p className="text-sm font-medium text-white capitalize">{pokemon.ability.replace(/_/g, ' ')}</p>
                         </div>
                         <div className="bg-gray-800/50 rounded-xl p-3 text-center border border-gray-700">
-                            <p className="text-xs text-gray-400 mb-1">Amistad</p>
+                            <p className="text-xs text-gray-400 mb-1">Friendship</p>
                             <p className="text-sm font-medium text-white">{pokemon.friendship}/255</p>
                         </div>
                         <div className="bg-gray-800/50 rounded-xl p-3 text-center border border-gray-700">
@@ -110,7 +110,7 @@ function PokemonModal({ pokemon, onClose }: { pokemon: CobblemonPokemon; onClose
                     <div>
                         <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
                             <i className="fas fa-chart-bar text-purple-400"></i>
-                            Estadísticas
+                            Stats
                         </h3>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             {/* IVs */}
@@ -120,7 +120,7 @@ function PokemonModal({ pokemon, onClose }: { pokemon: CobblemonPokemon; onClose
                                     {(Object.keys(pokemon.ivs) as Array<keyof PokemonStats>).map((stat) => (
                                         <div key={stat} className="flex items-center gap-2">
                                             <span className={`text-xs w-16 ${natureInfo.plus === stat ? 'text-green-400' :
-                                                    natureInfo.minus === stat ? 'text-red-400' : 'text-gray-400'
+                                                natureInfo.minus === stat ? 'text-red-400' : 'text-gray-400'
                                                 }`}>
                                                 {statLabels[stat]}
                                                 {natureInfo.plus === stat && ' ↑'}
@@ -169,7 +169,7 @@ function PokemonModal({ pokemon, onClose }: { pokemon: CobblemonPokemon; onClose
                     <div>
                         <h3 className="text-lg font-bold text-white mb-3 flex items-center gap-2">
                             <i className="fas fa-fist-raised text-red-400"></i>
-                            Movimientos
+                            Moves
                         </h3>
                         <div className="grid grid-cols-2 gap-2">
                             {pokemon.moves.length > 0 ? (
@@ -182,7 +182,7 @@ function PokemonModal({ pokemon, onClose }: { pokemon: CobblemonPokemon; onClose
                                     </div>
                                 ))
                             ) : (
-                                <p className="col-span-2 text-gray-500 text-center py-4">Sin movimientos</p>
+                                <p className="col-span-2 text-gray-500 text-center py-4">No moves</p>
                             )}
                             {[...Array(4 - pokemon.moves.length)].map((_, i) => (
                                 <div
@@ -223,7 +223,7 @@ export default function PlayerProfilePage() {
             setProfile(data);
             setIsMock(data.mock || false);
         } catch (err) {
-            setError('Error al cargar el perfil');
+            setError('Error loading profile');
             console.error(err);
         } finally {
             setLoading(false);
@@ -254,7 +254,7 @@ export default function PlayerProfilePage() {
                             className="absolute inset-0 m-auto w-8 h-8 animate-pulse"
                         />
                     </div>
-                    <p className="mt-4 text-gray-400">Cargando perfil...</p>
+                    <p className="mt-4 text-gray-400">Loading profile...</p>
                 </div>
             </div>
         );
@@ -265,13 +265,13 @@ export default function PlayerProfilePage() {
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
                     <i className="fas fa-exclamation-triangle text-4xl text-red-500 mb-4"></i>
-                    <p className="text-red-400 mb-4">{error || 'Perfil no encontrado'}</p>
+                    <p className="text-red-400 mb-4">{error || 'Profile not found'}</p>
                     <Link
                         href="/jugadores"
                         onClick={() => playSound('click')}
                         className="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors"
                     >
-                        Volver a Jugadores
+                        Back to Players
                     </Link>
                 </div>
             </div>
@@ -291,7 +291,7 @@ export default function PlayerProfilePage() {
                         className="inline-flex items-center gap-2 text-white/70 hover:text-white mb-4 transition-colors"
                     >
                         <i className="fas fa-arrow-left"></i>
-                        Volver a Jugadores
+                        Back to Players
                     </Link>
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
@@ -310,7 +310,7 @@ export default function PlayerProfilePage() {
                         {/* Info */}
                         <div className="flex-1">
                             <h1 className="text-3xl font-bold text-white mb-2">
-                                {(profile.username || 'Desconocido').replace(/_/g, ' ')}
+                                {(profile.username || 'Unknown').replace(/_/g, ' ')}
                             </h1>
 
                             <div className="flex flex-wrap gap-4 text-white/80">
@@ -320,7 +320,7 @@ export default function PlayerProfilePage() {
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <i className="fas fa-dna text-cyan-300"></i>
-                                    <span>{profile.stats.uniqueSpecies} Especies</span>
+                                    <span>{profile.stats.uniqueSpecies} Species</span>
                                 </div>
                                 {profile.stats.shinies > 0 && (
                                     <div className="flex items-center gap-2 text-yellow-300">
@@ -330,14 +330,14 @@ export default function PlayerProfilePage() {
                                 )}
                                 <div className="flex items-center gap-2">
                                     <i className="fas fa-chart-line text-green-300"></i>
-                                    <span>Nivel promedio: {profile.stats.avgLevel}</span>
+                                    <span>Avg level: {profile.stats.avgLevel}</span>
                                 </div>
                             </div>
 
                             {isMock && (
                                 <div className="mt-3 inline-flex items-center gap-2 bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm">
                                     <i className="fas fa-flask"></i>
-                                    Datos de demostración
+                                    Demo data
                                 </div>
                             )}
                         </div>
@@ -351,7 +351,7 @@ export default function PlayerProfilePage() {
                 <section>
                     <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                         <i className="fas fa-users text-purple-400"></i>
-                        Equipo ({profile.party.length}/6)
+                        Team ({profile.party.length}/6)
                     </h2>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
@@ -406,8 +406,8 @@ export default function PlayerProfilePage() {
                                     key={box.boxNumber}
                                     onClick={() => { playSound('click'); setActiveBox(i); }}
                                     className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-all ${activeBox === i
-                                            ? 'bg-purple-600 text-white'
-                                            : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
+                                        ? 'bg-purple-600 text-white'
+                                        : 'bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white'
                                         }`}
                                 >
                                     <i className="fas fa-box mr-2"></i>
@@ -443,7 +443,7 @@ export default function PlayerProfilePage() {
                                 </div>
 
                                 {profile.pc[activeBox].pokemon.length === 0 && (
-                                    <p className="text-gray-500 text-center py-8">Esta caja está vacía</p>
+                                    <p className="text-gray-500 text-center py-8">This box is empty</p>
                                 )}
                             </div>
                         )}
@@ -455,7 +455,7 @@ export default function PlayerProfilePage() {
                     <section>
                         <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
                             <i className="fas fa-crown text-yellow-400"></i>
-                            Pokémon Más Fuerte
+                            Strongest Pokémon
                         </h2>
 
                         <button
@@ -477,7 +477,7 @@ export default function PlayerProfilePage() {
                                     <p className="text-xl font-bold text-white capitalize">
                                         {profile.stats.strongestPokemon.nickname || profile.stats.strongestPokemon.species.replace(/_/g, ' ')}
                                     </p>
-                                    <p className="text-yellow-400">Nivel {profile.stats.strongestPokemon.level}</p>
+                                    <p className="text-yellow-400">Level {profile.stats.strongestPokemon.level}</p>
                                     <p className="text-gray-400 text-sm capitalize">
                                         {profile.stats.strongestPokemon.nature} • {profile.stats.strongestPokemon.ability.replace(/_/g, ' ')}
                                     </p>

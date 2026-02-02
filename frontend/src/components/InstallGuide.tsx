@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { detectOS } from '@/src/lib/mod-utils';
-import { DetectedOS, INSTALL_PATHS } from '@/src/lib/types/mod';
-import { playSound } from '@/src/lib/sounds';
+import { detectOS } from '@/lib/mod-utils';
+import { DetectedOS, INSTALL_PATHS } from '@/lib/types/mod';
+import { playSound } from '@/lib/sounds';
 
 interface InstallGuideProps {
   defaultExpanded?: boolean;

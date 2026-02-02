@@ -29,7 +29,7 @@ export default function JugadoresPage() {
             setPlayers(data.players || []);
             setIsMock(false); // Backend real data
         } catch (err) {
-            setError('Error al cargar jugadores');
+            setError('Error loading players');
             console.error(err);
         } finally {
             setLoading(false);
@@ -69,7 +69,7 @@ export default function JugadoresPage() {
                 <div className="relative max-w-7xl mx-auto text-center">
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white mb-4 pixel-font drop-shadow-lg">
                         <i className="fas fa-users mr-3 sm:mr-4"></i>
-                        Jugadores
+                        Players
                     </h1>
                     <p className="text-base sm:text-lg lg:text-xl text-white/90 max-w-2xl mx-auto">
                         Explora los perfiles de todos los entrenadores del servidor
@@ -92,7 +92,7 @@ export default function JugadoresPage() {
                         <i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                         <input
                             type="text"
-                            placeholder="Buscar jugador..."
+                            placeholder="Search player..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full pl-11 pr-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all text-sm"
@@ -137,7 +137,7 @@ export default function JugadoresPage() {
                                 className="absolute inset-0 m-auto w-10 h-10 animate-pulse"
                             />
                         </div>
-                        <p className="mt-6 text-gray-400 text-lg">Cargando jugadores...</p>
+                        <p className="mt-6 text-gray-400 text-lg">Loading players...</p>
                     </div>
                 ) : error ? (
                     <div className="text-center py-32">
@@ -153,7 +153,7 @@ export default function JugadoresPage() {
                 ) : filteredPlayers.length === 0 ? (
                     <div className="text-center py-32">
                         <i className="fas fa-user-slash text-5xl text-gray-600 mb-6"></i>
-                        <p className="text-gray-400 text-lg">No se encontraron jugadores</p>
+                        <p className="text-gray-400 text-lg">No players found</p>
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
@@ -291,7 +291,7 @@ export default function JugadoresPage() {
                                     <i className="fas fa-users text-blue-400 text-xl"></i>
                                 </div>
                                 <p className="text-4xl font-bold text-white mb-1">{players.length}</p>
-                                <p className="text-sm text-gray-400 uppercase tracking-wide">Jugadores</p>
+                                <p className="text-sm text-gray-400 uppercase tracking-wide">Players</p>
                             </div>
                             <div className="bg-gray-900/50 rounded-2xl p-6 text-center border border-gray-700/50">
                                 <div className="w-12 h-12 mx-auto mb-3 rounded-xl bg-purple-500/20 flex items-center justify-center">

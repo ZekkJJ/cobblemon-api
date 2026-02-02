@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { gachaAPI, authAPI, verificationAPI } from '@/src/lib/api-client';
-import { LocalUser } from '@/src/lib/types/user';
-import { Starter } from '@/src/lib/types/pokemon';
-import StarterCard from '@/src/components/StarterCard';
-import SoulDrivenQuestionnaire from '@/src/components/SoulDrivenQuestionnaire';
-import MusicPlayer from '@/src/components/MusicPlayer';
-import { playSound, playPokemonCry } from '@/src/lib/sounds';
+import { gachaAPI, authAPI, verificationAPI } from '@/lib/api-client';
+import { LocalUser } from '@/lib/types/user';
+import { Starter } from '@/lib/types/pokemon';
+import StarterCard from '@/components/StarterCard';
+import SoulDrivenQuestionnaire from '@/components/SoulDrivenQuestionnaire';
+import MusicPlayer from '@/components/MusicPlayer';
+import { playSound, playPokemonCry } from '@/lib/sounds';
 
 type GachaMode = 'classic' | 'soul-driven';
 
@@ -35,9 +35,9 @@ function UsernameAuthForm({ onSuccess }: { onSuccess: (user: LocalUser) => void 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!discordUsername.trim()) {
-      setError('El nombre de usuario es requerido');
+      setError('Username is required');
       return;
     }
 
@@ -56,12 +56,12 @@ function UsernameAuthForm({ onSuccess }: { onSuccess: (user: LocalUser) => void 
         discordUsername: result.discordUsername,
         nickname: result.nickname,
       };
-      
+
       localStorage.setItem('user', JSON.stringify(user));
       playSound('success');
       onSuccess(user);
     } catch (error: any) {
-      setError(error.message || 'Error al verificar el usuario');
+      setError(error.message || 'Error verifying user');
       playSound('error');
     } finally {
       setLoading(false);
@@ -78,7 +78,7 @@ function UsernameAuthForm({ onSuccess }: { onSuccess: (user: LocalUser) => void 
         className="btn-secondary"
       >
         <i className="fas fa-user mr-2"></i>
-        Ingresar con Nombre de Usuario
+        Sign in with Username
       </button>
     );
   }
@@ -87,13 +87,13 @@ function UsernameAuthForm({ onSuccess }: { onSuccess: (user: LocalUser) => void 
     <form onSubmit={handleSubmit} className="space-y-4 text-left">
       <div>
         <label className="block text-sm font-bold mb-2">
-          Nombre de Usuario de Discord *
+          Discord Username *
         </label>
         <input
           type="text"
           value={discordUsername}
           onChange={(e) => setDiscordUsername(e.target.value)}
-          placeholder="usuario#1234"
+          placeholder="user#1234"
           className="input-field w-full"
           required
         />
@@ -101,13 +101,13 @@ function UsernameAuthForm({ onSuccess }: { onSuccess: (user: LocalUser) => void 
 
       <div>
         <label className="block text-sm font-bold mb-2">
-          Apodo (Opcional)
+          Nickname (Optional)
         </label>
         <input
           type="text"
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
-          placeholder="Mi apodo"
+          placeholder="My nickname"
           className="input-field w-full"
         />
       </div>
@@ -129,7 +129,7 @@ function UsernameAuthForm({ onSuccess }: { onSuccess: (user: LocalUser) => void 
           className="btn-secondary flex-1"
           disabled={loading}
         >
-          Cancelar
+          Cancel
         </button>
         <button
           type="submit"
@@ -139,12 +139,12 @@ function UsernameAuthForm({ onSuccess }: { onSuccess: (user: LocalUser) => void 
           {loading ? (
             <>
               <i className="fas fa-spinner fa-spin mr-2"></i>
-              Verificando...
+              Verifying...
             </>
           ) : (
             <>
               <i className="fas fa-check mr-2"></i>
-              Ingresar
+              Sign In
             </>
           )}
         </button>
@@ -171,11 +171,11 @@ export default function Home() {
     // Verificar si viene de Discord OAuth callback
     const urlParams = new URLSearchParams(window.location.search);
     const authSuccess = urlParams.get('auth');
-    
+
     if (authSuccess === 'success') {
       // Limpiar el parámetro de la URL
       window.history.replaceState({}, '', '/');
-      
+
       // Obtener datos del usuario desde el backend (la cookie ya está establecida)
       fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/auth/me`, {
         credentials: 'include', // Importante para enviar cookies
@@ -200,7 +200,7 @@ export default function Home() {
         });
       return;
     }
-    
+
     // Cargar usuario de localStorage si no viene de OAuth
     const userStr = localStorage.getItem('user');
     if (userStr) {
@@ -224,11 +224,11 @@ export default function Home() {
       const status = await gachaAPI.getStatus(discordId);
       console.log('[GACHA] Status received:', status);
       setUserStatus(status);
-      
+
       if (status.hasRolled && status.starter) {
         console.log('[GACHA] User has already rolled, starter:', status.starter);
         setRollResult({ starter: status.starter, isShiny: status.isShiny || false });
-        
+
         // Check verification status
         checkVerificationStatus(discordId);
       }
@@ -245,7 +245,7 @@ export default function Home() {
     try {
       const status = await verificationAPI.getStatus(discordId);
       setIsVerified(status.verified || false);
-      
+
       // If not verified and no code, generate one
       if (!status.verified && !verificationCode) {
         generateVerificationCode(discordId);
@@ -259,12 +259,12 @@ export default function Home() {
   const generateVerificationCode = async (discordId: string) => {
     try {
       const result = await verificationAPI.generateWebCode(discordId, localUser?.discordUsername);
-      
+
       if (result.alreadyVerified) {
         setIsVerified(true);
         return;
       }
-      
+
       if (result.code) {
         setVerificationCode({
           code: result.code,
@@ -279,7 +279,7 @@ export default function Home() {
   // Poll verification status every 5 seconds when code is shown
   useEffect(() => {
     if (!verificationCode || isVerified || !localUser) return;
-    
+
     const interval = setInterval(async () => {
       setCheckingVerification(true);
       try {
@@ -295,7 +295,7 @@ export default function Home() {
         setCheckingVerification(false);
       }
     }, 5000);
-    
+
     return () => clearInterval(interval);
   }, [verificationCode, isVerified, localUser]);
 
@@ -317,7 +317,7 @@ export default function Home() {
         setRollResult(result);
         setIsRolling(false);
         playSound('success');
-        
+
         // Reproducir cry del Pokémon
         if (result.starter.sprites.cry) {
           playPokemonCry(result.starter.sprites.cry);
@@ -337,7 +337,7 @@ export default function Home() {
       }, 2000);
     } catch (error: any) {
       setIsRolling(false);
-      setError(error.message || 'Error al hacer la tirada');
+      setError(error.message || 'Error making roll');
       playSound('error');
     }
   };
@@ -362,7 +362,7 @@ export default function Home() {
         setIsRolling(false);
         setShowQuestionnaire(false);
         playSound('success');
-        
+
         // Reproducir cry del Pokémon
         if (result.starter.sprites.cry) {
           playPokemonCry(result.starter.sprites.cry);
@@ -382,7 +382,7 @@ export default function Home() {
       }, 2000);
     } catch (error: any) {
       setIsRolling(false);
-      setError(error.message || 'Error al hacer la tirada');
+      setError(error.message || 'Error making roll');
       playSound('error');
     }
   };
@@ -402,7 +402,7 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-poke-red border-t-transparent"></div>
-          <p className="mt-4 text-xl">Cargando...</p>
+          <p className="mt-4 text-xl">Loading...</p>
         </div>
       </div>
     );
@@ -411,7 +411,7 @@ export default function Home() {
   return (
     <div className="min-h-screen py-8">
       <MusicPlayer />
-      
+
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-8">
@@ -419,14 +419,14 @@ export default function Home() {
             GACHA POKÉMON
           </h1>
           <p className="text-xl text-slate-300">
-            Obtén tu Pokémon inicial único
+            Get your unique starter Pokémon
           </p>
         </div>
 
         {/* Stats Counter */}
         {userStatus && (
           <div className="max-w-md mx-auto mb-8 card text-center">
-            <div className="text-sm text-slate-400 mb-2">Starters Disponibles</div>
+            <div className="text-sm text-slate-400 mb-2">Available Starters</div>
             <div className="text-3xl font-bold">
               <span className="text-poke-green">{userStatus.availableCount}</span>
               <span className="text-slate-500"> / </span>
@@ -448,22 +448,22 @@ export default function Home() {
           <div className="max-w-2xl mx-auto">
             <div className="card text-center">
               <i className="fas fa-user-lock text-6xl text-poke-blue mb-4"></i>
-              <h2 className="text-2xl font-bold mb-4">Inicia Sesión</h2>
+              <h2 className="text-2xl font-bold mb-4">Sign In</h2>
               <p className="text-slate-300 mb-6">
-                Necesitas iniciar sesión para obtener tu Pokémon inicial
+                You need to sign in to get your starter Pokémon
               </p>
-              
+
               <div className="space-y-4">
                 <a
                   href={authAPI.getDiscordAuthUrl()}
                   className="btn-primary inline-flex items-center gap-2"
                 >
                   <i className="fab fa-discord text-xl"></i>
-                  Iniciar con Discord
+                  Sign in with Discord
                 </a>
-                
+
                 <div className="text-slate-400">o</div>
-                
+
                 <UsernameAuthForm onSuccess={(user) => {
                   setLocalUser(user);
                   loadGachaStatus(user.discordId);
@@ -482,22 +482,20 @@ export default function Home() {
                 <div className="flex justify-center gap-4 mb-6">
                   <button
                     onClick={() => handleModeChange('classic')}
-                    className={`px-6 py-3 rounded-lg font-bold transition-all ${
-                      gachaMode === 'classic'
-                        ? 'bg-poke-red text-white scale-105'
-                        : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-                    }`}
+                    className={`px-6 py-3 rounded-lg font-bold transition-all ${gachaMode === 'classic'
+                      ? 'bg-poke-red text-white scale-105'
+                      : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                      }`}
                   >
                     <i className="fas fa-dice mr-2"></i>
-                    Clásico
+                    Classic
                   </button>
                   <button
                     onClick={() => handleModeChange('soul-driven')}
-                    className={`px-6 py-3 rounded-lg font-bold transition-all ${
-                      gachaMode === 'soul-driven'
-                        ? 'bg-poke-purple text-white scale-105'
-                        : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
-                    }`}
+                    className={`px-6 py-3 rounded-lg font-bold transition-all ${gachaMode === 'soul-driven'
+                      ? 'bg-poke-purple text-white scale-105'
+                      : 'bg-slate-800 text-slate-400 hover:bg-slate-700'
+                      }`}
                   >
                     <i className="fas fa-brain mr-2"></i>
                     Soul Driven
@@ -507,9 +505,8 @@ export default function Home() {
                 {/* Gacha Machine */}
                 <div className="card text-center">
                   <div className="mb-6">
-                    <div className={`inline-block p-8 rounded-full relative ${
-                      isRolling ? 'animate-shake bg-poke-red/20' : 'bg-slate-800'
-                    }`}>
+                    <div className={`inline-block p-8 rounded-full relative ${isRolling ? 'animate-shake bg-poke-red/20' : 'bg-slate-800'
+                      }`}>
                       <div className="relative">
                         <div className="absolute inset-0 bg-white blur-xl opacity-20 animate-pulse rounded-full"></div>
                         <img
@@ -522,13 +519,13 @@ export default function Home() {
                   </div>
 
                   <h2 className="text-2xl font-bold mb-4">
-                    {gachaMode === 'classic' ? 'Tirada Clásica' : 'Soul Driven'}
+                    {gachaMode === 'classic' ? 'Classic Roll' : 'Soul Driven'}
                   </h2>
-                  
+
                   <p className="text-slate-300 mb-6">
                     {gachaMode === 'classic'
-                      ? 'Obtén un Pokémon inicial completamente aleatorio'
-                      : 'Responde 5 preguntas y obtén un Pokémon compatible con tu personalidad'}
+                      ? 'Get a completely random starter Pokémon'
+                      : 'Answer 5 questions and get a Pokémon compatible with your personality'}
                   </p>
 
                   {error && (
@@ -546,12 +543,12 @@ export default function Home() {
                     {isRolling ? (
                       <>
                         <i className="fas fa-spinner fa-spin mr-2"></i>
-                        INVOCANDO...
+                        SUMMONING...
                       </>
                     ) : (
                       <>
                         <i className="fas fa-bolt mr-2"></i>
-                        INVOCAR
+                        SUMMON
                       </>
                     )}
                   </button>
@@ -576,14 +573,14 @@ export default function Home() {
               <h2 className="text-3xl font-bold mb-2">
                 {rollResult.isShiny ? (
                   <>
-                    <span className="text-poke-yellow">✨ ¡SHINY! ✨</span>
+                    <span className="text-poke-yellow">✨ SHINY! ✨</span>
                   </>
                 ) : (
-                  '¡Felicidades!'
+                  'Congratulations!'
                 )}
               </h2>
               <p className="text-xl text-slate-300">
-                Has obtenido a {rollResult.starter.nameEs}
+                You got {rollResult.starter.nameEs}
               </p>
             </div>
 
@@ -595,13 +592,13 @@ export default function Home() {
                 <div className="text-center">
                   <h3 className="text-2xl font-bold mb-4 text-poke-blue">
                     <i className="fas fa-link mr-2"></i>
-                    Vincula tu cuenta de Minecraft
+                    Link your Minecraft account
                   </h3>
-                  
+
                   <p className="text-slate-300 mb-6">
-                    Para recibir tu Pokémon en el servidor, vincula tu cuenta usando este código:
+                    To receive your Pokémon on the server, link your account using this code:
                   </p>
-                  
+
                   <div className="bg-slate-900 rounded-xl p-6 mb-6 inline-block">
                     <div className="text-5xl font-mono font-bold text-poke-yellow tracking-widest">
                       {verificationCode.code}
@@ -614,30 +611,30 @@ export default function Home() {
                       className="mt-3 text-sm text-slate-400 hover:text-white transition-colors"
                     >
                       <i className="fas fa-copy mr-1"></i>
-                      Copiar código
+                      Copy code
                     </button>
                   </div>
-                  
+
                   <div className="text-left max-w-md mx-auto space-y-3">
                     <div className="flex items-start gap-3">
                       <span className="bg-poke-blue text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
-                      <span className="text-slate-300">Entra al servidor de Minecraft</span>
+                      <span className="text-slate-300">Join the Minecraft server</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="bg-poke-blue text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
-                      <span className="text-slate-300">Usa el comando: <code className="bg-slate-800 px-2 py-1 rounded text-poke-yellow">/verify {verificationCode.code}</code></span>
+                      <span className="text-slate-300">Use the command: <code className="bg-slate-800 px-2 py-1 rounded text-poke-yellow">/verify {verificationCode.code}</code></span>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="bg-poke-blue text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0">3</span>
-                      <span className="text-slate-300">¡Listo! Tu cuenta quedará vinculada</span>
+                      <span className="text-slate-300">Done! Your account will be linked</span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-6 text-sm text-slate-500">
                     {checkingVerification ? (
-                      <span><i className="fas fa-spinner fa-spin mr-2"></i>Verificando...</span>
+                      <span><i className="fas fa-spinner fa-spin mr-2"></i>Verifying...</span>
                     ) : (
-                      <span>El código expira en 15 minutos</span>
+                      <span>Code expires in 15 minutes</span>
                     )}
                   </div>
                 </div>
@@ -650,11 +647,11 @@ export default function Home() {
                 <div className="text-center">
                   <div className="text-4xl mb-4">✅</div>
                   <h3 className="text-2xl font-bold text-poke-green mb-2">
-                    ¡Cuenta Vinculada!
+                    Account Linked!
                   </h3>
                   <p className="text-slate-300">
-                    Tu cuenta de Discord está vinculada a Minecraft. 
-                    Tu Pokémon inicial te espera en el servidor.
+                    Your Discord account is linked to Minecraft.
+                    Your starter Pokémon awaits you on the server.
                   </p>
                 </div>
               </div>
@@ -666,9 +663,9 @@ export default function Home() {
         {localUser && userStatus && !userStatus.canRoll && userStatus.hasRolled && !rollResult && userStatus.starter && (
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-6">
-              <h2 className="text-3xl font-bold mb-2">Tu Pokémon Inicial</h2>
+              <h2 className="text-3xl font-bold mb-2">Your Starter Pokémon</h2>
               <p className="text-xl text-slate-300">
-                Ya has obtenido tu starter
+                You already got your starter
               </p>
             </div>
 
@@ -680,13 +677,13 @@ export default function Home() {
                 <div className="text-center">
                   <h3 className="text-2xl font-bold mb-4 text-poke-blue">
                     <i className="fas fa-link mr-2"></i>
-                    Vincula tu cuenta de Minecraft
+                    Link your Minecraft account
                   </h3>
-                  
+
                   <p className="text-slate-300 mb-6">
-                    Para recibir tu Pokémon en el servidor, vincula tu cuenta usando este código:
+                    To receive your Pokémon on the server, link your account using this code:
                   </p>
-                  
+
                   <div className="bg-slate-900 rounded-xl p-6 mb-6 inline-block">
                     <div className="text-5xl font-mono font-bold text-poke-yellow tracking-widest">
                       {verificationCode.code}
@@ -699,30 +696,30 @@ export default function Home() {
                       className="mt-3 text-sm text-slate-400 hover:text-white transition-colors"
                     >
                       <i className="fas fa-copy mr-1"></i>
-                      Copiar código
+                      Copy code
                     </button>
                   </div>
-                  
+
                   <div className="text-left max-w-md mx-auto space-y-3">
                     <div className="flex items-start gap-3">
                       <span className="bg-poke-blue text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0">1</span>
-                      <span className="text-slate-300">Entra al servidor de Minecraft</span>
+                      <span className="text-slate-300">Join the Minecraft server</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="bg-poke-blue text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0">2</span>
-                      <span className="text-slate-300">Usa el comando: <code className="bg-slate-800 px-2 py-1 rounded text-poke-yellow">/verify {verificationCode.code}</code></span>
+                      <span className="text-slate-300">Use the command: <code className="bg-slate-800 px-2 py-1 rounded text-poke-yellow">/verify {verificationCode.code}</code></span>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="bg-poke-blue text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold flex-shrink-0">3</span>
-                      <span className="text-slate-300">¡Listo! Tu cuenta quedará vinculada</span>
+                      <span className="text-slate-300">Done! Your account will be linked</span>
                     </div>
                   </div>
-                  
+
                   <div className="mt-6 text-sm text-slate-500">
                     {checkingVerification ? (
-                      <span><i className="fas fa-spinner fa-spin mr-2"></i>Verificando...</span>
+                      <span><i className="fas fa-spinner fa-spin mr-2"></i>Verifying...</span>
                     ) : (
-                      <span>El código expira en 15 minutos</span>
+                      <span>Code expires in 15 minutes</span>
                     )}
                   </div>
                 </div>
@@ -735,11 +732,11 @@ export default function Home() {
                 <div className="text-center">
                   <div className="text-4xl mb-4">✅</div>
                   <h3 className="text-2xl font-bold text-poke-green mb-2">
-                    ¡Cuenta Vinculada!
+                    Account Linked!
                   </h3>
                   <p className="text-slate-300">
-                    Tu cuenta de Discord está vinculada a Minecraft. 
-                    Tu Pokémon inicial te espera en el servidor.
+                    Your Discord account is linked to Minecraft.
+                    Your starter Pokémon awaits you on the server.
                   </p>
                 </div>
               </div>

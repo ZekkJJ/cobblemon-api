@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { playersAPI } from '@/src/lib/api-client';
-import { playSound } from '@/src/lib/sounds';
+import { playersAPI } from '@/lib/api-client';
+import { playSound } from '@/lib/sounds';
 
 const BLUEMAP_URL = 'http://cobblemon2.pals.army:17335';
 
@@ -80,7 +80,7 @@ export default function MapaPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-poke-green border-t-transparent mb-4"></div>
-          <p className="text-xl">Cargando mapa...</p>
+          <p className="text-xl">Loading map...</p>
         </div>
       </div>
     );
@@ -93,19 +93,19 @@ export default function MapaPage() {
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-4 pixel-font text-poke-green">
             <i className="fas fa-map-marked-alt mr-3"></i>
-            MAPA DEL MUNDO
+            WORLD MAP
           </h1>
           <p className="text-xl text-slate-300 mb-6">
-            Explora el mundo de Los Pitufos
+            Explore Los Pitufos world
           </p>
-          
+
           {/* Open BlueMap Button */}
           <button
             onClick={() => openBlueMap()}
             className="btn-primary text-xl py-4 px-8 animate-pulse hover:animate-none"
           >
             <i className="fas fa-globe mr-3"></i>
-            Abrir Mapa 3D Interactivo
+            Open 3D Interactive Map
           </button>
         </div>
 
@@ -115,15 +115,15 @@ export default function MapaPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
               <div>
                 <div className="text-3xl font-bold text-poke-green mb-1">{players.length}</div>
-                <div className="text-slate-400 text-sm">Online Ahora</div>
+                <div className="text-slate-400 text-sm">Online Now</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-poke-blue mb-1">{allPlayers.length}</div>
-                <div className="text-slate-400 text-sm">Jugadores Total</div>
+                <div className="text-slate-400 text-sm">Total Players</div>
               </div>
               <div>
                 <div className="text-3xl font-bold text-poke-yellow mb-1">∞</div>
-                <div className="text-slate-400 text-sm">Mundo Infinito</div>
+                <div className="text-slate-400 text-sm">Infinite World</div>
               </div>
               <div>
                 <code className="text-sm bg-slate-700 px-3 py-2 rounded block">-2883780887602083665</code>
@@ -148,7 +148,7 @@ export default function MapaPage() {
               className={`px-4 py-2 rounded-lg font-medium transition-all ${filter === 'all' ? 'bg-poke-blue text-white' : 'bg-slate-700 text-slate-400'}`}
             >
               <i className="fas fa-users mr-2"></i>
-              Todos ({allPlayers.length})
+              All ({allPlayers.length})
             </button>
           </div>
           <div className="flex items-center gap-4">
@@ -174,7 +174,7 @@ export default function MapaPage() {
             <div className="card text-center py-16">
               <i className="fas fa-user-slash text-6xl text-slate-600 mb-4"></i>
               <p className="text-xl text-slate-400">
-                {filter === 'online' ? 'No hay jugadores online' : 'No hay jugadores registrados'}
+                {filter === 'online' ? 'No players online' : 'No players registered'}
               </p>
             </div>
           ) : (
@@ -210,7 +210,7 @@ export default function MapaPage() {
                       <button
                         onClick={() => copyCoords(player)}
                         className="text-slate-400 hover:text-white transition-colors"
-                        title="Copiar coordenadas"
+                        title="Copy coordinates"
                       >
                         <i className="fas fa-copy"></i>
                       </button>
@@ -220,7 +220,7 @@ export default function MapaPage() {
                   {/* Pokemon Party */}
                   {showPokemon && player.party.length > 0 && (
                     <div className="mb-4">
-                      <div className="text-xs text-slate-400 mb-2">Equipo</div>
+                      <div className="text-xs text-slate-400 mb-2">Team</div>
                       <div className="flex gap-1">
                         {player.party.slice(0, 6).map((pokemon, idx) => (
                           <div key={idx} className="relative bg-slate-800/50 rounded p-1" title={`${pokemon.species} Lv.${pokemon.level}`}>
@@ -244,7 +244,7 @@ export default function MapaPage() {
                     className="w-full btn-secondary text-sm"
                   >
                     <i className="fas fa-map-marker-alt mr-2"></i>
-                    Ver en Mapa 3D
+                    View on 3D Map
                   </button>
                 </div>
               ))}
@@ -256,7 +256,7 @@ export default function MapaPage() {
         <div className="mt-8 text-center text-sm text-slate-400">
           <p>
             <i className="fas fa-info-circle mr-2"></i>
-            Las posiciones se actualizan cada 30 segundos
+            Positions update every 30 seconds
           </p>
         </div>
       </div>

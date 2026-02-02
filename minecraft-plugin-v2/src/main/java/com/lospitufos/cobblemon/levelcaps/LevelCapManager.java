@@ -18,6 +18,7 @@ import net.minecraft.text.Text;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentModificationException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -247,12 +248,24 @@ public class LevelCapManager {
      * Periodically check all online players' Party AND PC for illegal Pokémon
      * - Illegal species (legendaries, blocked, etc.) = DELETE immediately
      * - Over level cap = Warn + regularize (for existing Pokemon only)
+     * 
+     * THREAD SAFETY: Makes defensive copies of all collections before iteration
+     * to prevent ConcurrentModificationException
      */
     private void enforceAllPlayerLevelsAndPC() {
         if (server == null) return;
         
         server.execute(() -> {
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+            List<ServerPlayerEntity> playersCopy;
+            try {
+                playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+            } catch (Exception e) {
+                logger.debug("Could not copy player list: " + e.getMessage());
+                return;
+            }
+            
+            for (ServerPlayerEntity player : playersCopy) {
                 if (player == null || player.isDisconnected()) continue;
                 
                 PlayerCaps caps = getCapsInstant(player.getUuid());
@@ -270,6 +283,9 @@ public class LevelCapManager {
                     if (pc != null) {
                         scanAndEnforcePC(player, pc, caps);
                     }
+                } catch (ConcurrentModificationException cme) {
+                    // Expected during heavy activity - skip this player this cycle
+                    logger.debug("Skipping " + player.getName().getString() + " due to concurrent modification");
                 } catch (Exception e) {
                     logger.debug("Error checking storage for " + player.getName().getString() + ": " + e.getMessage());
                 }
@@ -279,14 +295,27 @@ public class LevelCapManager {
     
     /**
      * Scan party storage and enforce rules
+     * THREAD SAFETY: Makes defensive copy of party before iteration
      */
     private void scanAndEnforceStorage(ServerPlayerEntity player, PlayerPartyStore party, PlayerCaps caps, String storageName) {
         List<Pokemon> toRemove = new ArrayList<>();
         List<Pokemon> toRegularize = new ArrayList<>();
         
-        for (Pokemon pokemon : party) {
-            if (pokemon == null) continue;
-            
+        // DEFENSIVE COPY: Copy party pokemon to list to avoid ConcurrentModificationException
+        List<Pokemon> partyCopy = new ArrayList<>();
+        try {
+            for (int i = 0; i < 6; i++) {
+                Pokemon pokemon = party.get(i);
+                if (pokemon != null) {
+                    partyCopy.add(pokemon);
+                }
+            }
+        } catch (Exception e) {
+            logger.debug("Could not copy party for " + player.getName().getString() + ": " + e.getMessage());
+            return;
+        }
+        
+        for (Pokemon pokemon : partyCopy) {
             String species = pokemon.getSpecies().getName();
             int level = pokemon.getLevel();
             
@@ -312,80 +341,101 @@ public class LevelCapManager {
             }
         }
 
-        // Remove illegal Pokemon
+        // Remove illegal Pokemon (safe - we're not iterating anymore)
         for (Pokemon pokemon : toRemove) {
-            party.remove(pokemon);
+            try {
+                party.remove(pokemon);
+            } catch (Exception e) {
+                logger.debug("Could not remove pokemon: " + e.getMessage());
+            }
         }
         
         // Regularize over-level Pokemon (warn only)
         for (Pokemon pokemon : toRegularize) {
-            String species = pokemon.getSpecies().getName();
-            int oldLevel = pokemon.getLevel();
-            pokemon.setLevel(caps.ownershipCap);
-            
-            player.sendMessage(Text.literal("§6⚠ §e" + species + " §7(" + storageName + ") nivel §c" + oldLevel + " §7→ §a" + caps.ownershipCap));
-            logger.info("Regularized: " + player.getName().getString() + "'s " + species + " from " + oldLevel + " to " + caps.ownershipCap);
+            try {
+                String species = pokemon.getSpecies().getName();
+                int oldLevel = pokemon.getLevel();
+                pokemon.setLevel(caps.ownershipCap);
+                
+                player.sendMessage(Text.literal("§6⚠ §e" + species + " §7(" + storageName + ") nivel §c" + oldLevel + " §7→ §a" + caps.ownershipCap));
+                logger.info("Regularized: " + player.getName().getString() + "'s " + species + " from " + oldLevel + " to " + caps.ownershipCap);
+            } catch (Exception e) {
+                logger.debug("Could not regularize pokemon: " + e.getMessage());
+            }
         }
     }
     
     /**
      * Scan PC storage (all boxes) and enforce rules
+     * THREAD SAFETY: Makes defensive copy of PC pokemon before iteration
      */
     private void scanAndEnforcePC(ServerPlayerEntity player, PCStore pc, PlayerCaps caps) {
         List<Pokemon> toRemove = new ArrayList<>();
         List<Pokemon> toRegularize = new ArrayList<>();
         
-        // Iterate through all PC boxes
-        for (int boxIndex = 0; boxIndex < 30; boxIndex++) { // Cobblemon has up to 30 boxes
-            try {
-                for (Pokemon pokemon : pc) {
-                    if (pokemon == null) continue;
-                    
-                    String species = pokemon.getSpecies().getName();
-                    int level = pokemon.getLevel();
-                    
-                    // Check if blocked species - DELETE
-                    if (globalRestrictions.isBlocked(species)) {
-                        if (!toRemove.contains(pokemon)) {
-                            toRemove.add(pokemon);
-                            String reason = globalRestrictions.getBlockReason(species);
-                            
-                            player.sendMessage(Text.literal(""));
-                            player.sendMessage(Text.literal("§c§l⚠ POKÉMON ILEGAL EN PC ⚠"));
-                            player.sendMessage(Text.literal("§7━━━━━━━━━━━━━━━━━━━━━━━━━━━━"));
-                            player.sendMessage(Text.literal("§e" + species + " §7(PC)"));
-                            player.sendMessage(Text.literal("§7Razón: §c" + reason));
-                            player.sendMessage(Text.literal("§cELIMINADO permanentemente."));
-                            player.sendMessage(Text.literal("§7━━━━━━━━━━━━━━━━━━━━━━━━━━━━"));
-                            player.sendMessage(Text.literal(""));
-                            
-                            logger.warn("DELETED illegal from PC: " + player.getName().getString() + "'s " + species + " (" + reason + ")");
-                        }
-                    }
-                    // Check if over level cap - REGULARIZE
-                    else if (level > caps.ownershipCap && !toRegularize.contains(pokemon)) {
-                        toRegularize.add(pokemon);
-                    }
+        // DEFENSIVE COPY: Copy all PC pokemon to list to avoid ConcurrentModificationException
+        List<Pokemon> pcCopy = new ArrayList<>();
+        try {
+            for (Pokemon pokemon : pc) {
+                if (pokemon != null) {
+                    pcCopy.add(pokemon);
                 }
-                break; // PCStore iterator goes through all boxes
-            } catch (Exception e) {
-                break;
+            }
+        } catch (Exception e) {
+            logger.debug("Could not copy PC for " + player.getName().getString() + ": " + e.getMessage());
+            return;
+        }
+        
+        // Now iterate over the safe copy
+        for (Pokemon pokemon : pcCopy) {
+            String species = pokemon.getSpecies().getName();
+            int level = pokemon.getLevel();
+            
+            // Check if blocked species - DELETE
+            if (globalRestrictions.isBlocked(species)) {
+                if (!toRemove.contains(pokemon)) {
+                    toRemove.add(pokemon);
+                    String reason = globalRestrictions.getBlockReason(species);
+                    
+                    player.sendMessage(Text.literal(""));
+                    player.sendMessage(Text.literal("§c§l⚠ POKÉMON ILEGAL EN PC ⚠"));
+                    player.sendMessage(Text.literal("§7━━━━━━━━━━━━━━━━━━━━━━━━━━━━"));
+                    player.sendMessage(Text.literal("§e" + species + " §7(PC)"));
+                    player.sendMessage(Text.literal("§7Razón: §c" + reason));
+                    player.sendMessage(Text.literal("§cELIMINADO permanentemente."));
+                    player.sendMessage(Text.literal("§7━━━━━━━━━━━━━━━━━━━━━━━━━━━━"));
+                    player.sendMessage(Text.literal(""));
+                    
+                    logger.warn("DELETED illegal from PC: " + player.getName().getString() + "'s " + species + " (" + reason + ")");
+                }
+            }
+            // Check if over level cap - REGULARIZE
+            else if (level > caps.ownershipCap && !toRegularize.contains(pokemon)) {
+                toRegularize.add(pokemon);
             }
         }
         
-        // Remove illegal Pokemon from PC
+        // Remove illegal Pokemon from PC (safe - we're not iterating anymore)
         for (Pokemon pokemon : toRemove) {
-            pc.remove(pokemon);
+            try {
+                pc.remove(pokemon);
+            } catch (Exception e) {
+                logger.debug("Could not remove pokemon from PC: " + e.getMessage());
+            }
         }
         
         // Regularize over-level Pokemon in PC
         for (Pokemon pokemon : toRegularize) {
-            String species = pokemon.getSpecies().getName();
-            int oldLevel = pokemon.getLevel();
-            pokemon.setLevel(caps.ownershipCap);
-            
-            player.sendMessage(Text.literal("§6⚠ §e" + species + " §7(PC) nivel §c" + oldLevel + " §7→ §a" + caps.ownershipCap));
-            logger.info("Regularized PC: " + player.getName().getString() + "'s " + species + " from " + oldLevel + " to " + caps.ownershipCap);
+            try {
+                String species = pokemon.getSpecies().getName();
+                int oldLevel = pokemon.getLevel();
+                pokemon.setLevel(caps.ownershipCap);
+                
+                player.sendMessage(Text.literal("§6⚠ §e" + species + " §7(PC) nivel §c" + oldLevel + " §7→ §a" + caps.ownershipCap));
+                logger.info("Regularized PC: " + player.getName().getString() + "'s " + species + " from " + oldLevel + " to " + caps.ownershipCap);
+            } catch (Exception e) {
+                logger.debug("Could not regularize pokemon in PC: " + e.getMessage());
+            }
         }
     }
 

@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Mod, ModCategory, ModListResponse } from '@/src/lib/types/mod';
-import { modsAPI } from '@/src/lib/api-client';
-import { ModsStorageService } from '@/src/lib/mods-storage';
-import { filterMods, countModsByCategory, formatFileSize, estimateDownloadTime, hasUpdateAvailable } from '@/src/lib/mod-utils';
-import { playSound } from '@/src/lib/sounds';
-import ModCard from '@/src/components/ModCard';
-import ModFilters from '@/src/components/ModFilters';
-import InstallGuide from '@/src/components/InstallGuide';
-import ModNotificationToast from '@/src/components/ModNotificationToast';
+import { Mod, ModCategory, ModListResponse } from '@/lib/types/mod';
+import { modsAPI } from '@/lib/api-client';
+import { ModsStorageService } from '@/lib/mods-storage';
+import { filterMods, countModsByCategory, formatFileSize, estimateDownloadTime, hasUpdateAvailable } from '@/lib/mod-utils';
+import { playSound } from '@/lib/sounds';
+import ModCard from '@/components/ModCard';
+import ModFilters from '@/components/ModFilters';
+import InstallGuide from '@/components/InstallGuide';
+import ModNotificationToast from '@/components/ModNotificationToast';
 
 /**
  * Página principal de Mods

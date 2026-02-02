@@ -13,54 +13,54 @@ export default function SoulDrivenQuestionnaire({ onSubmit, isLoading }: SoulDri
 
     const questions = [
         {
-            question: '¿Cuál es tu estilo de combate preferido?',
+            question: 'What is your preferred combat style?',
             type: 'multiple',
             options: [
-                'Agresivo y directo',
-                'Estratégico y calculador',
-                'Defensivo y resistente',
-                'Rápido y evasivo'
+                'Aggressive and direct',
+                'Strategic and calculated',
+                'Defensive and resilient',
+                'Fast and evasive'
             ]
         },
         {
-            question: '¿Qué ambiente te gusta más?',
+            question: 'What environment do you like most?',
             type: 'multiple',
             options: [
-                'Bosques y naturaleza',
-                'Volcanes y lugares cálidos',
-                'Océanos y lagos',
-                'Montañas y cuevas'
+                'Forests and nature',
+                'Volcanoes and hot places',
+                'Oceans and lakes',
+                'Mountains and caves'
             ]
         },
         {
-            question: '¿Cómo describirías tu personalidad?',
+            question: 'How would you describe your personality?',
             type: 'multiple',
             options: [
-                'Calmado y paciente',
-                'Apasionado y energético',
-                'Leal y protector',
-                'Curioso y aventurero'
+                'Calm and patient',
+                'Passionate and energetic',
+                'Loyal and protective',
+                'Curious and adventurous'
             ]
         },
         {
-            question: '¿Qué valoras más en un compañero?',
+            question: 'What do you value most in a companion?',
             type: 'multiple',
             options: [
-                'Fuerza y poder',
-                'Inteligencia y astucia',
-                'Lealtad y confianza',
-                'Velocidad y agilidad'
+                'Strength and power',
+                'Intelligence and cunning',
+                'Loyalty and trust',
+                'Speed and agility'
             ]
         },
         {
-            question: 'Describe tu mayor fortaleza:',
+            question: 'Describe your greatest strength:',
             type: 'text',
-            placeholder: 'Escribe tu respuesta aquí...'
+            placeholder: 'Type your answer here...'
         },
         {
-            question: '¿Cuál es tu mayor sueño o meta?',
+            question: 'What is your biggest dream or goal?',
             type: 'text',
-            placeholder: 'Escribe tu respuesta aquí...'
+            placeholder: 'Type your answer here...'
         }
     ];
 
@@ -90,14 +90,14 @@ export default function SoulDrivenQuestionnaire({ onSubmit, isLoading }: SoulDri
     return (
         <div className="w-full flex flex-col items-center">
             <div className="w-full mb-4 bg-gray-700 rounded-full h-2 overflow-hidden">
-                <div 
+                <div
                     className="h-full bg-gradient-to-r from-purple-500 to-pink-500 transition-all duration-300"
                     style={{ width: `${progress}%` }}
                 ></div>
             </div>
 
             <div className="text-purple-400 text-xs mb-2">
-                Pregunta {currentQuestion + 1} de {questions.length}
+                Question {currentQuestion + 1} of {questions.length}
             </div>
 
             <div className="w-full bg-gray-700/50 rounded-xl p-6 mb-4 min-h-[300px] flex flex-col">
@@ -112,11 +112,10 @@ export default function SoulDrivenQuestionnaire({ onSubmit, isLoading }: SoulDri
                                 <button
                                     key={index}
                                     onClick={() => handleAnswer(option)}
-                                    className={`w-full p-4 rounded-lg text-left transition-all ${
-                                        answers[currentQuestion] === option
+                                    className={`w-full p-4 rounded-lg text-left transition-all ${answers[currentQuestion] === option
                                             ? 'bg-purple-600 text-white border-2 border-purple-400'
                                             : 'bg-gray-600 text-gray-200 hover:bg-gray-500 border-2 border-transparent'
-                                    }`}
+                                        }`}
                                 >
                                     {option}
                                 </button>
@@ -136,7 +135,7 @@ export default function SoulDrivenQuestionnaire({ onSubmit, isLoading }: SoulDri
 
                 {questions[currentQuestion].type === 'text' && (
                     <div className="text-gray-400 text-xs mt-2 text-right">
-                        {answers[currentQuestion].length}/200 caracteres
+                        {answers[currentQuestion].length}/200 characters
                     </div>
                 )}
             </div>
@@ -149,7 +148,7 @@ export default function SoulDrivenQuestionnaire({ onSubmit, isLoading }: SoulDri
                         className="flex-1 bg-gray-600 hover:bg-gray-500 disabled:opacity-50 text-white font-bold py-3 px-6 rounded-lg transition-all"
                     >
                         <i className="fas fa-arrow-left mr-2"></i>
-                        Anterior
+                        Previous
                     </button>
                 )}
                 <button
@@ -160,16 +159,16 @@ export default function SoulDrivenQuestionnaire({ onSubmit, isLoading }: SoulDri
                     {isLoading ? (
                         <>
                             <i className="fas fa-spinner fa-spin mr-2"></i>
-                            Analizando...
+                            Analyzing...
                         </>
                     ) : currentQuestion === questions.length - 1 ? (
                         <>
-                            Descubrir mi Pokémon
+                            Discover my Pokémon
                             <i className="fas fa-sparkles ml-2"></i>
                         </>
                     ) : (
                         <>
-                            Siguiente
+                            Next
                             <i className="fas fa-arrow-right ml-2"></i>
                         </>
                     )}

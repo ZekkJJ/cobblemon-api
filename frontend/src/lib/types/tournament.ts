@@ -3,6 +3,9 @@
  * Cobblemon Los Pitufos
  */
 
+// Formato de batalla
+export type BattleFormat = '1v1' | '2v2';
+
 // Tipos de victoria
 export type VictoryType = 'KO' | 'FORFEIT' | 'TIMEOUT' | 'DRAW' | 'ADMIN_DECISION' | 'BYE';
 
@@ -51,6 +54,23 @@ export interface TournamentMatch {
   nextLoserMatchId?: string | null;
   adminOverride: boolean;
   adminId?: string;
+  // 2v2 specific fields
+  is2v2?: boolean;
+  team1Id?: string | null;
+  team1Players?: string[];
+  team1Name?: string | null;
+  team2Id?: string | null;
+  team2Players?: string[];
+  team2Name?: string | null;
+}
+
+// Team for 2v2 tournaments
+export interface TournamentTeam {
+  id: string;
+  player1: TournamentParticipant;
+  player2: TournamentParticipant;
+  name: string;
+  combinedSeed: number;
 }
 
 // Ronda
@@ -69,6 +89,9 @@ export interface BracketStructure {
   totalRounds: number;
   winnerId: string | null;
   losersRounds?: TournamentRound[];
+  // 2v2 specific
+  battleFormat?: BattleFormat;
+  teams?: TournamentTeam[];
 }
 
 // Torneo completo
@@ -85,6 +108,7 @@ export interface Tournament {
   maxParticipants: number;
   minParticipants?: number;
   bracketType: 'single' | 'double';
+  battleFormat: BattleFormat;
   format?: string;
   status: TournamentStatus;
   currentRound: number;

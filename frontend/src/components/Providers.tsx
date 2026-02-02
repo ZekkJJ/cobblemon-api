@@ -1,7 +1,7 @@
 'use client';
 
 import { ReactNode } from 'react';
-import { AudioProvider } from '@/src/lib/audio-context';
+import { AudioProvider } from '@/lib/audio-context';
 
 interface ProvidersProps {
   children: ReactNode;

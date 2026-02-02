@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { playersAPI } from '@/src/lib/api-client';
-import { playSound } from '@/src/lib/sounds';
+import { playersAPI } from '@/lib/api-client';
+import { playSound } from '@/lib/sounds';
 
 interface PlayerSummary {
   uuid: string;
@@ -40,7 +40,7 @@ export default function JugadoresPage() {
       setPlayers(data.players || []);
       setError(null);
     } catch (err: any) {
-      setError(err.message || 'Error al cargar jugadores');
+      setError(err.message || 'Error loading players');
       setPlayers([]); // Ensure players is always an array
     } finally {
       setLoading(false);
@@ -94,7 +94,7 @@ export default function JugadoresPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-poke-blue border-t-transparent mb-4"></div>
-          <p className="text-xl">Cargando jugadores...</p>
+          <p className="text-xl">Loading players...</p>
         </div>
       </div>
     );
@@ -109,7 +109,7 @@ export default function JugadoresPage() {
           <p className="text-slate-300 mb-6">{error}</p>
           <button onClick={fetchPlayers} className="btn-primary">
             <i className="fas fa-redo mr-2"></i>
-            Reintentar
+            Retry
           </button>
         </div>
       </div>
@@ -123,10 +123,10 @@ export default function JugadoresPage() {
         <div className="text-center mb-8">
           <h1 className="text-5xl font-bold mb-4 pixel-font text-poke-blue">
             <i className="fas fa-users mr-3"></i>
-            JUGADORES
+            PLAYERS
           </h1>
           <p className="text-xl text-slate-300">
-            Explora los equipos y progreso de la comunidad
+            Explore the teams and progress of the community
           </p>
         </div>
 
@@ -142,7 +142,7 @@ export default function JugadoresPage() {
                     type="text"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Buscar jugador..."
+                    placeholder="Search player..."
                     className="w-full bg-slate-700 text-white pl-12 pr-4 py-3 rounded-lg border border-slate-600 focus:border-poke-blue focus:outline-none"
                   />
                 </div>
@@ -152,33 +152,30 @@ export default function JugadoresPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => handleSortChange('name')}
-                  className={`px-4 py-3 rounded-lg font-medium transition-all ${
-                    sortBy === 'name'
+                  className={`px-4 py-3 rounded-lg font-medium transition-all ${sortBy === 'name'
                       ? 'bg-poke-blue text-white'
                       : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                  }`}
+                    }`}
                 >
                   <i className="fas fa-sort-alpha-down mr-2"></i>
-                  Nombre
+                  Name
                 </button>
                 <button
                   onClick={() => handleSortChange('pokemon')}
-                  className={`px-4 py-3 rounded-lg font-medium transition-all ${
-                    sortBy === 'pokemon'
+                  className={`px-4 py-3 rounded-lg font-medium transition-all ${sortBy === 'pokemon'
                       ? 'bg-poke-blue text-white'
                       : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                  }`}
+                    }`}
                 >
                   <i className="fas fa-dragon mr-2"></i>
                   Pokémon
                 </button>
                 <button
                   onClick={() => handleSortChange('shinies')}
-                  className={`px-4 py-3 rounded-lg font-medium transition-all ${
-                    sortBy === 'shinies'
+                  className={`px-4 py-3 rounded-lg font-medium transition-all ${sortBy === 'shinies'
                       ? 'bg-poke-blue text-white'
                       : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                  }`}
+                    }`}
                 >
                   <i className="fas fa-star mr-2"></i>
                   Shinies
@@ -200,11 +197,11 @@ export default function JugadoresPage() {
         ) : (
           <div className="card text-center py-16 max-w-2xl mx-auto mb-12">
             <i className="fas fa-search text-6xl text-slate-600 mb-4"></i>
-            <h3 className="text-white font-bold text-xl mb-2">No se encontraron jugadores</h3>
+            <h3 className="text-white font-bold text-xl mb-2">No players found</h3>
             <p className="text-slate-400">
               {searchTerm
-                ? 'Intenta con otro término de búsqueda'
-                : 'No hay jugadores registrados aún'}
+                ? 'Try another search term'
+                : 'No players registered yet'}
             </p>
           </div>
         )}
@@ -214,7 +211,7 @@ export default function JugadoresPage() {
           <div className="card">
             <h3 className="text-white font-bold text-xl mb-6 text-center">
               <i className="fas fa-chart-bar text-poke-yellow mr-2"></i>
-              Estadísticas Globales
+              Global Statistics
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
@@ -223,7 +220,7 @@ export default function JugadoresPage() {
                 </div>
                 <div className="text-slate-400">
                   <i className="fas fa-users mr-2"></i>
-                  Jugadores
+                  Players
                 </div>
               </div>
               <div className="text-center">
@@ -232,7 +229,7 @@ export default function JugadoresPage() {
                 </div>
                 <div className="text-slate-400">
                   <i className="fas fa-dragon mr-2"></i>
-                  Pokémon Totales
+                  Total Pokémon
                 </div>
               </div>
               <div className="text-center">
@@ -256,7 +253,7 @@ export default function JugadoresPage() {
 function PlayerCard({ player }: { player: PlayerSummary }) {
   // Validar que el player tenga datos válidos
   const username = player.username || player.uuid || 'Unknown';
-  
+
   return (
     <Link href={`/jugadores/${player.uuid}`}>
       <div className="card hover:border-poke-blue transition-all cursor-pointer group">
@@ -289,7 +286,7 @@ function PlayerCard({ player }: { player: PlayerSummary }) {
               <i className="fas fa-egg text-poke-yellow text-xl"></i>
             </div>
             <div className="flex-1">
-              <div className="text-xs text-slate-400">Starter del Gacha</div>
+              <div className="text-xs text-slate-400">Gacha Starter</div>
               <div className="text-white font-medium flex items-center gap-2">
                 {player.starter.name}
                 {player.starter.isShiny && (
@@ -303,7 +300,7 @@ function PlayerCard({ player }: { player: PlayerSummary }) {
         {/* Party Preview */}
         {player.partyPreview && player.partyPreview.length > 0 && (
           <div>
-            <div className="text-xs text-slate-400 mb-2">Equipo Actual</div>
+            <div className="text-xs text-slate-400 mb-2">Current Team</div>
             <div className="grid grid-cols-6 gap-2">
               {player.partyPreview.slice(0, 6).map((pokemon, idx) => (
                 <div

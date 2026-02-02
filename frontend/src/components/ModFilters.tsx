@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ModCategory } from '@/src/lib/types/mod';
-import { playSound } from '@/src/lib/sounds';
+import { ModCategory } from '@/lib/types/mod';
+import { playSound } from '@/lib/sounds';
 
 interface ModFiltersProps {
   totalMods: number;

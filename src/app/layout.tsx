@@ -8,8 +8,8 @@ import MusicPlayer from '@/components/MusicPlayer';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Cobblemon Los Pitufos - Gacha de Starters',
-    description: 'Obtén tu starter único para el servidor Cobblemon. ¡Solo una tirada por jugador!',
+    title: 'Cobblemon Los Pitufos - Starter Gacha',
+    description: 'Get your unique starter for the Cobblemon server. Only one roll per player!',
     icons: {
         icon: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png',
     },
@@ -21,7 +21,7 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="es">
+        <html lang="en">
             <head>
                 <link
                     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"

@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { tournamentsAPI } from '@/src/lib/api-client';
+import { tournamentsAPI } from '@/lib/api-client';
 import { 
   Tournament, 
   TournamentParticipant, 
   TournamentMatch,
   getStatusText, 
   getStatusColor 
-} from '@/src/lib/types/tournament';
-import { playSound } from '@/src/lib/sounds';
+} from '@/lib/types/tournament';
+import { playSound } from '@/lib/sounds';
 
 interface AdminTournamentPanelProps {
   onClose?: () => void;
@@ -31,6 +31,7 @@ export default function AdminTournamentPanel({ onClose }: AdminTournamentPanelPr
     startDate: '',
     maxParticipants: 16,
     bracketType: 'single' as 'single' | 'double',
+    battleFormat: '1v1' as '1v1' | '2v2',
     prizes: '',
     rules: '',
     format: '6v6 Singles',
@@ -211,6 +212,7 @@ export default function AdminTournamentPanel({ onClose }: AdminTournamentPanelPr
       startDate: '',
       maxParticipants: 16,
       bracketType: 'single',
+      battleFormat: '1v1',
       prizes: '',
       rules: '',
       format: '6v6 Singles',
@@ -226,6 +228,7 @@ export default function AdminTournamentPanel({ onClose }: AdminTournamentPanelPr
       startDate: tournament.startDate.split('T')[0],
       maxParticipants: tournament.maxParticipants,
       bracketType: tournament.bracketType,
+      battleFormat: tournament.battleFormat || '1v1',
       prizes: typeof tournament.prizes === 'string' ? tournament.prizes : '',
       rules: tournament.rules || '',
       format: tournament.format || '6v6 Singles',
@@ -393,6 +396,10 @@ function TournamentList({
                 <span><i className="fas fa-users mr-1"></i>{tournament.participants.length}/{tournament.maxParticipants}</span>
                 <span><i className="fas fa-calendar mr-1"></i>{new Date(tournament.startDate).toLocaleDateString()}</span>
                 <span><i className="fas fa-sitemap mr-1"></i>{tournament.bracketType === 'single' ? 'Simple' : 'Doble'}</span>
+                <span className={tournament.battleFormat === '2v2' ? 'text-purple-400' : 'text-poke-yellow'}>
+                  <i className={`fas ${tournament.battleFormat === '2v2' ? 'fa-users' : 'fa-user'} mr-1`}></i>
+                  {tournament.battleFormat || '1v1'}
+                </span>
               </div>
             </div>
 
@@ -621,6 +628,7 @@ function TournamentForm({
     startDate: string;
     maxParticipants: number;
     bracketType: 'single' | 'double';
+    battleFormat: '1v1' | '2v2';
     prizes: string;
     rules: string;
     format: string;
@@ -700,18 +708,43 @@ function TournamentForm({
           </select>
         </div>
 
-        {/* Formato */}
+        {/* Formato de Batalla (1v1 o 2v2) */}
         <div>
           <label className="block text-sm font-medium text-slate-300 mb-2">
-            Formato de Batalla
+            Formato de Batalla *
           </label>
-          <input
-            type="text"
-            value={formData.format}
-            onChange={(e) => setFormData({ ...formData, format: e.target.value })}
-            className="w-full px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg focus:border-poke-yellow focus:outline-none"
-            placeholder="6v6 Singles"
-          />
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, battleFormat: '1v1' })}
+              className={`px-4 py-3 rounded-lg border-2 transition-all font-bold ${
+                formData.battleFormat === '1v1'
+                  ? 'border-poke-yellow bg-poke-yellow/20 text-poke-yellow'
+                  : 'border-slate-600 bg-slate-800 text-slate-400 hover:border-slate-500'
+              }`}
+            >
+              <i className="fas fa-user mr-2"></i>
+              1v1 Singles
+            </button>
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, battleFormat: '2v2' })}
+              className={`px-4 py-3 rounded-lg border-2 transition-all font-bold ${
+                formData.battleFormat === '2v2'
+                  ? 'border-purple-500 bg-purple-500/20 text-purple-400'
+                  : 'border-slate-600 bg-slate-800 text-slate-400 hover:border-slate-500'
+              }`}
+            >
+              <i className="fas fa-users mr-2"></i>
+              2v2 Doubles
+            </button>
+          </div>
+          <p className="text-xs text-slate-500 mt-2">
+            {formData.battleFormat === '2v2' 
+              ? '⚡ Los equipos se formarán automáticamente por seeds (1+4 vs 2+3, etc.)'
+              : '👤 Cada jugador compite individualmente'
+            }
+          </p>
         </div>
 
         {/* Tiempo de Inscripción */}

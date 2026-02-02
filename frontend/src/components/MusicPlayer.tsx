@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useAudio } from '@/src/lib/audio-context';
+import { useAudio } from '@/lib/audio-context';
 
 export default function MusicPlayer() {
   const {
@@ -46,7 +46,7 @@ export default function MusicPlayer() {
 
       for (let i = 0; i < barCount; i++) {
         let barHeight: number;
-        
+
         if (frequencyData && isPlaying) {
           // Use real frequency data - map bar index to frequency bin
           const freqIndex = Math.floor((i / barCount) * (frequencyData.length / 2));
@@ -140,7 +140,7 @@ export default function MusicPlayer() {
                 </motion.div>
               </div>
               <div className="text-slate-400 text-xs">
-                {isPlaying ? 'Reproduciendo...' : 'En pausa'}
+                {isPlaying ? 'Playing...' : 'Paused'}
               </div>
             </div>
 
@@ -285,9 +285,8 @@ export default function MusicPlayer() {
                 />
                 <button
                   onClick={() => setShowPlaylist(!showPlaylist)}
-                  className={`w-8 h-8 rounded-lg transition-all flex items-center justify-center ${
-                    showPlaylist ? 'bg-red-500 text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-400'
-                  }`}
+                  className={`w-8 h-8 rounded-lg transition-all flex items-center justify-center ${showPlaylist ? 'bg-red-500 text-white' : 'bg-slate-800 hover:bg-slate-700 text-slate-400'
+                    }`}
                 >
                   <i className="fas fa-list"></i>
                 </button>

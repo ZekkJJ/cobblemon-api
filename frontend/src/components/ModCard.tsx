@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Mod } from '@/src/lib/types/mod';
+import { Mod } from '@/lib/types/mod';
 import {
   formatFileSize,
   getCategoryBadgeColor,
@@ -10,8 +10,8 @@ import {
   getModLoaderColor,
   getModLoaderText,
   formatVersion,
-} from '@/src/lib/mod-utils';
-import { playSound } from '@/src/lib/sounds';
+} from '@/lib/mod-utils';
+import { playSound } from '@/lib/sounds';
 
 interface ModCardProps {
   mod: Mod;

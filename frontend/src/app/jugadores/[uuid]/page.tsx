@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { playersAPI } from '@/src/lib/api-client';
-import { Pokemon } from '@/src/lib/types/pokemon';
+import { playersAPI } from '@/lib/api-client';
+import { Pokemon } from '@/lib/types/pokemon';
 
 interface PlayerData {
   uuid: string;
@@ -363,7 +363,7 @@ function PokemonCard({ pokemon }: { pokemon: Pokemon }) {
               key={index}
               className="px-2 py-1 bg-slate-700 rounded text-xs"
             >
-              {move}
+              {typeof move === 'string' ? move : move.name}
             </span>
           ))}
         </div>

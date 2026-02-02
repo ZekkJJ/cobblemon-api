@@ -14,6 +14,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -83,10 +85,17 @@ public class ShopManager {
         if (server == null) return;
         
         try {
-            int playerCount = server.getPlayerManager().getPlayerList().size();
-            if (playerCount == 0) return;
+            // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+            List<ServerPlayerEntity> playersCopy;
+            try {
+                playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+            } catch (Exception e) {
+                return;
+            }
             
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            if (playersCopy.isEmpty()) return;
+            
+            for (ServerPlayerEntity player : playersCopy) {
                 if (player == null || player.isDisconnected()) continue;
                 
                 UUID uuid = player.getUuid();

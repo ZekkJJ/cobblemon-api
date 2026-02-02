@@ -1,6 +1,8 @@
 export interface Pokemon {
+  uuid: string;
   species: string;
   speciesId: number;
+  nickname?: string;
   level: number;
   experience: number;
   shiny: boolean;
@@ -9,27 +11,31 @@ export interface Pokemon {
   ability: string;
   friendship: number;
   ball: string;
-  ivs: {
-    hp: number;
-    attack: number;
-    defense: number;
-    spAttack: number;
-    spDefense: number;
-    speed: number;
-  };
-  evs: {
-    hp: number;
-    attack: number;
-    defense: number;
-    spAttack: number;
-    spDefense: number;
-    speed: number;
-  };
-  moves: string[];
+  form?: string;
+  originalTrainer?: string;
+  ivs: PokemonStats;
+  evs: PokemonStats;
+  moves: PokemonMove[];
   heldItem?: string;
   currentHealth: number;
   maxHealth: number;
   status?: string;
+}
+
+export interface PokemonStats {
+  hp: number;
+  attack: number;
+  defense: number;
+  spAttack: number;
+  spDefense: number;
+  speed: number;
+}
+
+export interface PokemonMove {
+  name: string;
+  type?: string;
+  pp?: number;
+  maxPp?: number;
 }
 
 export interface Starter {

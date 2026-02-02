@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { playSound } from '@/src/lib/sounds';
+import { playSound } from '@/lib/sounds';
 
 interface QuestionnaireProps {
   onSubmit: (answers: string[]) => void;
@@ -17,52 +17,52 @@ interface Question {
 const QUESTIONS: Question[] = [
   {
     id: 1,
-    question: '¿Qué valoras más en un compañero?',
+    question: 'What do you value most in a companion?',
     options: [
-      'Lealtad y protección',
-      'Inteligencia y astucia',
-      'Energía y entusiasmo',
-      'Calma y serenidad',
+      'Loyalty and protection',
+      'Intelligence and cunning',
+      'Energy and enthusiasm',
+      'Calm and serenity',
     ],
   },
   {
     id: 2,
-    question: '¿Cómo enfrentas los desafíos?',
+    question: 'How do you face challenges?',
     options: [
-      'Con fuerza y determinación',
-      'Con estrategia y planificación',
-      'Con creatividad y adaptabilidad',
-      'Con paciencia y perseverancia',
+      'With strength and determination',
+      'With strategy and planning',
+      'With creativity and adaptability',
+      'With patience and perseverance',
     ],
   },
   {
     id: 3,
-    question: '¿Qué ambiente prefieres?',
+    question: 'What environment do you prefer?',
     options: [
-      'Montañas y cuevas',
-      'Bosques y praderas',
-      'Océanos y ríos',
-      'Ciudades y lugares urbanos',
+      'Mountains and caves',
+      'Forests and meadows',
+      'Oceans and rivers',
+      'Cities and urban places',
     ],
   },
   {
     id: 4,
-    question: '¿Cuál es tu estilo de batalla?',
+    question: 'What is your battle style?',
     options: [
-      'Ofensivo y agresivo',
-      'Defensivo y resistente',
-      'Equilibrado y versátil',
-      'Táctico y estratégico',
+      'Offensive and aggressive',
+      'Defensive and resilient',
+      'Balanced and versatile',
+      'Tactical and strategic',
     ],
   },
   {
     id: 5,
-    question: '¿Qué te describe mejor?',
+    question: 'What describes you best?',
     options: [
-      'Valiente y audaz',
-      'Sabio y reflexivo',
-      'Amigable y sociable',
-      'Misterioso y reservado',
+      'Brave and bold',
+      'Wise and thoughtful',
+      'Friendly and sociable',
+      'Mysterious and reserved',
     ],
   },
 ];
@@ -73,7 +73,7 @@ export default function SoulDrivenQuestionnaire({ onSubmit, isLoading }: Questio
 
   const handleAnswer = (answer: string) => {
     playSound('click');
-    
+
     const newAnswers = [...answers, answer];
     setAnswers(newAnswers);
 
@@ -104,7 +104,7 @@ export default function SoulDrivenQuestionnaire({ onSubmit, isLoading }: Questio
         <div className="flex justify-between text-sm mb-2">
           <span className="text-poke-purple font-bold">Soul Driven</span>
           <span className="text-slate-400">
-            Pregunta {currentQuestion + 1} de {QUESTIONS.length}
+            Question {currentQuestion + 1} of {QUESTIONS.length}
           </span>
         </div>
         <div className="w-full bg-slate-700 rounded-full h-2">
@@ -148,14 +148,14 @@ export default function SoulDrivenQuestionnaire({ onSubmit, isLoading }: Questio
           className="btn-secondary text-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <i className="fas fa-arrow-left mr-2"></i>
-          Anterior
+          Previous
         </button>
 
         <div className="text-sm text-slate-400">
           {answers.length > 0 && (
             <span>
               <i className="fas fa-check-circle text-poke-green mr-1"></i>
-              {answers.length} respuesta{answers.length !== 1 ? 's' : ''}
+              {answers.length} answer{answers.length !== 1 ? 's' : ''}
             </span>
           )}
         </div>
@@ -166,7 +166,7 @@ export default function SoulDrivenQuestionnaire({ onSubmit, isLoading }: Questio
         <div className="mt-6 text-center">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-4 border-poke-purple border-t-transparent"></div>
           <p className="mt-2 text-poke-purple font-bold">
-            Analizando tu alma...
+            Analyzing your soul...
           </p>
         </div>
       )}

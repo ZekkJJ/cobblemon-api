@@ -140,43 +140,57 @@ public class BattleListener {
     
     /**
      * Handle battle victory event
+     * Supports both 1v1 and 2v2 (doubles) battles
      */
     private void onBattleVictory(PokemonBattle battle, List<BattleActor> winners, List<BattleActor> losers) {
         if (battle == null || winners == null || losers == null) return;
         if (winners.isEmpty() || losers.isEmpty()) return;
         
-        // Extract player UUIDs
-        UUID winnerUuid = null;
-        UUID loserUuid = null;
+        // Extract ALL player UUIDs from both sides (supports 2v2)
+        List<UUID> winnerUuids = new ArrayList<>();
+        List<UUID> loserUuids = new ArrayList<>();
         
         for (BattleActor actor : winners) {
             if (actor instanceof PlayerBattleActor) {
-                winnerUuid = ((PlayerBattleActor) actor).getUuid();
-                break;
+                winnerUuids.add(((PlayerBattleActor) actor).getUuid());
             }
         }
         
         for (BattleActor actor : losers) {
             if (actor instanceof PlayerBattleActor) {
-                loserUuid = ((PlayerBattleActor) actor).getUuid();
-                break;
+                loserUuids.add(((PlayerBattleActor) actor).getUuid());
             }
         }
         
-        if (winnerUuid == null || loserUuid == null) {
+        if (winnerUuids.isEmpty() || loserUuids.isEmpty()) {
             logger.debug("Battle victory: not a PvP battle");
             return;
         }
         
-        // Clean up tracking
-        activeBattles.remove(winnerUuid);
-        activeBattles.remove(loserUuid);
-        disconnectedPlayers.remove(winnerUuid);
-        disconnectedPlayers.remove(loserUuid);
+        // Clean up tracking for all players
+        for (UUID uuid : winnerUuids) {
+            activeBattles.remove(uuid);
+            disconnectedPlayers.remove(uuid);
+        }
+        for (UUID uuid : loserUuids) {
+            activeBattles.remove(uuid);
+            disconnectedPlayers.remove(uuid);
+        }
         
-        // Report to tournament manager
-        logger.info("Battle ended: " + winnerUuid + " defeated " + loserUuid + " (KO)");
-        tournamentManager.reportBattleResult(winnerUuid, loserUuid, "KO");
+        // Determine battle type
+        boolean isDoubles = winnerUuids.size() >= 2 && loserUuids.size() >= 2;
+        
+        if (isDoubles) {
+            // 2v2 Battle - report with all UUIDs
+            logger.info("2v2 Battle ended: " + winnerUuids + " defeated " + loserUuids + " (KO)");
+            tournamentManager.reportBattleResult2v2(winnerUuids, loserUuids, "KO");
+        } else {
+            // 1v1 Battle - use first UUID from each side
+            UUID winnerUuid = winnerUuids.get(0);
+            UUID loserUuid = loserUuids.get(0);
+            logger.info("1v1 Battle ended: " + winnerUuid + " defeated " + loserUuid + " (KO)");
+            tournamentManager.reportBattleResult(winnerUuid, loserUuid, "KO");
+        }
     }
     
     /**

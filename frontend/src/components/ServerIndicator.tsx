@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { serverAPI } from '@/src/lib/api-client';
+import { serverAPI } from '@/lib/api-client';
 
 interface ServerStatus {
   online: boolean;

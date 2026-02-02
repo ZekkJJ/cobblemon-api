@@ -73,7 +73,7 @@ export default function VerificarPage() {
                         <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
                             <i className="fas fa-link text-white text-2xl"></i>
                         </div>
-                        <h1 className="text-2xl font-bold text-white mb-2">Verificar Cuenta</h1>
+                        <h1 className="text-2xl font-bold text-white mb-2">Verify Account</h1>
                         <p className="text-gray-400 text-sm">
                             Vincula tu cuenta de Minecraft con Discord
                         </p>
@@ -89,11 +89,11 @@ export default function VerificarPage() {
                             </li>
                             <li className="flex items-start gap-2">
                                 <span className="bg-blue-500/20 text-blue-400 w-5 h-5 rounded flex items-center justify-center text-xs flex-shrink-0">2</span>
-                                <span>Aparecerá un código de 5 dígitos</span>
+                                <span>A 5-digit code will appear</span>
                             </li>
                             <li className="flex items-start gap-2">
                                 <span className="bg-blue-500/20 text-blue-400 w-5 h-5 rounded flex items-center justify-center text-xs flex-shrink-0">3</span>
-                                <span>Ingresa el código aquí abajo</span>
+                                <span>Enter the code below</span>
                             </li>
                             <li className="flex items-start gap-2">
                                 <span className="bg-blue-500/20 text-blue-400 w-5 h-5 rounded flex items-center justify-center text-xs flex-shrink-0">4</span>
@@ -125,7 +125,7 @@ export default function VerificarPage() {
                             className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
                         >
                             <i className="fab fa-discord"></i>
-                            Iniciar sesión con Discord
+                            Sign in with Discord
                         </button>
                     ) : (
                         <>
@@ -149,7 +149,7 @@ export default function VerificarPage() {
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 <div>
                                     <label className="block text-gray-300 text-sm mb-2">
-                                        Código de verificación
+                                        Verification code
                                     </label>
                                     <input
                                         type="text"
@@ -175,7 +175,7 @@ export default function VerificarPage() {
                                     ) : (
                                         <>
                                             <i className="fas fa-check mr-2"></i>
-                                            Verificar Cuenta
+                                            Verify Account
                                         </>
                                     )}
                                 </button>
@@ -199,7 +199,7 @@ export default function VerificarPage() {
 
                 {/* Help text */}
                 <p className="text-center text-gray-500 text-sm mt-6">
-                    ¿Problemas? Usa <code className="text-gray-400">/codigo</code> en el servidor para ver tu código de nuevo.
+                    Problems? Use <code className="text-gray-400">/codigo</code> in the server to see your code again.
                 </p>
             </div>
         </div>

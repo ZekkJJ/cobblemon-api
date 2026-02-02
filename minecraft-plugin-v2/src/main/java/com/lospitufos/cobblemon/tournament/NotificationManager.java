@@ -314,10 +314,20 @@ public class NotificationManager {
     
     /**
      * Play announcement sound to all players
+     * THREAD SAFETY: Makes defensive copy of player list
      */
     private void playAnnouncementSound() {
         if (server == null) return;
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playersCopy;
+        try {
+            playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
+        for (ServerPlayerEntity player : playersCopy) {
             if (player != null && !player.isDisconnected()) {
                 player.playSound(SoundEvents.ENTITY_ENDER_DRAGON_GROWL, 0.5f, 1.5f);
             }
@@ -326,7 +336,16 @@ public class NotificationManager {
     
     private void playWarningSound() {
         if (server == null) return;
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playersCopy;
+        try {
+            playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
+        for (ServerPlayerEntity player : playersCopy) {
             if (player != null && !player.isDisconnected()) {
                 player.playSound(SoundEvents.BLOCK_NOTE_BLOCK_BELL.value(), 1.0f, 1.0f);
             }
@@ -371,11 +390,20 @@ public class NotificationManager {
     
     /**
      * Broadcast message to all online players
+     * THREAD SAFETY: Makes defensive copy of player list
      */
     private void broadcastToAll(String message) {
         if (server == null) return;
         
-        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+        // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+        List<ServerPlayerEntity> playersCopy;
+        try {
+            playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+        } catch (Exception e) {
+            return;
+        }
+        
+        for (ServerPlayerEntity player : playersCopy) {
             if (player != null && !player.isDisconnected()) {
                 player.sendMessage(Text.literal(message));
             }

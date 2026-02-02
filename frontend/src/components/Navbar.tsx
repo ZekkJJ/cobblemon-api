@@ -12,10 +12,10 @@ import {
   MobileNavHeader,
   MobileNavToggle,
   MobileNavMenu,
-} from "@/src/components/ui/resizable-navbar";
-import { LocalUser } from "@/src/lib/types/user";
-import { ModsStorageService } from "@/src/lib/mods-storage";
-import { modsAPI } from "@/src/lib/api-client";
+} from "@/components/ui/resizable-navbar";
+import { LocalUser } from "@/lib/types/user";
+import { ModsStorageService } from "@/lib/mods-storage";
+import { modsAPI } from "@/lib/api-client";
 
 export default function Navbar() {
   const [localUser, setLocalUser] = useState<LocalUser | null>(null);
@@ -41,14 +41,14 @@ export default function Navbar() {
         const response = await modsAPI.getAll();
         const currentModIds = response.mods.map((m: { _id: string }) => m._id);
         const newMods = ModsStorageService.detectNewMods(currentModIds);
-        
+
         // También detectar actualizaciones
         const currentVersions: Record<string, string> = {};
         response.mods.forEach((m: { _id: string; version: string }) => {
           currentVersions[m._id] = m.version;
         });
         const updatedMods = ModsStorageService.detectUpdatedMods(currentVersions);
-        
+
         setNewModsCount(newMods.length + updatedMods.length);
       } catch (error) {
         // Silenciar errores - no es crítico
@@ -57,7 +57,7 @@ export default function Navbar() {
     };
 
     checkNewMods();
-    
+
     // Verificar cada 5 minutos
     const interval = setInterval(checkNewMods, 5 * 60 * 1000);
     return () => clearInterval(interval);
@@ -70,16 +70,32 @@ export default function Navbar() {
   };
 
   const navItems = [
-    { name: "Gacha", link: "/", icon: "fa-dice" },
+    { name: "Gacha", link: "/gacha", icon: "fa-dice" },
     { name: "Tienda", link: "/tienda", icon: "fa-store" },
+    { name: "Mercado", link: "/mercado", icon: "fa-exchange-alt" },
     { name: "Mods", link: "/mods", icon: "fa-puzzle-piece", badge: newModsCount > 0 ? newModsCount : undefined },
     { name: "Torneos", link: "/torneos", icon: "fa-trophy" },
+    { name: "Ranking", link: "/ranking", icon: "fa-medal" },
+    { name: "Equipos", link: "/team-ranking", icon: "fa-users-cog" },
     { name: "Jugadores", link: "/jugadores", icon: "fa-users" },
     { name: "Pokédex", link: "/pokedex", icon: "fa-book" },
     { name: "Mapa", link: "/mapa", icon: "fa-map" },
     { name: "Galería", link: "/galeria", icon: "fa-images" },
     { name: "Servidor", link: "/servidor", icon: "fa-server" },
   ];
+
+  // Add "Mis Ventas" link for logged-in users
+  if (localUser) {
+    // Insert after "Mercado"
+    const mercadoIndex = navItems.findIndex(item => item.link === "/mercado");
+    if (mercadoIndex !== -1) {
+      navItems.splice(mercadoIndex + 1, 0, {
+        name: "Mis ventas",
+        link: "/mercado/mis-ventas",
+        icon: "fa-tags"
+      });
+    }
+  }
 
   const isAdmin = localUser?.discordId === "478742167557505034";
   if (isAdmin) {
@@ -130,7 +146,7 @@ export default function Navbar() {
               variant="discord"
             >
               <i className="fab fa-discord"></i>
-              Login
+              Entrar
             </NavbarButton>
           )}
         </div>
@@ -193,12 +209,12 @@ export default function Navbar() {
               <span className="font-medium">{item.name}</span>
               {item.badge && item.badge > 0 && (
                 <span className="ml-auto text-xs bg-poke-green/20 text-poke-green px-2 py-0.5 rounded-full">
-                  {item.badge} nuevo{item.badge > 1 ? 's' : ''}
+                  {item.badge} nuevos
                 </span>
               )}
             </a>
           ))}
-          
+
           <div className="flex w-full flex-col gap-3 pt-4 border-t border-white/20">
             {localUser ? (
               <NavbarButton
@@ -211,7 +227,7 @@ export default function Navbar() {
                 className="w-full justify-center"
               >
                 <i className="fas fa-sign-out-alt"></i>
-                Cerrar Sesión
+                Salir
               </NavbarButton>
             ) : (
               <NavbarButton
@@ -221,7 +237,7 @@ export default function Navbar() {
                 className="w-full justify-center"
               >
                 <i className="fab fa-discord"></i>
-                Iniciar con Discord
+                Entrar con Discord
               </NavbarButton>
             )}
           </div>

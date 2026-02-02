@@ -1,9 +1,9 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { Mod, ModCategory, ModLoader } from '@/src/lib/types/mod';
-import { formatFileSize, getCategoryBadgeColor, getCategoryBadgeText } from '@/src/lib/mod-utils';
-import { playSound } from '@/src/lib/sounds';
+import { Mod, ModCategory, ModLoader } from '@/lib/types/mod';
+import { formatFileSize, getCategoryBadgeColor, getCategoryBadgeText } from '@/lib/mod-utils';
+import { playSound } from '@/lib/sounds';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
@@ -348,11 +348,6 @@ export default function AdminModPanel({ onModsUpdated }: AdminModPanelProps) {
 
       if (!success) {
         results.failed.push(`${file.name}: ${lastError}`);
-      }
-
-      // Pequeña pausa para no saturar el servidor
-      await new Promise(resolve => setTimeout(resolve, 300));
-    }
       }
 
       // Pequeña pausa para no saturar el servidor

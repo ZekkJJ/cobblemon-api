@@ -12,6 +12,8 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -64,6 +66,7 @@ public class VerificationManager {
 
     /**
      * Periodically check verification status and remind unverified players
+     * THREAD SAFETY: Makes defensive copy of player list
      */
     private void checkVerificationAndRemind() {
         if (server == null) return;
@@ -71,7 +74,15 @@ public class VerificationManager {
         try {
             long now = System.currentTimeMillis();
             
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            // DEFENSIVE COPY: Copy player list to avoid ConcurrentModificationException
+            List<ServerPlayerEntity> playersCopy;
+            try {
+                playersCopy = new ArrayList<>(server.getPlayerManager().getPlayerList());
+            } catch (Exception e) {
+                return;
+            }
+            
+            for (ServerPlayerEntity player : playersCopy) {
                 if (player == null || player.isDisconnected()) continue;
                 
                 UUID uuid = player.getUuid();

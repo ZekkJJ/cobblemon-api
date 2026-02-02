@@ -1,0 +1,311 @@
+# Implementation Plan
+
+- [x] 1. Set up module structure and types
+  - [x] 1.1 Create pokemon-gacha module directory structure
+    - Create `backend/src/modules/pokemon-gacha/` with controller, service, routes files
+    - _Requirements: 1.1, 1.2_
+  - [x] 1.2 Define TypeScript interfaces and types
+    - Create `backend/src/shared/types/pokemon-gacha.types.ts` with all interfaces
+    - Include GachaBanner, GachaReward, GachaPity, GachaHistory, Rarity enum
+    - _Requirements: 2.1, 7.1_
+  - [x] 1.3 Create Zod validation schemas
+    - Create `backend/src/modules/pokemon-gacha/pokemon-gacha.schema.ts`
+    - Include schemas for pull requests, banner creation, history filters
+    - _Requirements: 12.2_
+
+- [x] 2. Implement CryptoRngService
+  - [x] 2.1 Create crypto RNG service
+    - Implement `backend/src/modules/pokemon-gacha/crypto-rng.service.ts`
+    - Use crypto.randomBytes() for random number generation
+    - Implement random(), randomInt(), weightedSelect() methods
+    - _Requirements: 1.4, 12.5_
+  - [ ]* 2.2 Write property test for RNG bounds
+    - **Property 17: RNG bounds validation**
+    - **Validates: Requirements 12.5**
+  - [ ]* 2.3 Write property test for weighted selection
+    - Test that weightedSelect produces statistically correct distribution
+    - _Requirements: 2.1, 2.2_
+
+- [x] 3. Implement Pokemon and Item Pool Data
+  - [x] 3.1 Create Pokemon pool data file
+    - Create `backend/src/shared/data/gacha-pokemon-pool.data.ts`
+    - Define Pokemon by rarity tier (Common, Uncommon, Rare, Epic, Legendary, Mythic)
+    - Include pseudo-legendaries in Epic tier
+    - _Requirements: 2.1_
+  - [x] 3.2 Create Item pool data file
+    - Create `backend/src/shared/data/gacha-items-pool.data.ts`
+    - Define items: Master Ball (Mythic), Beast Ball (Legendary), Safari Ball (Epic), etc.
+    - _Requirements: 7.1_
+  - [x] 3.3 Create IV generation utility
+    - Create function to generate IVs based on rarity
+    - Common (0-15), Uncommon (5-20), Rare (10-25), Epic (15-28), Legendary (20-30), Mythic (25-31)
+    - _Requirements: 2.3_
+  - [ ]* 3.4 Write property test for IV ranges
+    - **Property 5: IV range by rarity**
+    - **Validates: Requirements 2.3**
+
+- [x] 4. Implement PityManagerService
+  - [x] 4.1 Create pity manager service
+    - Implement `backend/src/modules/pokemon-gacha/pity-manager.service.ts`
+    - Methods: getPityCount, incrementPity, resetPity, getLost5050Status, setLost5050Status
+    - _Requirements: 4.1, 4.4, 4.5_
+  - [x] 4.2 Implement soft pity calculation
+    - Increase Epic+ probability by 5% per pull after 75 pulls
+    - _Requirements: 4.2_
+  - [ ]* 4.3 Write property test for pity increment
+    - **Property 7: Pity counter increment**
+    - **Validates: Requirements 4.1**
+  - [ ]* 4.4 Write property test for pity reset
+    - **Property 9: Pity reset on Epic**
+    - **Validates: Requirements 4.4**
+  - [ ]* 4.5 Write property test for banner pity independence
+    - **Property 10: Banner pity independence**
+    - **Validates: Requirements 4.5, 5.1**
+
+- [x] 5. Implement PoolBuilderService
+  - [x] 5.1 Create pool builder service
+    - Implement `backend/src/modules/pokemon-gacha/pool-builder.service.ts`
+    - Methods: buildPool, calculateAdjustedProbabilities, selectReward
+    - _Requirements: 2.1, 2.2_
+  - [x] 5.2 Implement featured rate-up logic
+    - Apply rate-up multiplier to featured items
+    - Implement 50/50 system for featured rarity
+    - _Requirements: 6.1, 6.2_
+  - [ ]* 5.3 Write property test for 50/50 guarantee
+    - **Property 12: 50/50 guarantee after loss**
+    - **Validates: Requirements 6.3**
+
+- [x] 6. Implement BannerService
+  - [x] 6.1 Create banner service
+    - Implement `backend/src/modules/pokemon-gacha/banner.service.ts`
+    - Methods: getActiveBanners, getBanner, createBanner, updateBanner, deactivateBanner
+    - _Requirements: 5.1, 5.2, 5.5_
+  - [x] 6.2 Implement banner expiration check
+    - Auto-deactivate expired banners
+    - Reject pulls on expired banners
+    - _Requirements: 5.3_
+  - [x] 6.3 Create standard banner seed script
+    - Create permanent "Standard Banner" with default pool
+    - _Requirements: 5.4_
+  - [ ]* 6.4 Write property test for expired banner rejection
+    - **Property 11: Expired banner rejection**
+    - **Validates: Requirements 5.3**
+
+- [ ] 7. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 8. Implement PokemonGachaService (Core Logic)
+  - [x] 8.1 Create main gacha service
+    - Implement `backend/src/modules/pokemon-gacha/pokemon-gacha.service.ts`
+    - Inject CryptoRngService, PityManagerService, PoolBuilderService, BannerService
+    - _Requirements: 1.1, 1.2_
+  - [x] 8.2 Implement single pull logic
+    - Validate balance, deduct cost, generate reward, record history, update pity
+    - Use database transaction for atomicity
+    - _Requirements: 1.1, 1.5, 12.1_
+  - [x] 8.3 Implement multi-pull logic
+    - Execute 10 pulls in single transaction
+    - Apply multi-pull discount (4500 instead of 5000)
+    - _Requirements: 1.2_
+  - [x] 8.4 Implement shiny determination
+    - Apply 1/4096 chance for shiny variant
+    - Mark Pokemon with isShiny flag
+    - _Requirements: 3.1, 3.2_
+  - [x] 8.5 Implement hard pity guarantee
+    - Force Epic+ at 90 pulls
+    - _Requirements: 4.3_
+  - [x] 8.6 Implement idempotency
+    - Check idempotency key before processing
+    - Return cached result for duplicate requests
+    - _Requirements: 12.3_
+  - [ ]* 8.7 Write property test for balance deduction
+    - **Property 1: Balance deduction consistency**
+    - **Validates: Requirements 1.1, 1.2**
+  - [ ]* 8.8 Write property test for insufficient balance
+    - **Property 2: Insufficient balance rejection**
+    - **Validates: Requirements 1.3**
+  - [ ]* 8.9 Write property test for multi-pull count
+    - **Property 3: Multi-pull reward count**
+    - **Validates: Requirements 1.2**
+  - [ ]* 8.10 Write property test for history recording
+    - **Property 4: History recording**
+    - **Validates: Requirements 1.5**
+  - [ ]* 8.11 Write property test for hard pity
+    - **Property 8: Hard pity guarantee**
+    - **Validates: Requirements 4.3**
+  - [ ]* 8.12 Write property test for shiny flag
+    - **Property 6: Shiny flag consistency**
+    - **Validates: Requirements 3.2**
+  - [ ]* 8.13 Write property test for idempotency
+    - **Property 16: Idempotency**
+    - **Validates: Requirements 12.3**
+  - [ ]* 8.14 Write property test for transaction atomicity
+    - **Property 15: Transaction atomicity**
+    - **Validates: Requirements 12.1**
+
+- [x] 9. Implement History and Stats
+  - [x] 9.1 Implement getHistory method
+    - Return last 100 pulls with filters
+    - Support filtering by banner, rarity, date range
+    - _Requirements: 8.1, 8.4_
+  - [x] 9.2 Implement getStats method
+    - Calculate total pulls, CD spent, rarity distribution, pity progress
+    - _Requirements: 8.2_
+  - [ ]* 9.3 Write property test for history limit
+    - **Property 14: History limit**
+    - **Validates: Requirements 8.1**
+
+- [x] 10. Implement Pending Rewards System
+  - [x] 10.1 Create pending rewards collection and service
+    - Store rewards awaiting in-game delivery
+    - Methods: getPendingRewards, markAsClaimed
+    - _Requirements: 7.2, 10.2, 10.3_
+  - [ ]* 10.2 Write property test for item delivery
+    - **Property 13: Item reward delivery**
+    - **Validates: Requirements 7.2**
+
+- [ ] 11. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 12. Implement Controller and Routes
+  - [x] 12.1 Create gacha controller
+    - Implement `backend/src/modules/pokemon-gacha/pokemon-gacha.controller.ts`
+    - Handlers for all endpoints
+    - _Requirements: 1.1, 1.2, 8.1, 8.2_
+  - [x] 12.2 Create gacha routes
+    - Implement `backend/src/modules/pokemon-gacha/pokemon-gacha.routes.ts`
+    - Apply rate limiting and authentication
+    - _Requirements: 12.2_
+  - [x] 12.3 Register routes in app.ts
+    - Add pokemon-gacha router to Express app
+    - _Requirements: 1.1_
+  - [ ] 12.4 Add routes to server.js (legacy)
+    - Import and register routes in server.js for compatibility
+    - _Requirements: 1.1_
+
+- [x] 13. Implement Admin Endpoints
+  - [x] 13.1 Create admin controller methods
+    - Banner CRUD operations
+    - Validate admin permissions
+    - _Requirements: 11.1, 11.2, 11.3, 11.4_
+  - [ ] 13.2 Implement admin logging
+    - Log all admin actions with timestamp and admin ID
+    - _Requirements: 11.5_
+
+- [x] 14. Implement Frontend - Gacha Page
+  - [x] 14.1 Create gacha page layout
+    - Create `frontend/src/app/gacha/page.tsx`
+    - Display active banners, balance, pity progress
+    - _Requirements: 9.1, 9.5_
+  - [x] 14.2 Create BannerCard component
+    - Create `frontend/src/components/gacha/BannerCard.tsx`
+    - Show banner artwork, featured items, countdown timer
+    - _Requirements: 9.1_
+  - [x] 14.3 Create pull buttons and cost display
+    - Single pull (500 CD) and multi-pull (4500 CD) buttons
+    - Disable if insufficient balance
+    - _Requirements: 9.1_
+
+- [x] 15. Implement Frontend - Pull Animation
+  - [x] 15.1 Create PullAnimation component
+    - Create `frontend/src/components/gacha/PullAnimation.tsx`
+    - Animated sequence before revealing results
+    - _Requirements: 9.2_
+  - [x] 15.2 Create ResultsModal component
+    - Create `frontend/src/components/gacha/ResultsModal.tsx`
+    - Display rewards with rarity effects (particles, glow)
+    - Special effects for shiny Pokemon
+    - _Requirements: 9.3, 9.4_
+  - [ ] 15.3 Add sound effects
+    - Pull sound, reveal sound, shiny sound
+    - _Requirements: 9.3_
+
+- [ ] 16. Implement Frontend - History and Stats
+  - [ ] 16.1 Create history page/tab
+    - Display pull history with filters
+    - _Requirements: 8.1, 8.4_
+  - [ ] 16.2 Create stats display
+    - Show total pulls, spending, rarity distribution
+    - _Requirements: 8.2_
+  - [x] 16.3 Create pity counter display
+    - Show current pity progress with visual indicator
+    - _Requirements: 9.5_
+
+- [ ] 17. Implement Frontend - Admin Panel
+  - [ ] 17.1 Add gacha section to admin page
+    - Banner management interface
+    - _Requirements: 11.1_
+  - [ ] 17.2 Create banner creation form
+    - Form for all banner fields
+    - _Requirements: 11.2_
+  - [ ] 17.3 Create banner edit/delete functionality
+    - Edit existing banners, deactivate banners
+    - _Requirements: 11.3, 11.4_
+
+- [ ] 18. Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.
+
+- [x] 19. Implement Minecraft Plugin - GachaManager
+  - [x] 19.1 Create GachaManager class
+    - Create `minecraft-plugin-v2/src/main/java/com/lospitufos/cobblemon/gacha/GachaManager.java`
+    - Poll pending rewards from backend
+    - _Requirements: 10.1_
+  - [x] 19.2 Implement Pokemon delivery
+    - Create Pokemon with correct IVs, nature, ability
+    - Add to party or PC
+    - _Requirements: 10.2_
+  - [x] 19.3 Implement item delivery
+    - Give items to player inventory
+    - _Requirements: 10.3_
+  - [x] 19.4 Handle full party/PC
+    - Notify player and retain rewards as pending
+    - _Requirements: 10.4_
+  - [x] 19.5 Mark rewards as claimed
+    - Call backend API to mark delivery complete
+    - _Requirements: 10.5_
+  - [x] 19.6 ULTRA-OPTIMIZE for anti-lag (99999%)
+    - Staggered polling (500ms between players)
+    - Extended poll interval (90 seconds)
+    - Command cooldown (5 seconds)
+    - Batch delivery with delays (100ms between rewards)
+    - Cache with TTL (2 minutes)
+    - All Cobblemon API on main thread
+    - Comprehensive try-catch everywhere
+    - Low priority daemon thread
+    - Timeout on all HTTP calls (10-15s)
+    - Memory-efficient cleanup
+
+- [x] 20. Implement Minecraft Plugin - Commands
+  - [x] 20.1 Create GachaCommands class
+    - Commands integrated in GachaManager
+    - /gacha claim and /claimgacha commands
+    - _Requirements: 10.2_
+  - [x] 20.2 Implement login notification
+    - Notify players of pending rewards on login
+    - _Requirements: 10.1_
+  - [x] 20.3 Register commands in plugin
+    - Add to LosPitufosPlugin.java
+    - _Requirements: 10.2_
+
+- [x] 21. Create Seed Scripts and Initial Data
+  - [x] 21.1 Create banner seed script
+    - Create `backend/seed-gacha-banners.js`
+    - Seed standard banner and example limited banner
+    - _Requirements: 5.4_
+  - [x] 21.2 Create database indexes
+    - Add indexes for gacha collections (history, pity, pending)
+    - _Requirements: 8.3_
+
+- [ ] 22. Integration Testing
+  - [ ] 22.1 Test full pull flow
+    - End-to-end test from frontend to database
+    - _Requirements: 1.1, 1.2_
+  - [ ] 22.2 Test claim flow
+    - Test plugin claiming rewards
+    - _Requirements: 10.2, 10.3_
+  - [ ] 22.3 Test pity system
+    - Verify pity increments and resets correctly
+    - _Requirements: 4.1, 4.3, 4.4_
+
+- [ ] 23. Final Checkpoint - Ensure all tests pass
+  - Ensure all tests pass, ask the user if questions arise.

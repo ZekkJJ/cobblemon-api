@@ -27,13 +27,13 @@ export default function Navbar() {
 
     const navLinks = [
         { href: '/', label: 'Gacha', icon: 'fa-dice' },
-        { href: '/tienda', label: 'Tienda', icon: 'fa-shopping-cart' },
-        { href: '/servidor', label: 'Servidor', icon: 'fa-server' },
+        { href: '/tienda', label: 'Shop', icon: 'fa-shopping-cart' },
+        { href: '/servidor', label: 'Server', icon: 'fa-server' },
         { href: '/pokedex', label: 'Pokédex', icon: 'fa-book' },
-        { href: '/jugadores', label: 'Jugadores', icon: 'fa-users' },
-        { href: '/galeria', label: 'Galería', icon: 'fa-th' },
-        { href: '/comparador', label: 'Comparar', icon: 'fa-balance-scale' },
-        { href: '/torneos', label: 'Torneos', icon: 'fa-trophy' },
+        { href: '/jugadores', label: 'Players', icon: 'fa-users' },
+        { href: '/galeria', label: 'Gallery', icon: 'fa-th' },
+        { href: '/comparador', label: 'Compare', icon: 'fa-balance-scale' },
+        { href: '/torneos', label: 'Tournaments', icon: 'fa-trophy' },
     ];
 
     const handleLogout = () => {
@@ -56,11 +56,11 @@ export default function Navbar() {
                 window.location.href = data.authUrl;
             } else {
                 console.error('Failed to get auth URL:', data);
-                alert('Error al iniciar sesión. Por favor intenta de nuevo.');
+                alert('Login error. Please try again.');
             }
         } catch (error) {
             console.error('Login error:', error);
-            alert('Error al conectar con el servidor.');
+            alert('Server connection error.');
         }
     };
 
@@ -125,7 +125,7 @@ export default function Navbar() {
                         <button
                             onClick={toggleSfx}
                             className={`p-2.5 rounded-lg transition-colors ${sfxMuted ? 'bg-gray-600 text-gray-400' : 'hover:bg-red-800'}`}
-                            title={sfxMuted ? 'Activar SFX' : 'Silenciar SFX'}
+                            title={sfxMuted ? 'Enable SFX' : 'Mute SFX'}
                         >
                             <i className={`fas ${sfxMuted ? 'fa-volume-mute' : 'fa-volume-up'} text-base`}></i>
                         </button>
@@ -147,7 +147,7 @@ export default function Navbar() {
                                 <button
                                     onClick={handleLogout}
                                     className="p-2.5 hover:bg-red-800 rounded-lg transition-colors"
-                                    title="Cerrar sesión"
+                                    title="Sign out"
                                 >
                                     <i className="fas fa-sign-out-alt text-base"></i>
                                 </button>
@@ -213,7 +213,7 @@ export default function Navbar() {
                                     className="px-4 py-3 hover:bg-red-800 rounded-lg transition-colors flex items-center gap-3"
                                 >
                                     <i className="fas fa-sign-out-alt w-5 text-center"></i>
-                                    <span>Cerrar sesión</span>
+                                    <span>Sign out</span>
                                 </button>
                             </div>
                         ) : (
@@ -222,7 +222,7 @@ export default function Navbar() {
                                 className="sm:hidden mt-2 pt-2 border-t border-red-800 flex items-center justify-center gap-2 bg-[#5865F2] hover:bg-[#4752C4] px-4 py-3 rounded-lg font-medium transition-colors text-base"
                             >
                                 <i className="fab fa-discord"></i>
-                                <span>Login con Discord</span>
+                                <span>Login with Discord</span>
                             </button>
                         )}
                     </nav>

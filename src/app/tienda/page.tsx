@@ -93,7 +93,7 @@ export default function TiendaPage() {
 
     async function handlePurchase(ballId: string, quantity: number) {
         if (!localUser) {
-            alert('Debes iniciar sesión para comprar');
+            alert('You must log in to purchase');
             return;
         }
 
@@ -186,7 +186,7 @@ export default function TiendaPage() {
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <div>
                             <h1 className="text-4xl font-bold text-white mb-2">🏪 Tienda de Pokéballs</h1>
-                            <p className="text-gray-300">Stocks aleatorios • Actualización cada hora</p>
+                            <p className="text-gray-300">Random stocks • Hourly updates</p>
                         </div>
                         <div className="text-right">
                             <div className="text-2xl font-bold text-yellow-400 mb-1">

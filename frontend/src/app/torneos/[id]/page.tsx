@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { tournamentsAPI } from '@/src/lib/api-client';
-import { Tournament, getStatusText, getStatusColor } from '@/src/lib/types/tournament';
-import BracketVisualizer from '@/src/components/BracketVisualizer';
-import { playSound } from '@/src/lib/sounds';
+import { tournamentsAPI } from '@/lib/api-client';
+import { Tournament, getStatusText, getStatusColor } from '@/lib/types/tournament';
+import BracketVisualizer from '@/components/BracketVisualizer';
+import { playSound } from '@/lib/sounds';
 
 export default function TournamentDetailPage() {
   const params = useParams();
@@ -172,6 +172,11 @@ export default function TournamentDetailPage() {
             icon="fa-sitemap"
             label="Formato"
             value={tournament.bracketType === 'single' ? 'Eliminación Simple' : 'Eliminación Doble'}
+          />
+          <InfoCard
+            icon={tournament.battleFormat === '2v2' ? 'fa-users' : 'fa-user'}
+            label="Tipo de Batalla"
+            value={tournament.battleFormat === '2v2' ? '2v2 Doubles' : '1v1 Singles'}
           />
           <InfoCard
             icon="fa-trophy"

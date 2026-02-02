@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { TournamentTicker } from '@/components/TournamentTicker';
 import StarterCard from '@/components/StarterCard';
 import SoulDrivenQuestionnaire from '@/components/SoulDrivenQuestionnaire';
@@ -65,7 +64,7 @@ export default function HomePage() {
     // Handle username verification (non-OAuth)
     const handleUsernameVerify = async () => {
         if (!discordUsername.trim() || !nickname.trim()) {
-            setError('Por favor completa ambos campos');
+            setError('Please complete both fields');
             return;
         }
 
@@ -95,7 +94,7 @@ export default function HomePage() {
             localStorage.setItem('cobblemon_user', JSON.stringify(userData));
             setLocalUser(userData);
         } catch (e) {
-            setError('Error de conexión');
+            setError('Connection error');
         } finally {
             setIsLoading(false);
         }
@@ -104,7 +103,7 @@ export default function HomePage() {
     // Handle verification code submit
     const handleVerifyCode = async () => {
         if (!verifyCode.trim() || verifyCode.length !== 5) {
-            setError('El código debe tener 5 dígitos');
+            setError('Code must be 5 digits');
             return;
         }
 
@@ -113,7 +112,7 @@ export default function HomePage() {
 
         try {
             const discordId = localUser?.discordId;
-            const discordName = localUser?.discordUsername || 'Usuario';
+            const discordName = localUser?.discordUsername || 'User';
 
             const res = await fetch('/api/verify/check', {
                 method: 'POST',
@@ -134,10 +133,10 @@ export default function HomePage() {
                     setVerifySuccess(false);
                 }, 5000);
             } else {
-                setError(data.error || 'Código inválido');
+                setError(data.error || 'Invalid code');
             }
         } catch (e) {
-            setError('Error al verificar');
+            setError('Verification error');
         } finally {
             setVerifyLoading(false);
         }
@@ -175,7 +174,7 @@ export default function HomePage() {
             setRollResult(data.starter);
             setUserStatus({ canRoll: false, reason: 'already_rolled' });
         } catch (e) {
-            setError('Error al hacer la tirada');
+            setError('Error making roll');
         } finally {
             setIsRolling(false);
         }
@@ -210,7 +209,7 @@ export default function HomePage() {
             setUserStatus({ canRoll: false, reason: 'already_rolled' });
             setShowQuestionnaire(false);
         } catch (e) {
-            setError('Error al hacer la tirada Soul Driven');
+            setError('Error making Soul Driven roll');
         } finally {
             setIsRolling(false);
         }
@@ -231,7 +230,7 @@ export default function HomePage() {
                 <div className="w-full max-w-md mb-6 flex justify-end">
                     <div className="bg-red-900 bg-opacity-80 px-4 py-2 rounded-lg text-sm border border-red-500 shadow-inner font-bold">
                         <span>{userStatus?.totalStarters - (userStatus?.availableCount || 0) || 0}</span>
-                        <span className="opacity-60"> / {userStatus?.totalStarters || 27} Reclamados</span>
+                        <span className="opacity-60"> / {userStatus?.totalStarters || 27} Claimed</span>
                     </div>
                 </div>
 
@@ -245,11 +244,11 @@ export default function HomePage() {
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="text-white font-bold mb-1 flex items-center gap-2">
-                                        Verificar Minecraft
+                                        Verify Minecraft
                                         {verifySuccess && <i className="fas fa-check-circle text-green-400 animate-pulse"></i>}
                                     </h3>
                                     <p className="text-cyan-200 text-xs mb-3">
-                                        Ingresa el código de 5 dígitos que aparece en Minecraft
+                                        Enter the 5-digit code shown in Minecraft
                                     </p>
                                     <div className="flex gap-2">
                                         <input
@@ -276,7 +275,7 @@ export default function HomePage() {
                                     {verifySuccess && (
                                         <div className="mt-2 text-green-400 text-xs flex items-center gap-1">
                                             <i className="fas fa-check-circle"></i>
-                                            ¡Verificado! Ahora puedes moverte en el servidor
+                                            Verified! You can now move on the server
                                         </div>
                                     )}
                                 </div>
@@ -297,7 +296,7 @@ export default function HomePage() {
                         {!isLoggedIn && (
                             <div className="flex flex-col items-center w-full">
                                 <div className="text-green-400 text-center pixel-font text-xs mb-6 animate-pulse">
-                                    INICIA SESIÓN<br />PARA CONTINUAR
+                                    LOG IN<br />TO CONTINUE
                                 </div>
 
                                 {/* Auth mode toggle */}
@@ -327,29 +326,29 @@ export default function HomePage() {
                                                 if (data.success && data.authUrl) {
                                                     window.location.href = data.authUrl;
                                                 } else {
-                                                    setError('Error al obtener URL de autenticación');
+                                                    setError('Error getting authentication URL');
                                                 }
                                             } catch (e) {
-                                                setError('Error al conectar con el servidor');
+                                                setError('Server connection error');
                                             }
                                         }}
                                         className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all"
                                     >
                                         <i className="fab fa-discord text-xl"></i>
-                                        Iniciar con Discord
+                                        Sign in with Discord
                                     </button>
                                 ) : (
                                     <div className="w-full space-y-3">
                                         <input
                                             type="text"
-                                            placeholder="Tu nombre de Discord"
+                                            placeholder="Your Discord name"
                                             value={discordUsername}
                                             onChange={(e) => setDiscordUsername(e.target.value)}
                                             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none"
                                         />
                                         <input
                                             type="text"
-                                            placeholder="Tu apodo/nombre real"
+                                            placeholder="Your nickname/real name"
                                             value={nickname}
                                             onChange={(e) => setNickname(e.target.value)}
                                             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:border-purple-500 focus:outline-none"
@@ -362,17 +361,17 @@ export default function HomePage() {
                                             {isLoading ? (
                                                 <>
                                                     <i className="fas fa-spinner fa-spin"></i>
-                                                    Verificando...
+                                                    Verifying...
                                                 </>
                                             ) : (
                                                 <>
                                                     <i className="fas fa-check-circle"></i>
-                                                    Verificar y Registrar
+                                                    Verify and Register
                                                 </>
                                             )}
                                         </button>
                                         <p className="text-xs text-gray-400 text-center mt-2">
-                                            Debes estar en el servidor de Discord para verificar
+                                            You must be in the Discord server to verify
                                         </p>
                                     </div>
                                 )}
@@ -398,7 +397,7 @@ export default function HomePage() {
                                 {!showQuestionnaire ? (
                                     <>
                                         <div className="text-green-400 text-center pixel-font text-xs mb-4 animate-pulse">
-                                            ¡LISTO PARA<br />INVOCAR!
+                                            READY TO<br />SUMMON!
                                         </div>
 
                                         <div className="w-full mb-4 flex gap-2 bg-gray-700/50 p-1 rounded-lg">
@@ -410,7 +409,7 @@ export default function HomePage() {
                                                     }`}
                                             >
                                                 <i className="fas fa-dice mr-2"></i>
-                                                Clásico
+                                                Classic
                                             </button>
                                             <button
                                                 onClick={() => setGachaMode('soul-driven')}
@@ -434,13 +433,13 @@ export default function HomePage() {
                                         </div>
 
                                         <p className="text-gray-400 text-sm text-center mb-2">
-                                            ¡{userStatus?.availableCount || 27} starters disponibles!
+                                            {userStatus?.availableCount || 27} starters available!
                                         </p>
 
                                         {gachaMode === 'soul-driven' && (
                                             <p className="text-purple-400 text-xs text-center mb-2">
                                                 <i className="fas fa-brain mr-1"></i>
-                                                La IA encontrará tu compañero ideal
+                                                AI will find your perfect companion
                                             </p>
                                         )}
                                     </>
@@ -463,7 +462,7 @@ export default function HomePage() {
                         {isRolling && (
                             <div className="flex flex-col items-center">
                                 <div className="text-purple-400 text-center pixel-font text-xs mb-6 ai-loading">
-                                    INVOCANDO...
+                                    SUMMONING...
                                 </div>
                                 <div className="relative">
                                     <div className="absolute inset-0 bg-white blur-xl opacity-30 animate-pulse rounded-full"></div>
@@ -480,8 +479,8 @@ export default function HomePage() {
                         {isLoggedIn && !isRolling && !rollResult && userStatus?.canRoll === false && (
                             <div className="text-center">
                                 <i className="fas fa-exclamation-triangle text-4xl text-yellow-500 mb-4"></i>
-                                <p className="text-yellow-300 font-bold">Ya has hecho tu tirada</p>
-                                <p className="text-gray-400 text-sm mt-2">Cada jugador solo puede obtener un starter</p>
+                                <p className="text-yellow-300 font-bold">You already rolled</p>
+                                <p className="text-gray-400 text-sm mt-2">Each player can only get one starter</p>
                             </div>
                         )}
                     </div>
@@ -501,20 +500,20 @@ export default function HomePage() {
                                 {isRolling ? (
                                     <>
                                         <i className="fas fa-spinner fa-spin"></i>
-                                        INVOCANDO...
+                                        SUMMONING...
                                     </>
                                 ) : rollResult ? (
                                     <>
                                         <i className="fas fa-check"></i>
-                                        ¡COMPLETADO!
+                                        COMPLETED!
                                     </>
                                 ) : gachaMode === 'soul-driven' ? (
                                     <>
-                                        COMENZAR <i className="fas fa-sparkles text-lg"></i>
+                                        START <i className="fas fa-sparkles text-lg"></i>
                                     </>
                                 ) : (
                                     <>
-                                        INVOCAR <i className="fas fa-dice text-lg"></i>
+                                        SUMMON <i className="fas fa-dice text-lg"></i>
                                     </>
                                 )}
                             </span>
@@ -523,7 +522,7 @@ export default function HomePage() {
 
                     {/* Odds text */}
                     <div className="mt-5 text-center text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-                        1% Probabilidad de SHINY ✨
+                        1% SHINY Probability ✨
                     </div>
                 </div>
 
@@ -532,26 +531,26 @@ export default function HomePage() {
                     <div className="glass-dark rounded-xl p-4">
                         <h3 className="font-bold text-white mb-2 flex items-center justify-center gap-2">
                             <i className="fas fa-info-circle text-blue-400"></i>
-                            ¿Cómo funciona?
+                            How does it work?
                         </h3>
                         <ul className="text-sm text-gray-300 space-y-1 text-left">
-                            <li>• Cada jugador solo puede hacer <strong>UNA tirada</strong></li>
-                            <li>• El starter que obtengas será <strong>exclusivamente tuyo</strong></li>
-                            <li>• Nadie más podrá obtener el mismo starter</li>
-                            <li>• ¡Hay un 1% de probabilidad de obtener un <span className="text-yellow-400">SHINY</span>!</li>
+                            <li>• Each player can only make <strong>ONE roll</strong></li>
+                            <li>• The starter you get will be <strong>exclusively yours</strong></li>
+                            <li>• No one else can get the same starter</li>
+                            <li>• There's a 1% chance to get a <span className="text-yellow-400">SHINY</span>!</li>
                         </ul>
 
                         <div className="mt-4 pt-4 border-t border-gray-600">
                             <h4 className="font-bold text-purple-400 mb-2 text-sm flex items-center justify-center gap-2">
                                 <i className="fas fa-sparkles"></i>
-                                Modos de Invocación
+                                Summoning Modes
                             </h4>
                             <div className="text-xs text-gray-300 space-y-2 text-left">
                                 <div>
-                                    <strong className="text-red-400">• Clásico:</strong> Totalmente aleatorio
+                                    <strong className="text-red-400">• Classic:</strong> Completely random
                                 </div>
                                 <div>
-                                    <strong className="text-purple-400">• Soul Driven:</strong> La IA analiza tu personalidad para encontrar tu compañero perfecto
+                                    <strong className="text-purple-400">• Soul Driven:</strong> AI analyzes your personality to find your perfect companion
                                 </div>
                             </div>
                         </div>

@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useMemo, useEffect } from 'react';
-import { POKEDEX_DATA, PokedexPokemon } from '@/src/lib/pokedex-data';
-import { playSound, playPokemonCry } from '@/src/lib/sounds';
+import { POKEDEX_DATA, PokedexPokemon } from '@/lib/pokedex-data';
+import { playSound, playPokemonCry } from '@/lib/sounds';
 
 const TYPE_COLORS: Record<string, string> = {
   normal: '#A8A878',
@@ -112,7 +112,7 @@ export default function PokedexPage() {
             POKÉDEX
           </h1>
           <p className="text-xl text-slate-300">
-            {stats.total} Líneas evolutivas de las generaciones 1-5
+            {stats.total} Evolutionary lines from generations 1-5
           </p>
         </div>
 
@@ -121,14 +121,14 @@ export default function PokedexPage() {
           <div className="card">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
               <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                Pokédex Nacional
+                National Pokédex
               </h1>
 
               <button
                 onClick={clearFilters}
                 className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-sm text-white/70 hover:text-white transition-all flex items-center gap-2 w-fit"
               >
-                Reiniciar Filtros
+                Reset Filters
               </button>
             </div>
             <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
@@ -157,7 +157,7 @@ export default function PokedexPage() {
             <div className="mb-4">
               <input
                 type="text"
-                placeholder="Buscar por nombre o número..."
+                placeholder="Search by name or number..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full bg-slate-700 text-white px-4 py-3 rounded-lg border border-slate-600 focus:border-poke-red focus:outline-none"
@@ -166,14 +166,14 @@ export default function PokedexPage() {
 
             {/* Generation Filter */}
             <div className="mb-4">
-              <label className="block text-sm text-slate-400 mb-2">Generación:</label>
+              <label className="block text-sm text-slate-400 mb-2">Generation:</label>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => { setFilterGen(null); playSound('click'); }}
                   className={`px-4 py-2 rounded-lg font-medium transition-all ${!filterGen ? 'bg-poke-red text-white' : 'bg-slate-700 hover:bg-slate-600'
                     }`}
                 >
-                  Todas
+                  All
                 </button>
                 {[1, 2, 3, 4, 5].map((gen) => {
                   const genCount = stats[(`gen${gen}` as keyof typeof stats)] || 0;
@@ -196,14 +196,14 @@ export default function PokedexPage() {
 
             {/* Type Filter */}
             <div className="mb-4">
-              <label className="block text-sm text-slate-400 mb-2">Tipo:</label>
+              <label className="block text-sm text-slate-400 mb-2">Type:</label>
               <div className="flex flex-wrap gap-2">
                 <button
                   onClick={() => { setFilterType(null); playSound('click'); }}
                   className={`px-3 py-1.5 rounded-lg font-medium text-sm transition-all ${!filterType ? 'bg-poke-red text-white' : 'bg-slate-700 hover:bg-slate-600'
                     }`}
                 >
-                  Todos
+                  All
                 </button>
                 {allTypes.map((type) => (
                   <button
@@ -220,7 +220,7 @@ export default function PokedexPage() {
             </div>
 
             <div className="text-slate-400 text-sm">
-              Mostrando {Math.min(visibleCount, filteredPokemon.length)} de {filteredPokemon.length} filtrados ({stats.total} total)
+              Showing {Math.min(visibleCount, filteredPokemon.length)} of {filteredPokemon.length} filtered ({stats.total} total)
             </div>
           </div>
         </div>
@@ -229,7 +229,7 @@ export default function PokedexPage() {
         {filteredPokemon.length === 0 ? (
           <div className="card text-center py-16">
             <i className="fas fa-search text-6xl text-slate-600 mb-4"></i>
-            <p className="text-slate-400 text-xl">No se encontraron Pokémon</p>
+            <p className="text-slate-400 text-xl">No Pokémon found</p>
           </div>
         ) : (
           <>
@@ -288,7 +288,7 @@ export default function PokedexPage() {
                   onClick={() => setVisibleCount(prev => prev + 40)}
                   className="bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-8 rounded-xl transition-all border border-slate-700 hover:border-poke-red"
                 >
-                  Cargar Más Pokémon...
+                  Load More Pokémon...
                 </button>
               </div>
             )}
@@ -358,26 +358,26 @@ export default function PokedexPage() {
                 {/* Physical Info */}
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div className="bg-slate-800 rounded-lg p-3 text-center">
-                    <div className="text-slate-400 text-sm">Altura</div>
+                    <div className="text-slate-400 text-sm">Height</div>
                     <div className="text-lg font-bold">{selectedPokemon.height} m</div>
                   </div>
                   <div className="bg-slate-800 rounded-lg p-3 text-center">
-                    <div className="text-slate-400 text-sm">Peso</div>
+                    <div className="text-slate-400 text-sm">Weight</div>
                     <div className="text-lg font-bold">{selectedPokemon.weight} kg</div>
                   </div>
                 </div>
 
                 {/* Stats */}
                 <div className="bg-slate-800 rounded-lg p-4 mb-4">
-                  <h3 className="text-lg font-bold mb-3">Estadísticas Base</h3>
+                  <h3 className="text-lg font-bold mb-3">Base Stats</h3>
                   <div className="space-y-2">
                     {[
                       { label: 'HP', value: (selectedPokemon.stats as any).hp, color: '#FF5959' },
-                      { label: 'Ataque', value: (selectedPokemon.stats as any).atk, color: '#F5AC78' },
-                      { label: 'Defensa', value: (selectedPokemon.stats as any).def, color: '#FAE078' },
+                      { label: 'Attack', value: (selectedPokemon.stats as any).atk, color: '#F5AC78' },
+                      { label: 'Defense', value: (selectedPokemon.stats as any).def, color: '#FAE078' },
                       { label: 'Sp. Atk', value: (selectedPokemon.stats as any).spa, color: '#9DB7F5' },
                       { label: 'Sp. Def', value: (selectedPokemon.stats as any).spd, color: '#A7DB8D' },
-                      { label: 'Velocidad', value: (selectedPokemon.stats as any).spe, color: '#FA92B2' },
+                      { label: 'Speed', value: (selectedPokemon.stats as any).spe, color: '#FA92B2' },
                     ].map((stat) => (
                       <div key={stat.label} className="flex items-center gap-2">
                         <div className="w-20 text-sm text-slate-400">{stat.label}</div>
@@ -405,7 +405,7 @@ export default function PokedexPage() {
                 {/* Evolutions */}
                 {selectedPokemon.evos && selectedPokemon.evos.length > 0 && (
                   <div className="bg-slate-800 rounded-lg p-4 mb-4">
-                    <h3 className="text-lg font-bold mb-3">Evoluciones</h3>
+                    <h3 className="text-lg font-bold mb-3">Evolutions</h3>
                     <div className="flex flex-col gap-3">
                       {selectedPokemon.evos.map((evo: any, idx: number) => (
                         <div key={evo.name + idx} className="flex items-center gap-4 bg-slate-700/50 p-2 rounded-lg">
@@ -440,7 +440,7 @@ export default function PokedexPage() {
                   className="w-full bg-poke-blue hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg transition-colors"
                 >
                   <i className="fas fa-volume-up mr-2"></i>
-                  Escuchar Grito
+                  Hear Cry
                 </button>
               </div>
             </div>

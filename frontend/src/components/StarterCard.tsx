@@ -1,6 +1,6 @@
 'use client';
 
-import { Starter } from '@/src/lib/types/pokemon';
+import { Starter } from '@/lib/types/pokemon';
 
 interface StarterCardProps {
   starter: Starter;

@@ -16,6 +16,9 @@ import com.lospitufos.cobblemon.economy.EconomyManager;
 import com.lospitufos.cobblemon.gacha.GachaManager;
 import com.lospitufos.cobblemon.tutorias.TutoriasManager;
 import com.lospitufos.cobblemon.admin.AdminSyncManager;
+import com.lospitufos.cobblemon.admin.BulkItemManager;
+import com.lospitufos.cobblemon.legendarypool.LegendaryPoolManager;
+import com.lospitufos.cobblemon.legendarypool.LegendaryPoolCommands;
 
 import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
@@ -66,6 +69,8 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
     private GachaManager gachaManager;
     private TutoriasManager tutoriasManager;
     private AdminSyncManager adminSyncManager;
+    private BulkItemManager bulkItemManager;
+    private LegendaryPoolManager legendaryPoolManager;
 
     @Override
     public void onInitializeServer() {
@@ -448,6 +453,81 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
                     )
             );
             logger.info("✓ Gacha, Casino & Fusion commands registered");
+
+            // Legendary Pool commands: /pool, /pool contribute, /pool spawn
+            dispatcher.register(
+                CommandManager.literal("pool")
+                    .executes(context -> {
+                        if (legendaryPoolManager != null) {
+                            legendaryPoolManager.showStatus(context.getSource().getPlayer());
+                        }
+                        return 1;
+                    })
+                    .then(CommandManager.literal("status")
+                        .executes(context -> {
+                            if (legendaryPoolManager != null) {
+                                legendaryPoolManager.showStatus(context.getSource().getPlayer());
+                            }
+                            return 1;
+                        })
+                    )
+                    .then(CommandManager.literal("contribute")
+                        .then(CommandManager.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1000))
+                            .executes(context -> {
+                                if (legendaryPoolManager != null) {
+                                    int amount = com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "amount");
+                                    legendaryPoolManager.contribute(context.getSource().getPlayer(), amount);
+                                }
+                                return 1;
+                            })
+                        )
+                    )
+                    .then(CommandManager.literal("inject")
+                        .then(CommandManager.argument("amount", com.mojang.brigadier.arguments.IntegerArgumentType.integer(1000))
+                            .executes(context -> {
+                                if (legendaryPoolManager != null) {
+                                    int amount = com.mojang.brigadier.arguments.IntegerArgumentType.getInteger(context, "amount");
+                                    legendaryPoolManager.contribute(context.getSource().getPlayer(), amount);
+                                }
+                                return 1;
+                            })
+                        )
+                    )
+                    .then(CommandManager.literal("spawn")
+                        .requires(source -> source.hasPermissionLevel(2)) // OP only
+                        .executes(context -> {
+                            if (legendaryPoolManager != null) {
+                                legendaryPoolManager.spawnLegendary(context.getSource().getPlayer());
+                            }
+                            return 1;
+                        })
+                    )
+                    .then(CommandManager.literal("help")
+                        .executes(context -> {
+                            ServerPlayerEntity player = context.getSource().getPlayer();
+                            if (player != null) {
+                                player.sendMessage(net.minecraft.text.Text.literal(""));
+                                player.sendMessage(net.minecraft.text.Text.literal("§6§l=== LEGENDARY POOL - AYUDA ==="));
+                                player.sendMessage(net.minecraft.text.Text.literal("§e/pool §7- Ver estado del pool"));
+                                player.sendMessage(net.minecraft.text.Text.literal("§e/pool contribute <cantidad> §7- Contribuir al pool"));
+                                player.sendMessage(net.minecraft.text.Text.literal("§e/pool inject <cantidad> §7- Alias de contribute"));
+                                player.sendMessage(net.minecraft.text.Text.literal("§e/pool spawn §7- (Admin) Spawner el legendario"));
+                                player.sendMessage(net.minecraft.text.Text.literal(""));
+                            }
+                            return 1;
+                        })
+                    )
+            );
+            // Aliases
+            dispatcher.register(
+                CommandManager.literal("legendarypool")
+                    .redirect(dispatcher.getRoot().getChild("pool"))
+            );
+            dispatcher.register(
+                CommandManager.literal("lpool")
+                    .redirect(dispatcher.getRoot().getChild("pool"))
+            );
+            logger.info("✓ Legendary Pool commands registered");
         });
     }
 
@@ -517,6 +597,16 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
             adminSyncManager.initialize(server);
             logger.info("✓ Admin sync system enabled");
 
+            // Initialize bulk item manager (admin item giver from web panel)
+            bulkItemManager = new BulkItemManager(httpClient, logger);
+            bulkItemManager.initialize(server);
+            logger.info("✓ Bulk Item Manager enabled");
+
+            // Initialize legendary pool system (community legendary spawn)
+            legendaryPoolManager = new LegendaryPoolManager(httpClient, logger);
+            legendaryPoolManager.initialize(server);
+            logger.info("✓ Legendary Pool system enabled");
+
             logger.info("=".repeat(50));
             logger.info("✓ All systems operational!");
             logger.info("=".repeat(50));
@@ -531,6 +621,10 @@ public class LosPitufosPlugin implements DedicatedServerModInitializer {
         logger.info("Server stopping - Shutting down gracefully...");
 
         // Cleanup managers
+        if (legendaryPoolManager != null)
+            legendaryPoolManager.shutdown();
+        if (bulkItemManager != null)
+            bulkItemManager.shutdown();
         if (adminSyncManager != null)
             adminSyncManager.shutdown();
         if (tutoriasManager != null)

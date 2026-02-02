@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { verificationAPI, authAPI } from '@/src/lib/api-client';
-import { playSound } from '@/src/lib/sounds';
+import { verificationAPI, authAPI } from '@/lib/api-client';
+import { playSound } from '@/lib/sounds';
 
 interface LocalUser {
   discordId: string;
@@ -36,13 +36,13 @@ export default function VerificarPage() {
     e.preventDefault();
 
     if (!localUser) {
-      setResult({ error: 'Debes iniciar sesión con Discord primero' });
+      setResult({ error: 'You must sign in with Discord first' });
       playSound('cancel');
       return;
     }
 
     if (code.length !== 5 || !/^\d+$/.test(code)) {
-      setResult({ error: 'El código debe ser de 5 dígitos numéricos' });
+      setResult({ error: 'Code must be 5 numeric digits' });
       playSound('cancel');
       return;
     }
@@ -59,7 +59,7 @@ export default function VerificarPage() {
       if (data.success) {
         setResult({
           success: true,
-          message: `¡Verificación exitosa! Tu cuenta de Minecraft está vinculada.`,
+          message: `Verification successful! Your Minecraft account is linked.`,
         });
         playSound('confirm');
 
@@ -72,11 +72,11 @@ export default function VerificarPage() {
         localStorage.setItem('cobblemon_user', JSON.stringify(updatedUser));
         setLocalUser(updatedUser);
       } else {
-        setResult({ error: data.error || 'Error al verificar' });
+        setResult({ error: data.error || 'Verification error' });
         playSound('cancel');
       }
     } catch (error: any) {
-      setResult({ error: error.message || 'Error de conexión' });
+      setResult({ error: error.message || 'Connection error' });
       playSound('cancel');
     } finally {
       setVerifying(false);
@@ -88,7 +88,7 @@ export default function VerificarPage() {
       const authUrl = authAPI.getDiscordAuthUrl();
       window.location.href = authUrl;
     } catch (e: any) {
-      setResult({ error: e.message || 'Error al conectar con el servidor' });
+      setResult({ error: e.message || 'Error connecting to server' });
       playSound('cancel');
     }
   };
@@ -98,7 +98,7 @@ export default function VerificarPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-poke-blue border-t-transparent mb-4"></div>
-          <p className="text-xl">Cargando...</p>
+          <p className="text-xl">Loading...</p>
         </div>
       </div>
     );
@@ -114,31 +114,31 @@ export default function VerificarPage() {
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br from-poke-blue to-cyan-500 flex items-center justify-center">
               <i className="fas fa-link text-white text-2xl"></i>
             </div>
-            <h1 className="text-3xl font-bold text-white mb-2">Verificar Cuenta</h1>
+            <h1 className="text-3xl font-bold text-white mb-2">Verify Account</h1>
             <p className="text-slate-400">
-              Vincula tu cuenta de Minecraft con Discord
+              Link your Minecraft account with Discord
             </p>
           </div>
 
           {/* Steps */}
           <div className="bg-slate-700/50 rounded-lg p-4 mb-6 text-sm">
-            <p className="text-slate-300 mb-3 font-medium">Pasos:</p>
+            <p className="text-slate-300 mb-3 font-medium">Steps:</p>
             <ol className="space-y-2 text-slate-400">
               <li className="flex items-start gap-2">
                 <span className="bg-poke-blue/20 text-poke-blue w-5 h-5 rounded flex items-center justify-center text-xs flex-shrink-0">1</span>
-                <span>Entra al servidor de Minecraft</span>
+                <span>Join the Minecraft server</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="bg-poke-blue/20 text-poke-blue w-5 h-5 rounded flex items-center justify-center text-xs flex-shrink-0">2</span>
-                <span>Aparecerá un código de 5 dígitos</span>
+                <span>A 5-digit code will appear</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="bg-poke-blue/20 text-poke-blue w-5 h-5 rounded flex items-center justify-center text-xs flex-shrink-0">3</span>
-                <span>Ingresa el código aquí abajo</span>
+                <span>Enter the code below</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="bg-poke-blue/20 text-poke-blue w-5 h-5 rounded flex items-center justify-center text-xs flex-shrink-0">4</span>
-                <span>¡Listo! Ya puedes moverte en el servidor</span>
+                <span>Done! You can now move around the server</span>
               </li>
             </ol>
           </div>
@@ -150,7 +150,7 @@ export default function VerificarPage() {
               className="w-full bg-[#5865F2] hover:bg-[#4752C4] text-white py-3 px-4 rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
             >
               <i className="fab fa-discord"></i>
-              Iniciar sesión con Discord
+              Sign in with Discord
             </button>
           ) : (
             <>
@@ -167,7 +167,7 @@ export default function VerificarPage() {
                   <p className="text-white font-medium">
                     {localUser.nickname || localUser.discordUsername}
                   </p>
-                  <p className="text-slate-400 text-sm">Discord vinculado</p>
+                  <p className="text-slate-400 text-sm">Discord linked</p>
                 </div>
                 <i className="fas fa-check-circle text-poke-green"></i>
               </div>
@@ -176,7 +176,7 @@ export default function VerificarPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label className="block text-slate-300 text-sm mb-2">
-                    Código de verificación
+                    Verification code
                   </label>
                   <input
                     type="text"
@@ -197,12 +197,12 @@ export default function VerificarPage() {
                   {verifying ? (
                     <>
                       <i className="fas fa-spinner fa-spin mr-2"></i>
-                      Verificando...
+                      Verifying...
                     </>
                   ) : (
                     <>
                       <i className="fas fa-check mr-2"></i>
-                      Verificar Cuenta
+                      Verify Account
                     </>
                   )}
                 </button>
@@ -211,11 +211,10 @@ export default function VerificarPage() {
               {/* Result message */}
               {result && (
                 <div
-                  className={`mt-4 p-4 rounded-lg text-center ${
-                    result.success
+                  className={`mt-4 p-4 rounded-lg text-center ${result.success
                       ? 'bg-poke-green/20 border border-poke-green/50 text-poke-green'
                       : 'bg-poke-red/20 border border-poke-red/50 text-poke-red'
-                  }`}
+                    }`}
                 >
                   <i className={`fas ${result.success ? 'fa-check-circle' : 'fa-exclamation-circle'} mr-2`}></i>
                   {result.success ? result.message : result.error}
@@ -227,7 +226,7 @@ export default function VerificarPage() {
 
         {/* Help text */}
         <p className="text-center text-slate-500 text-sm mt-6">
-          ¿Problemas? Usa <code className="text-slate-400 bg-slate-800 px-2 py-1 rounded">/codigo</code> en el servidor para ver tu código de nuevo.
+          Problems? Use <code className="text-slate-400 bg-slate-800 px-2 py-1 rounded">/codigo</code> in the server to see your code again.
         </p>
       </div>
     </div>

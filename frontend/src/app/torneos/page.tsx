@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { tournamentsAPI } from '@/src/lib/api-client';
-import { Tournament, getStatusText } from '@/src/lib/types/tournament';
-import { playSound } from '@/src/lib/sounds';
+import { tournamentsAPI } from '@/lib/api-client';
+import { Tournament, getStatusText } from '@/lib/types/tournament';
+import { playSound } from '@/lib/sounds';
 
 export default function TorneosPage() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
@@ -23,7 +23,7 @@ export default function TorneosPage() {
       const data = response.data || response;
       setTournaments(Array.isArray(data) ? data : []);
     } catch (err: any) {
-      setError(err.message || 'Error al cargar torneos');
+      setError(err.message || 'Error loading tournaments');
     } finally {
       setLoading(false);
     }
@@ -48,7 +48,7 @@ export default function TorneosPage() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-16 w-16 border-4 border-poke-yellow border-t-transparent mb-4"></div>
-          <p className="text-xl">Cargando torneos...</p>
+          <p className="text-xl">Loading tournaments...</p>
         </div>
       </div>
     );
@@ -63,7 +63,7 @@ export default function TorneosPage() {
           <p className="text-slate-300 mb-6">{error}</p>
           <button onClick={fetchTournaments} className="btn-primary">
             <i className="fas fa-redo mr-2"></i>
-            Reintentar
+            Retry
           </button>
         </div>
       </div>
@@ -77,10 +77,10 @@ export default function TorneosPage() {
         <div className="text-center mb-8">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 pixel-font text-poke-yellow">
             <i className="fas fa-trophy mr-3"></i>
-            TORNEOS
+            TOURNAMENTS
           </h1>
           <p className="text-lg md:text-xl text-slate-300">
-            Compite con otros entrenadores y demuestra tu habilidad
+            Compete with other trainers and prove your skill
           </p>
         </div>
 
@@ -89,27 +89,27 @@ export default function TorneosPage() {
           <FilterButton
             active={filter === 'all'}
             onClick={() => setFilter('all')}
-            label="Todos"
+            label="All"
             count={tournaments.length}
           />
           <FilterButton
             active={filter === 'active'}
             onClick={() => setFilter('active')}
-            label="En Curso"
+            label="Ongoing"
             count={activeTournaments.length}
             color="green"
           />
           <FilterButton
             active={filter === 'upcoming'}
             onClick={() => setFilter('upcoming')}
-            label="Próximos"
+            label="Upcoming"
             count={upcomingTournaments.length}
             color="blue"
           />
           <FilterButton
             active={filter === 'completed'}
             onClick={() => setFilter('completed')}
-            label="Finalizados"
+            label="Completed"
             count={completedTournaments.length}
             color="gray"
           />
@@ -123,7 +123,7 @@ export default function TorneosPage() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-4 w-4 bg-green-500"></span>
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-green-400">En Curso</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-green-400">Ongoing</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {activeTournaments.map(tournament => (
@@ -138,7 +138,7 @@ export default function TorneosPage() {
           <section className="mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-blue-400 mb-6">
               <i className="fas fa-calendar-alt mr-3"></i>
-              Próximamente
+              Coming Soon
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {upcomingTournaments.map(tournament => (
@@ -153,7 +153,7 @@ export default function TorneosPage() {
           <section className="mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-slate-500 mb-6">
               <i className="fas fa-history mr-3"></i>
-              Historial
+              History
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 opacity-80">
               {completedTournaments.map(tournament => (
@@ -167,11 +167,11 @@ export default function TorneosPage() {
         {filteredTournaments.length === 0 && (
           <div className="card text-center py-16">
             <i className="fas fa-calendar-times text-6xl text-slate-600 mb-4"></i>
-            <h3 className="text-2xl font-bold mb-2">No hay torneos</h3>
+            <h3 className="text-2xl font-bold mb-2">No tournaments</h3>
             <p className="text-slate-400">
-              {filter === 'all' 
-                ? 'Vuelve pronto para ver los próximos eventos'
-                : `No hay torneos ${filter === 'active' ? 'activos' : filter === 'upcoming' ? 'próximos' : 'finalizados'}`
+              {filter === 'all'
+                ? 'Come back soon for upcoming events'
+                : `No ${filter === 'active' ? 'ongoing' : filter === 'upcoming' ? 'upcoming' : 'completed'} tournaments`
               }
             </p>
           </div>
@@ -181,26 +181,26 @@ export default function TorneosPage() {
         <section className="mt-12 bg-slate-800/50 rounded-xl p-6 md:p-8 border border-slate-700">
           <h2 className="text-2xl font-bold mb-6 text-center">
             <i className="fas fa-question-circle text-poke-yellow mr-2"></i>
-            ¿Cómo participar?
+            How to participate?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <StepCard
               number={1}
               icon="fa-search"
-              title="Encuentra un torneo"
-              description="Busca un torneo con inscripciones abiertas que te interese"
+              title="Find a tournament"
+              description="Look for a tournament with open registration that interests you"
             />
             <StepCard
               number={2}
               icon="fa-terminal"
               title="Inscríbete in-game"
-              description="Usa el comando /torneo join [CÓDIGO] en el servidor"
+              description="Use the command /torneo join [CODE] in the server"
             />
             <StepCard
               number={3}
               icon="fa-gamepad"
-              title="¡Compite!"
-              description="Cuando el torneo comience, tus batallas se registrarán automáticamente"
+              title="Compete!"
+              description="When the tournament starts, your battles will be automatically recorded"
             />
           </div>
         </section>
@@ -210,16 +210,16 @@ export default function TorneosPage() {
 }
 
 // Componente de botón de filtro
-function FilterButton({ 
-  active, 
-  onClick, 
-  label, 
-  count, 
-  color = 'yellow' 
-}: { 
-  active: boolean; 
-  onClick: () => void; 
-  label: string; 
+function FilterButton({
+  active,
+  onClick,
+  label,
+  count,
+  color = 'yellow'
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
   count: number;
   color?: string;
 }) {
@@ -238,8 +238,8 @@ function FilterButton({
       }}
       className={`
         px-4 py-2 rounded-full font-medium transition-all
-        ${active 
-          ? colorClasses[color] 
+        ${active
+          ? colorClasses[color]
           : 'bg-slate-800 text-slate-400 hover:bg-slate-700 hover:text-white'
         }
       `}
@@ -272,23 +272,23 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
           (p: any) => p.minecraftUuid === userData.minecraftUuid
         );
         setIsRegistered(registered || false);
-      } catch (e) {}
+      } catch (e) { }
     }
   }, [tournament.participants]);
 
   const handleRegister = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     if (!user) {
       playSound('error');
-      alert('Debes iniciar sesión con Discord primero');
+      alert('You must sign in with Discord first');
       return;
     }
 
     if (!user.minecraftUuid) {
       playSound('error');
-      alert('Debes verificar tu cuenta de Minecraft primero. Ve a la página de verificación.');
+      alert('You must verify your Minecraft account first. Go to the verification page.');
       return;
     }
 
@@ -304,7 +304,7 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
       if (onRegister) onRegister();
     } catch (err: any) {
       playSound('error');
-      alert(err.message || 'Error al inscribirse');
+      alert(err.message || 'Error registering');
     } finally {
       setRegistering(false);
     }
@@ -334,7 +334,7 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
             `}>
               {getStatusText(tournament.status)}
             </span>
-            
+
             {/* Código del torneo */}
             <span className="font-mono text-xs bg-slate-700 px-2 py-1 rounded text-slate-300">
               {tournament.code}
@@ -362,17 +362,17 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
             <div className="flex justify-between text-sm">
               <span className="text-slate-500 flex items-center gap-2">
                 <i className="fas fa-users w-4"></i>
-                Participantes
+                Participants
               </span>
               <span className="text-slate-300 font-medium">
                 {tournament.participants?.length || 0} / {tournament.maxParticipants}
               </span>
             </div>
-            
+
             <div className="flex justify-between text-sm">
               <span className="text-slate-500 flex items-center gap-2">
                 <i className="fas fa-calendar w-4"></i>
-                Fecha
+                Date
               </span>
               <span className="text-slate-300">
                 {new Date(tournament.startDate).toLocaleDateString('es-ES', {
@@ -385,10 +385,10 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
             <div className="flex justify-between text-sm">
               <span className="text-slate-500 flex items-center gap-2">
                 <i className="fas fa-sitemap w-4"></i>
-                Formato
+                Format
               </span>
               <span className="text-slate-300">
-                {tournament.bracketType === 'single' ? 'Eliminación Simple' : 'Eliminación Doble'}
+                {tournament.bracketType === 'single' ? 'Single Elimination' : 'Double Elimination'}
               </span>
             </div>
 
@@ -396,7 +396,7 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
               <div className="mt-3 pt-3 border-t border-slate-700">
                 <div className="text-slate-500 text-xs mb-2 flex items-center gap-2">
                   <i className="fas fa-trophy text-yellow-500"></i>
-                  Premios
+                  Prizes
                 </div>
                 <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 rounded-lg p-3 border border-yellow-500/20">
                   <div className="text-sm text-yellow-200 space-y-1">
@@ -433,7 +433,7 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
               <div className="flex justify-between text-sm mt-2 pt-2 border-t border-slate-700">
                 <span className="text-slate-500 flex items-center gap-2">
                   <i className="fas fa-crown w-4 text-yellow-500"></i>
-                  Campeón
+                  Champion
                 </span>
                 <span className="text-yellow-400 font-bold">
                   {tournament.winnerUsername}
@@ -451,7 +451,7 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
             {isRegistered ? (
               <div className="w-full py-2 rounded-lg text-center text-sm font-medium bg-green-600/20 text-green-400">
                 <i className="fas fa-check mr-2"></i>
-                ¡Ya estás inscrito!
+                Already registered!
               </div>
             ) : (
               <button
@@ -466,17 +466,17 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
                 {registering ? (
                   <>
                     <i className="fas fa-spinner fa-spin mr-2"></i>
-                    Inscribiendo...
+                    Registering...
                   </>
                 ) : (tournament.participants?.length || 0) >= tournament.maxParticipants ? (
                   <>
                     <i className="fas fa-ban mr-2"></i>
-                    Torneo lleno
+                    Tournament full
                   </>
                 ) : (
                   <>
                     <i className="fas fa-user-plus mr-2"></i>
-                    ¡Inscribirme ahora!
+                    Register now!
                   </>
                 )}
               </button>
@@ -495,9 +495,9 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
               ${tournament.status === 'upcoming' ? 'bg-yellow-600/20 text-yellow-400' : ''}
             `}
           >
-            {isActive && 'Ver bracket en vivo'}
-            {isCompleted && 'Ver resultados'}
-            {tournament.status === 'upcoming' && 'Próximamente'}
+            {isActive && 'View live bracket'}
+            {isCompleted && 'View results'}
+            {tournament.status === 'upcoming' && 'Coming Soon'}
           </Link>
         )}
       </div>
@@ -506,15 +506,15 @@ function TournamentCard({ tournament, onRegister }: { tournament: Tournament; on
 }
 
 // Componente de paso
-function StepCard({ 
-  number, 
-  icon, 
-  title, 
-  description 
-}: { 
-  number: number; 
-  icon: string; 
-  title: string; 
+function StepCard({
+  number,
+  icon,
+  title,
+  description
+}: {
+  number: number;
+  icon: string;
+  title: string;
   description: string;
 }) {
   return (
